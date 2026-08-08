@@ -1,42 +1,58 @@
 # Deploy: GitHub + Cloudflare Pages + Tunnel
 
-目标架构：
+目标域名（PinGo）：
+
+| 用途 | 域名 |
+|------|------|
+| 坐席台（Pages） | `https://cs.originmount.com` |
+| API / Webhook（Tunnel） | `https://api.cs.originmount.com` |
 
 ```text
-GitHub repo
-  ├─ apps/web  ──CI──► Cloudflare Pages  (cs.your-domain.com)
-  └─ backend   ──VPS + docker compose──► Cloudflare Tunnel (api.your-domain.com)
+GitHub dianhailu/cs--center
+  ├─ apps/web  ──► Cloudflare Pages  → cs.originmount.com
+  └─ backend   ──► VPS + docker + Tunnel → api.cs.originmount.com
                                               ▲
                                       LiveAgent webhook
 ```
 
-## 0. 推送到 GitHub
+前提：`originmount.com` 的 DNS 已接入 Cloudflare（橙色云或至少可由 Cloudflare 管理 DNS）。
 
-本机若未装 `gh`，用网页新建空仓库后执行：
+## 0. 代码仓库
 
-```bash
-cd /Users/lu/Desktop/cursor/cs-midplatform
-# 去掉本地假 remote（若还指向自身 .git）
-git remote remove origin 2>/dev/null || true
-git remote add origin https://github.com/<YOU>/<REPO>.git
-
-git add .
-git status   # 确认没有 .env / cs.db / secrets
-git commit -m "feat: cs midplatform with LiveAgent adapter and deploy configs"
-git push -u origin main
-```
+已推送：https://github.com/dianhailu/cs--center
 
 **不要提交**：`.env`、`.env.production`、`backend/cs.db`、`deploy/cloudflared/*.json`
 
-## 1. 后端（VPS + Docker + Tunnel）
+## 1. 前端（Cloudflare Pages）— 可先做
+
+1. Cloudflare → **Workers & Pages** → Create → **Connect to Git** → `dianhailu/cs--center`
+2. 构建设置：
+   - Root directory: `apps/web`
+   - Build command: `npm ci && npm run build`
+   - Build output: `out`
+3. Environment variable：
+   - `NEXT_PUBLIC_API_BASE` = `https://api.cs.originmount.com`
+4. 部署完成后：**Custom domains** → 添加 `cs.originmount.com`  
+   （Cloudflare 会自动加 CNAME；若域名已在本账号下，通常一键即可）
+
+此时页面能打开，但登录要等 API 上线。
+
+## 2. 后端（VPS + Docker + Tunnel）
 
 在任意小 VPS（Ubuntu 即可）：
 
 ```bash
-git clone https://github.com/<YOU>/<REPO>.git
-cd <REPO>
+git clone https://github.com/dianhailu/cs--center.git
+cd cs--center
 cp .env.production.example .env.production
 # 编辑密钥、LIVEAGENT_*、CORS_ORIGINS、SEED_AGENT_PASSWORD
+```
+
+`.env.production` 关键至少保证：
+
+```env
+CORS_ORIGINS=https://cs.originmount.com
+LIVEAGENT_DRY_RUN=false
 ```
 
 安装 Docker 后：
@@ -48,12 +64,12 @@ curl -s http://127.0.0.1:8080/health
 
 ### Cloudflare Tunnel
 
-在本机或服务器：
+本机或服务器（需已安装 `cloudflared`，且用管 `originmount.com` 的 Cloudflare 账号登录）：
 
 ```bash
 cloudflared tunnel login
 cloudflared tunnel create cs-midplatform
-cloudflared tunnel route dns cs-midplatform api.your-domain.com
+cloudflared tunnel route dns cs-midplatform api.cs.originmount.com
 ```
 
 复制凭证：
@@ -61,51 +77,33 @@ cloudflared tunnel route dns cs-midplatform api.your-domain.com
 ```bash
 cp ~/.cloudflared/<TUNNEL_ID>.json deploy/cloudflared/
 cp deploy/cloudflared/config.example.yml deploy/cloudflared/config.yml
-# 编辑 tunnel id / credentials-file / hostname
+# 编辑 tunnel id / credentials-file / hostname → api.cs.originmount.com
 ```
 
-启动 Tunnel 容器：
+启动 Tunnel：
 
 ```bash
 docker compose -f docker-compose.prod.yml --env-file .env.production --profile tunnel up -d
 ```
 
-验证：`https://api.your-domain.com/health`
+验证：`https://api.cs.originmount.com/health`
 
 ### LiveAgent 规则
 
 Webhook：
 
-`https://api.your-domain.com/api/webhooks/liveagent/<CONNECTION_ID>`
+`https://api.cs.originmount.com/api/webhooks/liveagent/<CONNECTION_ID>`
 
 Header：`X-Webhook-Secret: <WEBHOOK_SECRET>`
 
 详见 [scripts/liveagent_rules.md](scripts/liveagent_rules.md)。  
 服务器首次启动后看 API/worker 日志里的 `SEED_CONNECTION_ID`。
 
-生产请设：`LIVEAGENT_DRY_RUN=false`
-
-## 2. 前端（Cloudflare Pages）
-
-用 Cloudflare 控制台直连 GitHub（无需 `workflow` PAT 权限）：
-
-1. Workers & Pages → Create → Connect to Git  
-2. Root directory: `apps/web`  
-3. Build command: `npm ci && npm run build`  
-4. Build output: `out`  
-5. Env var: `NEXT_PUBLIC_API_BASE=https://api.your-domain.com`
-
-自定义域名：`cs.your-domain.com` → Pages 项目。
-
-## 3. CORS
-
-`.env.production`：
+## 3. CORS（改域名后重启 API）
 
 ```env
-CORS_ORIGINS=https://cs.your-domain.com,https://<project>.pages.dev
+CORS_ORIGINS=https://cs.originmount.com,https://<project>.pages.dev
 ```
-
-改完后：
 
 ```bash
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d api worker
@@ -113,16 +111,16 @@ docker compose -f docker-compose.prod.yml --env-file .env.production up -d api w
 
 ## 4. 验收清单
 
-- [ ] `https://api.your-domain.com/health` 返回 ok  
-- [ ] Pages 登录页可打开，能登录  
+- [ ] `https://api.cs.originmount.com/health` 返回 ok  
+- [ ] `https://cs.originmount.com` 登录页可打开并登录  
 - [ ] 坐席台能拉到会话列表  
-- [ ] LiveAgent 测试消息能进中台（webhook 或 worker poll）  
+- [ ] LiveAgent 测试消息能进中台  
 - [ ] 坐席回复后客户侧可见（`DRY_RUN=false`）  
 
 ## 5. 本地静态构建自检
 
 ```bash
 cd apps/web
-NEXT_PUBLIC_API_BASE=https://api.your-domain.com npm run build
+NEXT_PUBLIC_API_BASE=https://api.cs.originmount.com npm run build
 ls out
 ```

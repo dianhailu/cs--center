@@ -4,7 +4,7 @@
 # 2) Copy this file to deploy/cloudflared/config.yml
 # 3) Put credentials JSON next to it (path below)
 # 4) DNS route:
-#    cloudflared tunnel route dns cs-midplatform api.your-domain.com
+#    cloudflared tunnel route dns cs-midplatform api.cs.originmount.com
 # 5) Run with compose profile:
 #    docker compose -f docker-compose.prod.yml --env-file .env.production --profile tunnel up -d
 
@@ -12,6 +12,6 @@ tunnel: YOUR_TUNNEL_ID
 credentials-file: /etc/cloudflared/YOUR_TUNNEL_ID.json
 
 ingress:
-  - hostname: api.your-domain.com
+  - hostname: api.cs.originmount.com
     service: http://api:8080
   - service: http_status:404
