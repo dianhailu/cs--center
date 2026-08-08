@@ -87,23 +87,7 @@ Header：`X-Webhook-Secret: <WEBHOOK_SECRET>`
 
 ## 2. 前端（Cloudflare Pages）
 
-### 方式 A：GitHub Actions（已写好）
-
-仓库配置：
-
-**Secrets**
-
-- `CLOUDFLARE_API_TOKEN`（Pages Edit 权限）
-- `CLOUDFLARE_ACCOUNT_ID`
-
-**Variables**
-
-- `NEXT_PUBLIC_API_BASE` = `https://api.your-domain.com`
-- `CLOUDFLARE_PAGES_PROJECT` = `cs-midplatform`（可选）
-
-推送到 `main` 且改动 `apps/web/**` 时自动构建发布。
-
-### 方式 B：Cloudflare 控制台直连 GitHub
+用 Cloudflare 控制台直连 GitHub（无需 `workflow` PAT 权限）：
 
 1. Workers & Pages → Create → Connect to Git  
 2. Root directory: `apps/web`  
