@@ -175,3 +175,50 @@ def poll_connection(db: Session, connection: ChannelConnection, limit: int = 30)
             logger.exception("poll import failed for %s: %s", tid, exc)
             db.rollback()
     return count
+
+
+def backfill_connection(
+    db: Session,
+    connection: ChannelConnection,
+    *,
+    per_page: int = 50,
+    max_pages: int = 100,
+    enqueue_ai: bool = False,
+    channel_type: str | None = None,
+) -> dict[str, int]:
+    """Page through LiveAgent tickets and import messages (for historical sync)."""
+    la = client_from_connection(connection)
+    stats = {"pages": 0, "tickets": 0, "imported_messages": 0, "errors": 0, "skipped": 0}
+    try:
+        for page in range(1, max_pages + 1):
+            try:
+                tickets = la.list_tickets(page=page, per_page=per_page, sort_field="date_created", sort_dir="DESC")
+            except Exception as exc:  # noqa: BLE001
+                logger.exception("backfill list page=%s failed: %s", page, exc)
+                stats["errors"] += 1
+                break
+            if not tickets:
+                break
+            stats["pages"] = page
+            for t in tickets:
+                tid = t.get("id")
+                if not tid:
+                    continue
+                if channel_type:
+                    ct = str(t.get("channel_type") or "")
+                    if ct.lower() != channel_type.lower():
+                        stats["skipped"] += 1
+                        continue
+                try:
+                    _, imported, _ = import_ticket(db, connection, str(tid), enqueue_ai=enqueue_ai)
+                    stats["tickets"] += 1
+                    stats["imported_messages"] += imported
+                except Exception as exc:  # noqa: BLE001
+                    logger.exception("backfill import failed for %s: %s", tid, exc)
+                    db.rollback()
+                    stats["errors"] += 1
+            if len(tickets) < per_page:
+                break
+    finally:
+        la.close()
+    return stats

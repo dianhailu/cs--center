@@ -55,23 +55,48 @@ class LiveAgentClient:
         return r.json()
 
     def get_ticket_messages(self, ticket_id: str, per_page: int = 100) -> list[dict[str, Any]]:
-        r = self._client.get(
-            f"{self.config.v3_base}/tickets/{ticket_id}/messages",
-            headers=self._v3_headers(),
-            params={"_perPage": per_page, "_sortDir": "ASC"},
-        )
-        r.raise_for_status()
-        data = r.json()
-        return data if isinstance(data, list) else []
+        """Fetch all message groups for a ticket (paginated)."""
+        all_groups: list[dict[str, Any]] = []
+        page = 1
+        while True:
+            r = self._client.get(
+                f"{self.config.v3_base}/tickets/{ticket_id}/messages",
+                headers=self._v3_headers(),
+                params={"_perPage": per_page, "_page": page, "_sortDir": "ASC"},
+            )
+            r.raise_for_status()
+            data = r.json()
+            batch = data if isinstance(data, list) else []
+            if not batch:
+                break
+            all_groups.extend(batch)
+            if len(batch) < per_page:
+                break
+            page += 1
+            if page > 200:
+                logger.warning("message pagination stopped at page 200 for ticket %s", ticket_id)
+                break
+        return all_groups
 
     def list_recent_tickets(self, per_page: int = 50) -> list[dict[str, Any]]:
+        return self.list_tickets(page=1, per_page=per_page)
+
+    def list_tickets(
+        self,
+        *,
+        page: int = 1,
+        per_page: int = 50,
+        sort_field: str = "date_changed",
+        sort_dir: str = "DESC",
+    ) -> list[dict[str, Any]]:
         r = self._client.get(
             f"{self.config.v3_base}/tickets",
             headers=self._v3_headers(),
             params={
+                "_page": page,
                 "_perPage": per_page,
-                "_sortDir": "DESC",
-                "_sortField": "date_changed",
+                "_sortDir": sort_dir,
+                "_sortField": sort_field,
             },
         )
         r.raise_for_status()
