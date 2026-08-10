@@ -259,7 +259,8 @@ class LiveAgentClient:
                 or group.get("agent_email")
             )
             group_name = (
-                group.get("user_name")
+                group.get("user_full_name")
+                or group.get("user_name")
                 or group.get("name")
                 or group.get("userid_name")
                 or group.get("agent_name")
@@ -311,10 +312,11 @@ class LiveAgentClient:
         contact_id: str = "",
         known_ai_bodies: set[str] | None = None,
     ) -> tuple[str, str]:
-        """Return (direction, sender_type) for an imported LA message.
+        """Return (direction, sender_type) using LiveAgent userid + /agents.
 
-        direction: inbound | outbound | note
-        sender_type: customer | agent | ai | system
+        LiveChat visitor userid != ticket owner_contactid. Agent messages use
+        staff userid from GET /agents (e.g. PinGo CS). Do NOT treat "any userid"
+        as agent — that mislabels visitor pre-chat fields as PinGo CS.
         """
         if item.get("is_note"):
             return "note", "system"
@@ -325,36 +327,23 @@ class LiveAgentClient:
         userid = str(item.get("userid") or "").strip()
         email = str(item.get("user_email") or "").strip().lower()
         name = str(item.get("user_name") or "").strip().lower()
-        contact = str(contact_id or "").strip()
         agent_email_l = (agent_email or "").strip().lower()
+        ids = set(agent_user_ids or set())
         emails = set(agent_emails or set())
         if agent_email_l:
             emails.add(agent_email_l)
         names = set(agent_names or set())
-        names.update({"pingo cs", "pin go cs", "pingo"})
-        ids = set(agent_user_ids or set())
 
-        # Explicit contact match => customer
-        if contact and userid and userid == contact:
-            return "inbound", "customer"
-
-        if ids and userid and userid in ids:
+        # Primary: LiveAgent agent id from GET /agents
+        if userid and ids and userid in ids:
             return "outbound", "agent"
         if email and email in emails:
             return "outbound", "agent"
-        if name and (name in names or "pingo" in name or "cs" == name):
+        if name and name in names:
             return "outbound", "agent"
 
-        group_type = str(item.get("group_type") or "").upper()
-        if group_type in {"A", "AGENT", "O", "OPERATOR", "H"}:
-            return "outbound", "agent"
-
-        # LiveChat human greetings often arrive without userid
-        if body and cls._AGENT_BODY_RE.search(body):
-            return "outbound", "agent"
-
-        # userid present and not the contact => staff
-        if userid and (not contact or userid != contact):
+        # Fallback only when agent directory failed to load
+        if not ids and body and cls._AGENT_BODY_RE.search(body):
             return "outbound", "agent"
 
         return "inbound", "customer"
