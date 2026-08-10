@@ -87,6 +87,11 @@ def seed() -> None:
             )
             db.add(agent)
             db.flush()
+        else:
+            # Keep login password in sync with SEED_AGENT_PASSWORD from env
+            agent.password_hash = hash_password(settings.seed_agent_password)
+            if not agent.name:
+                agent.name = "PinGo Agent"
 
         membership = db.scalar(
             select(Membership).where(
