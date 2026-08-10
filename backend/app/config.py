@@ -32,12 +32,14 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-4o-mini"
     default_reply_lang: str = "id"
     min_faq_score: float = 0.18
+    min_history_score: float = 0.22
     ai_enabled: bool = True
 
     seed_agent_email: str = "agent@pingo.com"
     seed_agent_password: str = "agent123"
 
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
+    history_path: Path = BACKEND_ROOT / "knowledge" / "history_pairs.json"
 
     @property
     def cors_origin_list(self) -> list[str]:

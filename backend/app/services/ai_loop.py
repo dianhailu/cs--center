@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.agent import SupportAgent
 from app.ai.faq import FaqIndex
+from app.ai.history import HistoryIndex
 from app.channels.liveagent import client_from_connection
 from app.config import get_settings
 from app.models import (
@@ -23,16 +24,21 @@ from app.services.conversations import send_outbound_message
 logger = logging.getLogger(__name__)
 
 _faq: FaqIndex | None = None
+_history: HistoryIndex | None = None
 _agent: SupportAgent | None = None
 
 
 def get_support_agent() -> SupportAgent:
-    global _faq, _agent
+    global _faq, _history, _agent
     settings = get_settings()
     if _faq is None:
         _faq = FaqIndex(settings.faq_path)
+    if _history is None:
+        _history = HistoryIndex(settings.history_path)
+    else:
+        _history.maybe_reload()
     if _agent is None:
-        _agent = SupportAgent(settings, _faq)
+        _agent = SupportAgent(settings, _faq, _history)
     return _agent
 
 
@@ -66,6 +72,10 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 "faq": [
                     {"id": h.faq_id, "score": round(h.score, 4), "q": h.question}
                     for h in decision.faq_hits
+                ],
+                "history": [
+                    {"id": h.pair_id, "score": round(h.score, 4), "q": h.question[:120]}
+                    for h in decision.history_hits
                 ],
             }
             if decision.action == "reply" and decision.reply:
