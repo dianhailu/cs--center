@@ -1,2 +1,5 @@
-# Cloudflare Pages: SPA-style fallback for client routes
+# Weekly static reports must not hit SPA fallback
+/weekly/*   /weekly/:splat   200
+
+# Cloudflare Pages: soft fallback for app client routes
 /*    /index.html   200
