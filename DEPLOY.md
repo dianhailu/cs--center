@@ -109,15 +109,33 @@ CORS_ORIGINS=https://cs.originmount.com,https://<project>.pages.dev
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d api worker
 ```
 
-## 4. 验收清单
+## 4. Smart 晚上学习历史会话
+
+Worker 内置定时任务：每天在 `HISTORY_LEARN_HOUR`（默认 **22**）`HISTORY_LEARN_TIMEZONE`（默认 **Asia/Jakarta**）从 DB 全量重建 `backend/knowledge/history_pairs.json`（含历史 + 当天新会话）。知识目录已挂载到 API/worker。
+
+首次部署若知识文件为空，worker 启动时会立刻做一次 **initial** 全量学习。也可手动触发：
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env.production exec worker \
+  python scripts/build_history_knowledge.py
+```
+
+日志关键字：`history learn start` / `history learn finished`。
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env.production logs -f worker | grep 'history learn'
+```
+
+## 5. 验收清单
 
 - [ ] `https://api.cs.originmount.com/health` 返回 ok  
 - [ ] `https://cs.originmount.com` 登录页可打开并登录  
 - [ ] 坐席台能拉到会话列表  
 - [ ] LiveAgent 测试消息能进中台  
 - [ ] 坐席回复后客户侧可见（`DRY_RUN=false`）  
+- [ ] worker 日志出现 `learn=True@22:00 Asia/Jakarta`；空知识时有 `history learn start reason=initial`  
 
-## 5. 本地静态构建自检
+## 6. 本地静态构建自检
 
 ```bash
 cd apps/web

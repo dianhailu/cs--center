@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     min_history_score: float = 0.22
     ai_enabled: bool = True
 
+    # Evening history learning (worker scheduled task; rebuilds from full DB)
+    history_learn_enabled: bool = True
+    history_learn_hour: int = 22  # local hour, default 22:00 (evening)
+    history_learn_timezone: str = "Asia/Jakarta"
+    history_learn_limit_conversations: int = 8000
+
     seed_agent_email: str = "agent@pingo.com"
     seed_agent_password: str = "agent123"
 
