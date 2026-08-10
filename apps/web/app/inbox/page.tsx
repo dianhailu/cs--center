@@ -98,7 +98,7 @@ export default function InboxPage() {
               <div style={{ marginTop: 6 }}>
                 <span className="badge">{c.status}</span>
                 {c.needs_human ? <span className="badge warn">needs human</span> : null}
-                {c.ai_handled ? <span className="badge">ai</span> : null}
+                {c.ai_handled ? <span className="badge">Smart</span> : null}
               </div>
             </Link>
           ))}

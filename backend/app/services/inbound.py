@@ -35,6 +35,7 @@ def import_ticket(
         ticket = la.get_ticket(ticket_id)
         groups = la.get_ticket_messages(ticket_id)
         flat = la.flatten_messages(groups)
+        agent_user_ids = la.list_agent_user_ids()
     finally:
         la.close()
 
@@ -72,9 +73,29 @@ def import_ticket(
         "la_status": ticket.get("status"),
     }
 
+    known_ai_bodies = {
+        (m.body or "").strip()
+        for m in db.scalars(
+            select(Message).where(
+                Message.conversation_id == conv.id,
+                Message.sender_type == MessageSenderType.ai,
+            )
+        )
+        if (m.body or "").strip()
+    }
+
     imported = 0
     latest_inbound: Message | None = None
     for item in flat:
+        direction_s, sender_s = LiveAgentClient.classify_sender(
+            item,
+            agent_user_ids=agent_user_ids,
+            agent_email=connection.agent_email or "",
+            known_ai_bodies=known_ai_bodies,
+        )
+        direction = MessageDirection(direction_s)
+        sender_type = MessageSenderType(sender_s)
+
         existing = db.scalar(
             select(Message).where(
                 Message.channel_connection_id == connection.id,
@@ -82,16 +103,21 @@ def import_ticket(
             )
         )
         if existing:
+            # Fix historical mis-labels (everything was treated as customer)
+            if existing.sender_type != sender_type or existing.direction != direction:
+                existing.sender_type = sender_type
+                existing.direction = direction
+                existing.meta = {
+                    **(existing.meta or {}),
+                    "userid": item.get("userid"),
+                    "user_email": item.get("user_email"),
+                    "user_name": item.get("user_name"),
+                    "datecreated": item.get("datecreated"),
+                }
+            if direction == MessageDirection.inbound:
+                latest_inbound = existing
             continue
-        is_note = bool(item.get("is_note"))
-        # Treat notes as outbound/system; public messages without agent heuristic as inbound customer
-        if is_note:
-            direction = MessageDirection.note
-            sender_type = MessageSenderType.system
-        else:
-            # If conversation already has AI/agent outbound with same body recently, skip mis-classify
-            direction = MessageDirection.inbound
-            sender_type = MessageSenderType.customer
+
         msg = Message(
             conversation_id=conv.id,
             channel_connection_id=connection.id,
@@ -100,7 +126,12 @@ def import_ticket(
             sender_type=sender_type,
             body=item["body"],
             send_status=MessageSendStatus.sent,
-            meta={"userid": item.get("userid"), "datecreated": item.get("datecreated")},
+            meta={
+                "userid": item.get("userid"),
+                "user_email": item.get("user_email"),
+                "user_name": item.get("user_name"),
+                "datecreated": item.get("datecreated"),
+            },
         )
         db.add(msg)
         imported += 1

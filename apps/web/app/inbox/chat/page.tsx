@@ -117,10 +117,20 @@ function ChatInner() {
                   : m.sender_type === "ai"
                     ? "ai"
                     : "agent";
+            const roleLabel =
+              m.sender_type === "customer"
+                ? "客户"
+                : m.sender_type === "ai"
+                  ? "Smart"
+                  : m.sender_type === "agent"
+                    ? "PinGo CS"
+                    : m.sender_type === "system"
+                      ? "系统"
+                      : m.sender_type;
             return (
               <div key={m.id} className={`bubble ${cls}`}>
                 <div className="meta">
-                  {m.sender_type} · {m.send_status} · {new Date(m.created_at).toLocaleString()}
+                  {roleLabel} · {m.send_status} · {new Date(m.created_at).toLocaleString()}
                 </div>
                 {m.body}
               </div>

@@ -197,6 +197,31 @@ class LiveAgentClient:
         except Exception:
             return {"status_code": r.status_code, "text": r.text}
 
+    def list_agent_user_ids(self) -> set[str]:
+        """Return LiveAgent agent user ids (best-effort)."""
+        ids: set[str] = set()
+        for path in ("agents", "users"):
+            try:
+                r = self._client.get(
+                    f"{self.config.v3_base}/{path}",
+                    headers=self._v3_headers(),
+                    params={"_perPage": 100},
+                )
+                if r.status_code >= 400:
+                    continue
+                data = r.json()
+                rows = data if isinstance(data, list) else data.get("data") or []
+                for row in rows:
+                    if not isinstance(row, dict):
+                        continue
+                    for key in ("id", "userid", "user_id"):
+                        val = row.get(key)
+                        if val:
+                            ids.add(str(val))
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("list_agent_user_ids %s failed: %s", path, exc)
+        return ids
+
     @staticmethod
     def flatten_messages(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Normalize LA message groups into flat message dicts."""
@@ -205,6 +230,8 @@ class LiveAgentClient:
             group_id = group.get("id") or group.get("messagegroupid")
             group_userid = group.get("userid")
             group_type = group.get("type")
+            group_email = group.get("user_email") or group.get("email") or group.get("userid_email")
+            group_name = group.get("user_name") or group.get("name") or group.get("userid_name")
             for msg in group.get("messages") or []:
                 msg_type = msg.get("type")
                 if msg_type not in {"M", "Y", "N"}:
@@ -213,13 +240,15 @@ class LiveAgentClient:
                 if not body:
                     continue
                 mid = str(msg.get("id") or f"{group_id}:{msg.get('datecreated')}:{hash(body) & 0xFFFF}")
-                # Heuristic: notes are internal; otherwise treat as customer unless marked otherwise
                 is_note = msg_type == "N"
+                userid = msg.get("userid") or group_userid
                 flat.append(
                     {
                         "external_id": mid,
                         "body": body,
-                        "userid": msg.get("userid") or group_userid,
+                        "userid": userid,
+                        "user_email": msg.get("user_email") or msg.get("email") or group_email,
+                        "user_name": msg.get("user_name") or msg.get("name") or group_name,
                         "datecreated": msg.get("datecreated"),
                         "is_note": is_note,
                         "group_type": group_type,
@@ -227,6 +256,40 @@ class LiveAgentClient:
                     }
                 )
         return flat
+
+    @staticmethod
+    def classify_sender(
+        item: dict[str, Any],
+        *,
+        agent_user_ids: set[str] | None = None,
+        agent_email: str = "",
+        known_ai_bodies: set[str] | None = None,
+    ) -> tuple[str, str]:
+        """Return (direction, sender_type) for an imported LA message.
+
+        direction: inbound | outbound | note
+        sender_type: customer | agent | ai | system
+        """
+        if item.get("is_note"):
+            return "note", "system"
+        body = (item.get("body") or "").strip()
+        if known_ai_bodies and body in known_ai_bodies:
+            return "outbound", "ai"
+        userid = str(item.get("userid") or "").strip()
+        email = str(item.get("user_email") or "").strip().lower()
+        name = str(item.get("user_name") or "").strip().lower()
+        agent_email_l = (agent_email or "").strip().lower()
+        if agent_user_ids and userid and userid in agent_user_ids:
+            return "outbound", "agent"
+        if agent_email_l and email and email == agent_email_l:
+            return "outbound", "agent"
+        # PinGo CS / common agent display names from LiveAgent
+        if name and ("pingo" in name or name in {"pingo cs", "pin go cs"}):
+            return "outbound", "agent"
+        if userid:
+            # Non-empty userid usually means a LiveAgent staff user, not the contact
+            return "outbound", "agent"
+        return "inbound", "customer"
 
 
 def client_from_connection(conn: Any) -> LiveAgentClient:
