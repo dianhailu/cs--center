@@ -35,9 +35,11 @@ def import_ticket(
         ticket = la.get_ticket(ticket_id)
         groups = la.get_ticket_messages(ticket_id)
         flat = la.flatten_messages(groups)
-        agent_user_ids = la.list_agent_user_ids()
+        agent_dir = la.list_agent_directory()
     finally:
         la.close()
+
+    contact_id = str(ticket.get("owner_contactid") or "").strip()
 
     conv = db.scalar(
         select(Conversation).where(
@@ -89,8 +91,11 @@ def import_ticket(
     for item in flat:
         direction_s, sender_s = LiveAgentClient.classify_sender(
             item,
-            agent_user_ids=agent_user_ids,
+            agent_user_ids=agent_dir["ids"],
+            agent_emails=agent_dir["emails"],
+            agent_names=agent_dir["names"],
             agent_email=connection.agent_email or "",
+            contact_id=contact_id,
             known_ai_bodies=known_ai_bodies,
         )
         direction = MessageDirection(direction_s)

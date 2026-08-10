@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -197,9 +198,11 @@ class LiveAgentClient:
         except Exception:
             return {"status_code": r.status_code, "text": r.text}
 
-    def list_agent_user_ids(self) -> set[str]:
-        """Return LiveAgent agent user ids (best-effort)."""
+    def list_agent_directory(self) -> dict[str, set[str]]:
+        """Best-effort agent ids / emails / names from LiveAgent."""
         ids: set[str] = set()
+        emails: set[str] = set()
+        names: set[str] = set()
         for path in ("agents", "users"):
             try:
                 r = self._client.get(
@@ -218,9 +221,28 @@ class LiveAgentClient:
                         val = row.get(key)
                         if val:
                             ids.add(str(val))
+                    for key in ("email", "user_email", "mail"):
+                        val = row.get(key)
+                        if val:
+                            emails.add(str(val).strip().lower())
+                    for key in ("name", "firstname", "lastname", "user_name"):
+                        val = row.get(key)
+                        if val:
+                            names.add(str(val).strip().lower())
+                    # combine first+last when present
+                    first = str(row.get("firstname") or "").strip()
+                    last = str(row.get("lastname") or "").strip()
+                    if first or last:
+                        names.add(f"{first} {last}".strip().lower())
             except Exception as exc:  # noqa: BLE001
-                logger.debug("list_agent_user_ids %s failed: %s", path, exc)
-        return ids
+                logger.debug("list_agent_directory %s failed: %s", path, exc)
+        if self.config.agent_email:
+            emails.add(self.config.agent_email.strip().lower())
+        names.update({"pingo cs", "pin go cs", "pingo"})
+        return {"ids": ids, "emails": emails, "names": names}
+
+    def list_agent_user_ids(self) -> set[str]:
+        return self.list_agent_directory()["ids"]
 
     @staticmethod
     def flatten_messages(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -230,8 +252,19 @@ class LiveAgentClient:
             group_id = group.get("id") or group.get("messagegroupid")
             group_userid = group.get("userid")
             group_type = group.get("type")
-            group_email = group.get("user_email") or group.get("email") or group.get("userid_email")
-            group_name = group.get("user_name") or group.get("name") or group.get("userid_name")
+            group_email = (
+                group.get("user_email")
+                or group.get("email")
+                or group.get("userid_email")
+                or group.get("agent_email")
+            )
+            group_name = (
+                group.get("user_name")
+                or group.get("name")
+                or group.get("userid_name")
+                or group.get("agent_name")
+                or group.get("username")
+            )
             for msg in group.get("messages") or []:
                 msg_type = msg.get("type")
                 if msg_type not in {"M", "Y", "N"}:
@@ -253,16 +286,29 @@ class LiveAgentClient:
                         "is_note": is_note,
                         "group_type": group_type,
                         "raw_type": msg_type,
+                        "raw_group": {k: group.get(k) for k in ("type", "userid", "user_type", "role") if k in group},
                     }
                 )
         return flat
 
-    @staticmethod
+    _AGENT_BODY_RE = re.compile(
+        r"(layanan\s*pelanggan|customer\s*service|ada\s+yang\s+bisa\s+saya\s+bantu|"
+        r"how\s+can\s+i\s+(help|assist)|saya\s+\w+\s+dari\s+.*pingo|"
+        r"i\s*('?m|am)\s+\w+\s+from\s+pingo|from\s+pingo\s+customer|"
+        r"pingo\s+cs\b|agent\s+manusia)",
+        re.IGNORECASE,
+    )
+
+    @classmethod
     def classify_sender(
+        cls,
         item: dict[str, Any],
         *,
         agent_user_ids: set[str] | None = None,
+        agent_emails: set[str] | None = None,
+        agent_names: set[str] | None = None,
         agent_email: str = "",
+        contact_id: str = "",
         known_ai_bodies: set[str] | None = None,
     ) -> tuple[str, str]:
         """Return (direction, sender_type) for an imported LA message.
@@ -275,20 +321,42 @@ class LiveAgentClient:
         body = (item.get("body") or "").strip()
         if known_ai_bodies and body in known_ai_bodies:
             return "outbound", "ai"
+
         userid = str(item.get("userid") or "").strip()
         email = str(item.get("user_email") or "").strip().lower()
         name = str(item.get("user_name") or "").strip().lower()
+        contact = str(contact_id or "").strip()
         agent_email_l = (agent_email or "").strip().lower()
-        if agent_user_ids and userid and userid in agent_user_ids:
+        emails = set(agent_emails or set())
+        if agent_email_l:
+            emails.add(agent_email_l)
+        names = set(agent_names or set())
+        names.update({"pingo cs", "pin go cs", "pingo"})
+        ids = set(agent_user_ids or set())
+
+        # Explicit contact match => customer
+        if contact and userid and userid == contact:
+            return "inbound", "customer"
+
+        if ids and userid and userid in ids:
             return "outbound", "agent"
-        if agent_email_l and email and email == agent_email_l:
+        if email and email in emails:
             return "outbound", "agent"
-        # PinGo CS / common agent display names from LiveAgent
-        if name and ("pingo" in name or name in {"pingo cs", "pin go cs"}):
+        if name and (name in names or "pingo" in name or "cs" == name):
             return "outbound", "agent"
-        if userid:
-            # Non-empty userid usually means a LiveAgent staff user, not the contact
+
+        group_type = str(item.get("group_type") or "").upper()
+        if group_type in {"A", "AGENT", "O", "OPERATOR", "H"}:
             return "outbound", "agent"
+
+        # LiveChat human greetings often arrive without userid
+        if body and cls._AGENT_BODY_RE.search(body):
+            return "outbound", "agent"
+
+        # userid present and not the contact => staff
+        if userid and (not contact or userid != contact):
+            return "outbound", "agent"
+
         return "inbound", "customer"
 
 
