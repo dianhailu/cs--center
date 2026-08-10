@@ -173,7 +173,21 @@ class LiveAgentClient:
         *,
         as_note: bool = False,
     ) -> dict[str, Any]:
-        api_key = self.config.api_v1_key or self.config.api_v3_key
+        """Post an agent message into a LiveAgent conversation (API v1).
+
+        Requires a real API **v1** key. A v3 key will get 403 on this endpoint.
+        """
+        api_key = (self.config.api_v1_key or "").strip()
+        if self.config.dry_run:
+            logger.info("DRY_RUN post_reply %s -> %s", conversation_id, message[:200])
+            import uuid
+
+            return {"dry_run": True, "external_stub": f"dry-{conversation_id}-{uuid.uuid4().hex[:12]}"}
+        if not api_key:
+            raise RuntimeError(
+                "LIVEAGENT_API_V1_KEY is empty; cannot post replies. "
+                "API v3 keys do not work on /api/conversations/.../messages"
+            )
         data: dict[str, Any] = {
             "apikey": api_key,
             "message": message,
@@ -184,17 +198,13 @@ class LiveAgentClient:
         if self.config.agent_email:
             data["useridentifier"] = self.config.agent_email
         url = f"{self.config.v1_base}/conversations/{conversation_id}/messages"
-        if self.config.dry_run:
-            logger.info("DRY_RUN post_reply %s -> %s", conversation_id, message[:200])
-            import uuid
-
-            return {"dry_run": True, "external_stub": f"dry-{conversation_id}-{uuid.uuid4().hex[:12]}"}
         r = self._client.post(url, data=data)
         if r.status_code >= 400:
             logger.error("post_reply failed %s %s", r.status_code, r.text[:500])
             r.raise_for_status()
+        logger.info("post_reply ok conversation=%s status=%s", conversation_id, r.status_code)
         try:
-            return r.json()
+            return r.json() if r.content else {"status_code": r.status_code}
         except Exception:
             return {"status_code": r.status_code, "text": r.text}
 

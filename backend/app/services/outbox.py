@@ -77,5 +77,11 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
         )
     if external:
         msg.external_id = str(external)
+    if isinstance(result, dict) and result.get("dry_run"):
+        msg.meta = {**(msg.meta or {}), "dry_run": True}
+        logger.warning(
+            "outbox message %s marked sent under DRY_RUN — not visible in LiveAgent",
+            msg.id,
+        )
     msg.send_status = MessageSendStatus.sent
     db.commit()
