@@ -18,6 +18,9 @@ class LiveAgentConfig:
     agent_email: str = ""
     dry_run: bool = True
     auto_transfer: bool = True
+    # Optional overrides for Devices keep-online (PinGo CS presence)
+    agent_user_id: str = ""
+    chat_department_id: str = ""
 
     @property
     def v3_base(self) -> str:
@@ -391,6 +394,340 @@ class LiveAgentClient:
     def list_agent_user_ids(self) -> set[str]:
         return self.list_agent_directory()["ids"]
 
+    def resolve_agent_id(self, email: str | None = None) -> str:
+        """Resolve LiveAgent agent id from email (or configured override)."""
+        override = (self.config.agent_user_id or "").strip()
+        if override:
+            return override
+        target = (email or self.config.agent_email or "").strip().lower()
+        if not target:
+            raise RuntimeError("LIVEAGENT_AGENT_EMAIL / LIVEAGENT_AGENT_USER_ID empty; cannot resolve agent")
+        r = self._client.get(
+            f"{self.config.v3_base}/agents",
+            headers=self._v3_headers(),
+            params={"_perPage": 100},
+        )
+        r.raise_for_status()
+        data = r.json()
+        rows = data if isinstance(data, list) else (data.get("data") or [])
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            row_email = str(row.get("email") or row.get("mail") or "").strip().lower()
+            if row_email == target:
+                agent_id = str(row.get("id") or row.get("userid") or "").strip()
+                if agent_id:
+                    return agent_id
+        raise RuntimeError(f"LiveAgent agent not found for email={target}")
+
+    def list_devices(self, *, per_page: int = 100) -> list[dict[str, Any]]:
+        r = self._client.get(
+            f"{self.config.v3_base}/devices",
+            headers=self._v3_headers(),
+            params={"_perPage": per_page},
+        )
+        r.raise_for_status()
+        data = r.json()
+        return data if isinstance(data, list) else []
+
+    def list_departments(self, *, per_page: int = 100) -> list[dict[str, Any]]:
+        r = self._client.get(
+            f"{self.config.v3_base}/departments",
+            headers=self._v3_headers(),
+            params={"_perPage": per_page},
+        )
+        r.raise_for_status()
+        data = r.json()
+        return data if isinstance(data, list) else []
+
+    def resolve_chat_department_id(self, agent_id: str | None = None) -> str:
+        """Pick chat department id: config override, else agent membership, else first dept."""
+        override = (self.config.chat_department_id or "").strip()
+        if override:
+            return override
+        depts = self.list_departments()
+        aid = (agent_id or "").strip()
+        for dept in depts:
+            if not isinstance(dept, dict):
+                continue
+            dept_id = str(dept.get("department_id") or dept.get("id") or "").strip()
+            if not dept_id:
+                continue
+            agent_ids = dept.get("agent_ids") or []
+            if aid and isinstance(agent_ids, list) and aid in [str(x) for x in agent_ids]:
+                return dept_id
+        for dept in depts:
+            if not isinstance(dept, dict):
+                continue
+            dept_id = str(dept.get("department_id") or dept.get("id") or "").strip()
+            if dept_id:
+                return dept_id
+        return "default"
+
+    @staticmethod
+    def _is_chat_device(row: dict[str, Any]) -> bool:
+        service = str(row.get("service_type") or "").upper()
+        return service in {"T", "CHAT"}
+
+    @staticmethod
+    def _device_type_rank(row: dict[str, Any]) -> int:
+        dtype = str(row.get("type") or "").upper()
+        # Prefer EXTERNAL when present; PinGo 5.67.7 typically only has Web (W) chat devices.
+        if dtype in {"E", "EXTERNAL"}:
+            return 0
+        if dtype in {"W", "WEB"}:
+            return 1
+        return 9
+
+    def ensure_external_chat_device(self, agent_id: str) -> dict[str, Any]:
+        """Ensure a chat device exists for the agent and return it.
+
+        Research targeted EXTERNAL (E) devices. On PinGo 5.67.7, POST /devices only
+        allows phone devices, so we reuse the existing Web (W) chat device when present
+        and only attempt EXTERNAL create as a best-effort fallback.
+        """
+        aid = (agent_id or "").strip()
+        if not aid:
+            raise RuntimeError("agent_id required for ensure_external_chat_device")
+
+        devices = self.list_devices()
+        candidates = [
+            d
+            for d in devices
+            if isinstance(d, dict)
+            and str(d.get("agent_id") or d.get("userid") or d.get("user_id") or "") == aid
+            and self._is_chat_device(d)
+        ]
+        candidates.sort(key=self._device_type_rank)
+        if candidates:
+            chosen = candidates[0]
+            logger.info(
+                "keep_online reuse chat device id=%s type=%s service_type=%s agent=%s",
+                chosen.get("id"),
+                chosen.get("type"),
+                chosen.get("service_type"),
+                aid,
+            )
+            return chosen
+
+        # Best-effort create EXTERNAL chat device (often rejected: only phone creatable).
+        if self.config.dry_run:
+            logger.info("DRY_RUN ensure_external_chat_device create agent=%s", aid)
+            return {
+                "id": "dry-device",
+                "agent_id": aid,
+                "type": "E",
+                "service_type": "T",
+                "online_status": "N",
+                "preset_status": "N",
+                "dry_run": True,
+            }
+        payload = {
+            "agent_id": aid,
+            "type": "E",
+            "service_type": "T",
+            "online_status": "N",
+            "preset_status": "N",
+        }
+        r = self._client.post(
+            f"{self.config.v3_base}/devices",
+            headers=self._v3_headers(),
+            json=payload,
+        )
+        if r.status_code < 400:
+            body = r.json() if r.content else {}
+            if isinstance(body, dict) and body.get("id") is not None:
+                logger.info("keep_online created EXTERNAL chat device id=%s agent=%s", body.get("id"), aid)
+                return body
+        detail = (r.text or "")[:300]
+        logger.warning(
+            "keep_online cannot create EXTERNAL chat device agent=%s status=%s detail=%s "
+            "(PinGo may only allow phone device create; open LA panel once to seed a Web chat device)",
+            aid,
+            r.status_code,
+            detail,
+        )
+        raise RuntimeError(
+            f"No chat device for agent={aid} and POST /devices failed ({r.status_code}): {detail}"
+        )
+
+    def set_online(
+        self,
+        device_id: str | int,
+        *,
+        agent_id: str,
+        device_type: str = "W",
+        service_type: str = "T",
+        online: bool = True,
+    ) -> dict[str, Any]:
+        """PUT /api/v3/devices/{id} presence (online_status/preset_status N or F)."""
+        status = "N" if online else "F"
+        payload = {
+            "agent_id": agent_id,
+            "type": device_type or "W",
+            "service_type": service_type or "T",
+            "online_status": status,
+            "preset_status": status,
+        }
+        if self.config.dry_run:
+            logger.info("DRY_RUN set_online device=%s payload=%s", device_id, payload)
+            return {"dry_run": True, **payload, "id": device_id}
+        r = self._client.put(
+            f"{self.config.v3_base}/devices/{device_id}",
+            headers=self._v3_headers(),
+            json=payload,
+        )
+        if r.status_code >= 400:
+            logger.error("set_online failed device=%s status=%s detail=%s", device_id, r.status_code, r.text[:300])
+            r.raise_for_status()
+        body = r.json() if r.content else {}
+        return body if isinstance(body, dict) else {"id": device_id, "online_status": status}
+
+    def set_department_chat(
+        self,
+        device_id: str | int,
+        department_id: str,
+        *,
+        user_id: str,
+        online: bool = True,
+    ) -> dict[str, Any]:
+        """PUT /api/v3/devices/{id}/departments/{departmentId} chat presence."""
+        status = "N" if online else "F"
+        dept = (department_id or "default").strip() or "default"
+        payload = {
+            "device_id": int(device_id) if str(device_id).isdigit() else device_id,
+            "department_id": dept,
+            "user_id": user_id,
+            "online_status": status,
+        }
+        if self.config.dry_run:
+            logger.info("DRY_RUN set_department_chat device=%s dept=%s payload=%s", device_id, dept, payload)
+            return {"dry_run": True, **payload}
+        r = self._client.put(
+            f"{self.config.v3_base}/devices/{device_id}/departments/{dept}",
+            headers=self._v3_headers(),
+            json=payload,
+        )
+        if r.status_code >= 400:
+            logger.error(
+                "set_department_chat failed device=%s dept=%s status=%s detail=%s",
+                device_id,
+                dept,
+                r.status_code,
+                r.text[:300],
+            )
+            r.raise_for_status()
+        body = r.json() if r.content else {}
+        return body if isinstance(body, dict) else payload
+
+    def get_online_status(self, agent_id: str | None = None) -> dict[str, Any]:
+        """Read agent presence via v1 onlinestatus + optional v3 agent status."""
+        result: dict[str, Any] = {"agents": [], "agent_status": None}
+        api_key = (self.config.api_v1_key or "").strip()
+        if api_key:
+            r = self._client.get(
+                f"{self.config.v1_base}/onlinestatus/agents",
+                params={"apikey": api_key},
+                headers={"Accept": "application/json"},
+            )
+            if r.status_code < 400:
+                try:
+                    body = r.json() if r.content else {}
+                except Exception:
+                    body = {}
+                resp = body.get("response") if isinstance(body, dict) else {}
+                agents = (resp or {}).get("agentsOnlineStates") if isinstance(resp, dict) else None
+                if isinstance(agents, list):
+                    result["agents"] = agents
+                else:
+                    result["raw"] = body
+            else:
+                logger.warning("get_online_status v1 failed status=%s detail=%s", r.status_code, r.text[:200])
+        aid = (agent_id or self.config.agent_user_id or "").strip()
+        if aid:
+            r = self._client.get(
+                f"{self.config.v3_base}/agents/{aid}/status",
+                headers=self._v3_headers(),
+            )
+            if r.status_code < 400:
+                try:
+                    result["agent_status"] = r.json() if r.content else None
+                except Exception:
+                    result["agent_status"] = None
+        return result
+
+    @staticmethod
+    def _agent_chat_online(online_status: Any) -> bool | None:
+        """Return True if status includes chat online (T/N), False if offline, else None."""
+        s = str(online_status or "").strip().upper()
+        if not s or s == "F":
+            return False
+        if "T" in s or "N" in s:
+            return True
+        return None
+
+    def keep_agent_online(self) -> dict[str, Any]:
+        """Best-effort Devices keep-alive so visitors can start livechat.
+
+        Does not touch auto-transfer / post_reply. Failures should be handled by caller.
+        """
+        agent_id = self.resolve_agent_id()
+        device = self.ensure_external_chat_device(agent_id)
+        device_id = device.get("id")
+        if device_id is None:
+            raise RuntimeError(f"chat device missing id for agent={agent_id}")
+        dtype = str(device.get("type") or "W")
+        stype = str(device.get("service_type") or "T")
+        self.set_online(device_id, agent_id=agent_id, device_type=dtype, service_type=stype, online=True)
+        dept_id = self.resolve_chat_department_id(agent_id)
+        try:
+            self.set_department_chat(device_id, dept_id, user_id=agent_id, online=True)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(
+                "keep_online department status skipped agent=%s device=%s dept=%s: %s",
+                agent_id,
+                device_id,
+                dept_id,
+                exc,
+            )
+
+        status = self.get_online_status(agent_id)
+        agents = status.get("agents") or []
+        mine = next((a for a in agents if isinstance(a, dict) and str(a.get("id") or "") == agent_id), None)
+        online_flag = None
+        online_raw = None
+        if isinstance(mine, dict):
+            online_raw = mine.get("onlineStatus") or mine.get("online_status")
+            online_flag = self._agent_chat_online(online_raw)
+        if online_flag is False:
+            logger.warning(
+                "keep_online agent=%s device=%s still offline after Devices PUT "
+                "(onlineStatus=%r). LA panel browser session may still be required.",
+                agent_id,
+                device_id,
+                online_raw,
+            )
+        else:
+            logger.info(
+                "keep_online ok agent=%s device=%s type=%s/%s dept=%s onlineStatus=%r",
+                agent_id,
+                device_id,
+                dtype,
+                stype,
+                dept_id,
+                online_raw,
+            )
+        return {
+            "agent_id": agent_id,
+            "device_id": device_id,
+            "device_type": dtype,
+            "service_type": stype,
+            "department_id": dept_id,
+            "online_status": online_raw,
+            "chat_online": online_flag,
+            "status": status,
+        }
+
     @staticmethod
     def flatten_messages(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Normalize LA message groups into flat message dicts."""
@@ -504,6 +841,10 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
     auto_transfer = cfg.get("auto_transfer")
     if auto_transfer is None:
         auto_transfer = settings.liveagent_auto_transfer
+    agent_user_id = str(cfg.get("agent_user_id") or settings.liveagent_agent_user_id or "").strip()
+    chat_department_id = str(
+        cfg.get("chat_department_id") or settings.liveagent_chat_department_id or ""
+    ).strip()
     return LiveAgentClient(
         LiveAgentConfig(
             base_url=conn.base_url,
@@ -512,5 +853,7 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
             agent_email=conn.agent_email,
             dry_run=bool(conn.dry_run),
             auto_transfer=bool(auto_transfer),
+            agent_user_id=agent_user_id,
+            chat_department_id=chat_department_id,
         )
     )

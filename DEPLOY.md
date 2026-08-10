@@ -59,6 +59,26 @@ LIVEAGENT_AGENT_EMAIL=<PinGo CS agent email>
 
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
+### LiveAgent 常在线（Devices keep-alive）
+
+`LIVEAGENT_KEEP_ONLINE=true`（默认）时，worker 启动后立刻、并每 `LIVEAGENT_KEEP_ONLINE_INTERVAL_SEC`（默认 60）秒，通过 v3 Devices API 把 PinGo CS 的 **chat device** 设为 online（`online_status/preset_status=N`），并更新 department 在线状态，让访客 widget 能发起 livechat。
+
+与 auto-transfer **互补、互不替代**：
+- keep-online：访客侧能看到客服在线并开始聊天
+- auto-transfer：会话进来后转给 `LIVEAGENT_AGENT_EMAIL`，再由 AI/`post_reply` 回复
+
+可选环境变量：
+```env
+LIVEAGENT_KEEP_ONLINE=true
+LIVEAGENT_KEEP_ONLINE_INTERVAL_SEC=60
+# LIVEAGENT_AGENT_USER_ID=<optional agent id>
+# LIVEAGENT_CHAT_DEPARTMENT_ID=<optional department_id, e.g. default>
+```
+
+日志关键字：`keep_online ok` / `keep_online agent=... still offline`。若反复出现 still offline，可能仍需在 LiveAgent 面板保留一次浏览器会话，或确认该 agent 已有 Web chat device（PinGo 5.67.7 的 `POST /devices` 只能创建 phone device，chat device 需面板侧已存在）。
+
+离线临时兜底（不改代码）：可在 LiveAgent 配置 chatbot/离线消息；本仓库当前不集成 chatbot。
+
 安装 Docker 后：
 
 ```bash
@@ -138,6 +158,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.production logs -f wor
 - [ ] LiveAgent 测试消息能进中台  
 - [ ] 坐席回复后客户侧可见（`DRY_RUN=false`）  
 - [ ] worker 日志出现 `learn=True@22:00 Asia/Jakarta`；空知识时有 `history learn start reason=initial`  
+- [ ] worker 日志出现 `keep_online=True` 与周期性 `keep_online ok`；访客 widget 可发起 livechat  
 
 ## 6. 本地静态构建自检
 

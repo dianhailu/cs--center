@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     liveagent_dry_run: bool = True
     # Transfer/assign chat to LIVEAGENT_AGENT_EMAIL before posting AI replies
     liveagent_auto_transfer: bool = True
+    # Keep PinGo CS chat presence online via Devices API (does not replace auto-transfer)
+    liveagent_keep_online: bool = True
+    liveagent_keep_online_interval_sec: int = 60
+    liveagent_agent_user_id: str = ""  # optional; else resolve via LIVEAGENT_AGENT_EMAIL
+    liveagent_chat_department_id: str = ""  # optional; else prefer dept containing the agent
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"

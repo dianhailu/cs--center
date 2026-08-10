@@ -6,6 +6,7 @@ import time
 from sqlalchemy import select
 
 from app.ai.learn_history import build_history_pairs, needs_initial_learn, should_run_nightly_learn
+from app.channels.liveagent import client_from_connection
 from app.config import get_settings
 from app.db import SessionLocal
 from app.models import ChannelConnection
@@ -50,15 +51,56 @@ def _maybe_learn(*, force_initial: bool = False) -> None:
         db.close()
 
 
+def _keep_online_tick() -> None:
+    """Best-effort Devices presence pulse; never raises into the main worker loop."""
+    settings = get_settings()
+    if not settings.liveagent_keep_online:
+        return
+    db = SessionLocal()
+    try:
+        conns = list(db.scalars(select(ChannelConnection).where(ChannelConnection.provider == "liveagent")))
+        for conn in conns:
+            if not conn.api_v3_key:
+                continue
+            la = client_from_connection(conn)
+            try:
+                if la.config.dry_run:
+                    logger.info(
+                        "keep_online skip connection=%s dry_run=true (presence writes disabled)",
+                        conn.id,
+                    )
+                    continue
+                result = la.keep_agent_online()
+                logger.info(
+                    "keep_online connection=%s agent=%s device=%s chat_online=%s onlineStatus=%r",
+                    conn.id,
+                    result.get("agent_id"),
+                    result.get("device_id"),
+                    result.get("chat_online"),
+                    result.get("online_status"),
+                )
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("keep_online failed connection=%s: %s", conn.id, exc)
+            finally:
+                la.close()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("keep_online tick error: %s", exc)
+    finally:
+        db.close()
+
+
 def run() -> None:
     settings = get_settings()
+    keep_online_interval = max(15, int(settings.liveagent_keep_online_interval_sec or 60))
     logger.info(
-        "worker starting dry_run=%s ai=%s learn=%s@%02d:00 %s",
+        "worker starting dry_run=%s ai=%s learn=%s@%02d:00 %s keep_online=%s interval=%ss",
         settings.liveagent_dry_run,
         settings.ai_enabled,
         settings.history_learn_enabled,
         settings.history_learn_hour,
         settings.history_learn_timezone,
+        settings.liveagent_keep_online,
+        keep_online_interval,
     )
     try:
         seed()
@@ -71,9 +113,16 @@ def run() -> None:
     except Exception as exc:  # noqa: BLE001
         logger.warning("initial history learn skipped: %s", exc)
 
+    # Immediate presence pulse so visitors can chat soon after deploy/restart
+    try:
+        _keep_online_tick()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("initial keep_online skipped: %s", exc)
+
     poll_every = 30
     learn_every = 60  # check schedule about once per minute
     ticks = 0
+    last_keep_online = time.monotonic()
     while True:
         db = SessionLocal()
         try:
@@ -96,6 +145,12 @@ def run() -> None:
             logger.exception("worker loop error: %s", exc)
         finally:
             db.close()
+
+        now = time.monotonic()
+        if now - last_keep_online >= keep_online_interval:
+            last_keep_online = now
+            _keep_online_tick()
+
         time.sleep(1)
 
 
