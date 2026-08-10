@@ -192,21 +192,29 @@ class LiveAgentClient:
             "apikey": api_key,
             "message": message,
             "type": "N" if as_note else "M",
-            "do_not_send_mail": "N",
+            # Chat/button tickets: avoid email department template wrapping
+            "do_not_send_mail": "Y",
             "is_html_message": "N",
+            "use_template": "N",
         }
         if self.config.agent_email:
             data["useridentifier"] = self.config.agent_email
         url = f"{self.config.v1_base}/conversations/{conversation_id}/messages"
         r = self._client.post(url, data=data)
         if r.status_code >= 400:
-            logger.error("post_reply failed %s %s", r.status_code, r.text[:500])
+            logger.error("post_reply failed %s %s body=%s", r.status_code, r.text[:500], message[:120])
             r.raise_for_status()
         logger.info("post_reply ok conversation=%s status=%s", conversation_id, r.status_code)
         try:
-            return r.json() if r.content else {"status_code": r.status_code}
+            body = r.json() if r.content else {"status_code": r.status_code}
         except Exception:
-            return {"status_code": r.status_code, "text": r.text}
+            body = {"status_code": r.status_code, "text": r.text}
+        # Normalize success payloads that only return {response:{status:OK}}
+        if isinstance(body, dict) and not (
+            body.get("id") or body.get("messageid") or (body.get("response") or {}).get("messageid")
+        ):
+            body["external_stub"] = f"la-{conversation_id}-{r.status_code}"
+        return body
 
     def list_agent_directory(self) -> dict[str, set[str]]:
         """Best-effort agent ids / emails / names from LiveAgent."""
