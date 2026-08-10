@@ -63,6 +63,16 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
 
     la = client_from_connection(conn)
     try:
+        # Assign to PinGo CS before posting so livechat does not wait on the ring popup.
+        if la.config.auto_transfer and not la.config.dry_run:
+            try:
+                la.transfer_to_agent(conv.external_id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "transfer_to_agent failed conversation=%s; continuing to post_reply: %s",
+                    conv.external_id,
+                    exc,
+                )
         result = la.post_reply(conv.external_id, msg.body, as_note=False)
     finally:
         la.close()

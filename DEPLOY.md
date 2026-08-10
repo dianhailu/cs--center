@@ -53,7 +53,11 @@ cp .env.production.example .env.production
 ```env
 CORS_ORIGINS=https://cs.originmount.com
 LIVEAGENT_DRY_RUN=false
+LIVEAGENT_AUTO_TRANSFER=true
+LIVEAGENT_AGENT_EMAIL=<PinGo CS agent email>
 ```
+
+`LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
 安装 Docker 后：
 

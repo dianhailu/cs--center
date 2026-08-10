@@ -71,6 +71,15 @@ def main() -> int:
                 return 1
             la = client_from_connection(conn)
             try:
+                if la.config.auto_transfer and not la.config.dry_run:
+                    try:
+                        la.transfer_to_agent(conv.external_id)
+                    except Exception as exc:  # noqa: BLE001
+                        logger.warning(
+                            "transfer_to_agent failed ticket=%s; continuing: %s",
+                            conv.external_id,
+                            exc,
+                        )
                 result = la.post_reply(conv.external_id, msg.body, as_note=False)
                 logger.info("resent msg %s ticket=%s result=%s", msg.id, conv.external_id, result)
                 stub = None

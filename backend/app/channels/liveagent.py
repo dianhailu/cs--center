@@ -17,6 +17,7 @@ class LiveAgentConfig:
     api_v1_key: str = ""
     agent_email: str = ""
     dry_run: bool = True
+    auto_transfer: bool = True
 
     @property
     def v3_base(self) -> str:
@@ -25,6 +26,16 @@ class LiveAgentConfig:
     @property
     def v1_base(self) -> str:
         return self.base_url.rstrip("/") + "/api"
+
+
+_HARMLESS_TRANSFER_RE = re.compile(
+    r"already\s+(assigned|transferred|accepted)|"
+    r"same\s+agent|"
+    r"is\s+already|"
+    r"not\s+needed|"
+    r"no\s+change",
+    re.IGNORECASE,
+)
 
 
 class LiveAgentClient:
@@ -165,6 +176,124 @@ class LiveAgentClient:
             existing = [t for t in existing.split(",") if t]
         merged = list(dict.fromkeys([*existing, *tag_ids]))
         return self.update_ticket(ticket_id, {"tags": merged})
+
+    @staticmethod
+    def _v1_error_text(response: httpx.Response) -> str:
+        text = (response.text or "")[:500]
+        try:
+            body = response.json() if response.content else {}
+        except Exception:
+            return text
+        if not isinstance(body, dict):
+            return text
+        resp = body.get("response") if isinstance(body.get("response"), dict) else body
+        parts = [
+            str(resp.get("errormessage") or resp.get("message") or "").strip(),
+            str(resp.get("status") or "").strip(),
+            text,
+        ]
+        return " ".join(p for p in parts if p)
+
+    @classmethod
+    def _is_harmless_transfer_error(cls, status_code: int, error_text: str) -> bool:
+        if status_code in {200, 204}:
+            return True
+        if _HARMLESS_TRANSFER_RE.search(error_text or ""):
+            return True
+        return False
+
+    def transfer_to_agent(
+        self,
+        conversation_id: str,
+        agent_email: str | None = None,
+    ) -> dict[str, Any]:
+        """Assign/transfer a conversation to an agent via API v1 attendants.
+
+        LiveAgent has no dedicated chat accept/join endpoint; transferring to
+        ``LIVEAGENT_AGENT_EMAIL`` is the supported way to pick up a ringing chat
+        before posting a reply. Requires a real API **v1** key.
+        """
+        api_key = (self.config.api_v1_key or "").strip()
+        email = (agent_email or self.config.agent_email or "").strip()
+        if self.config.dry_run:
+            logger.info("DRY_RUN transfer_to_agent %s -> %s", conversation_id, email)
+            return {"dry_run": True}
+        if not api_key:
+            raise RuntimeError(
+                "LIVEAGENT_API_V1_KEY is empty; cannot transfer. "
+                "API v3 keys do not work on /api/conversations/.../attendants"
+            )
+        if not email:
+            raise RuntimeError("LIVEAGENT_AGENT_EMAIL is empty; cannot transfer conversation")
+
+        data: dict[str, Any] = {
+            "apikey": api_key,
+            "agentidentifier": email,
+            "useridentifier": email,
+        }
+        url = f"{self.config.v1_base}/conversations/{conversation_id}/attendants"
+        r = self._client.put(url, data=data)
+        err_text = self._v1_error_text(r)
+        body: dict[str, Any] = {}
+        try:
+            parsed = r.json() if r.content else {}
+            if isinstance(parsed, dict):
+                body = parsed
+        except Exception:
+            body = {}
+        resp = body.get("response") if isinstance(body.get("response"), dict) else body
+        api_error = str((resp or {}).get("status") or "").upper() == "ERROR"
+        if r.status_code >= 400 or api_error:
+            if self._is_harmless_transfer_error(r.status_code, err_text):
+                logger.info(
+                    "transfer_to_agent harmless conversation=%s status=%s detail=%s",
+                    conversation_id,
+                    r.status_code,
+                    err_text[:200],
+                )
+                return {"skipped": True, "status_code": r.status_code, "detail": err_text[:200]}
+            logger.error(
+                "transfer_to_agent failed conversation=%s status=%s detail=%s",
+                conversation_id,
+                r.status_code,
+                err_text[:500],
+            )
+            if r.status_code >= 400:
+                r.raise_for_status()
+            raise RuntimeError(f"transfer_to_agent API error: {err_text[:300]}")
+
+        # Soft status nudge toward Answered when transfer succeeded (best-effort).
+        # API status endpoint accepts A/R/C only; ignore failures.
+        try:
+            status_url = f"{self.config.v1_base}/conversations/{conversation_id}/status"
+            status_r = self._client.put(
+                status_url,
+                data={"apikey": api_key, "status": "A", "useridentifier": email},
+            )
+            if status_r.status_code >= 400:
+                logger.info(
+                    "transfer_to_agent status nudge skipped conversation=%s status=%s detail=%s",
+                    conversation_id,
+                    status_r.status_code,
+                    self._v1_error_text(status_r)[:200],
+                )
+        except Exception as exc:  # noqa: BLE001
+            logger.info(
+                "transfer_to_agent status nudge error conversation=%s: %s",
+                conversation_id,
+                exc,
+            )
+
+        logger.info(
+            "transfer_to_agent ok conversation=%s agent=%s status=%s",
+            conversation_id,
+            email,
+            r.status_code,
+        )
+        if isinstance(body, dict):
+            body.setdefault("transferred_to", email)
+            return body
+        return {"status_code": r.status_code, "transferred_to": email}
 
     def post_reply(
         self,
@@ -368,6 +497,13 @@ class LiveAgentClient:
 
 
 def client_from_connection(conn: Any) -> LiveAgentClient:
+    from app.config import get_settings
+
+    settings = get_settings()
+    cfg = conn.config if isinstance(getattr(conn, "config", None), dict) else {}
+    auto_transfer = cfg.get("auto_transfer")
+    if auto_transfer is None:
+        auto_transfer = settings.liveagent_auto_transfer
     return LiveAgentClient(
         LiveAgentConfig(
             base_url=conn.base_url,
@@ -375,5 +511,6 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
             api_v1_key=conn.api_v1_key,
             agent_email=conn.agent_email,
             dry_run=bool(conn.dry_run),
+            auto_transfer=bool(auto_transfer),
         )
     )

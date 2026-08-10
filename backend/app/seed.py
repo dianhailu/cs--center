@@ -67,6 +67,7 @@ def seed() -> None:
                 agent_email=settings.liveagent_agent_email,
                 dry_run=settings.liveagent_dry_run,
                 webhook_secret=settings.webhook_secret,
+                config={"auto_transfer": settings.liveagent_auto_transfer},
             )
             db.add(conn)
         else:
@@ -77,6 +78,9 @@ def seed() -> None:
             conn.agent_email = settings.liveagent_agent_email or conn.agent_email
             conn.dry_run = settings.liveagent_dry_run
             conn.webhook_secret = settings.webhook_secret
+            merged = dict(conn.config or {})
+            merged["auto_transfer"] = settings.liveagent_auto_transfer
+            conn.config = merged
 
         agent = db.scalar(select(AgentUser).where(AgentUser.email == settings.seed_agent_email))
         if not agent:

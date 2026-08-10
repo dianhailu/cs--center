@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     liveagent_api_v1_key: str = ""
     liveagent_agent_email: str = ""
     liveagent_dry_run: bool = True
+    # Transfer/assign chat to LIVEAGENT_AGENT_EMAIL before posting AI replies
+    liveagent_auto_transfer: bool = True
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
