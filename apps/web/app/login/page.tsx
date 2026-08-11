@@ -8,7 +8,7 @@ function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
   const [email, setEmail] = useState("agent@pingo.com");
-  const [password, setPassword] = useState("agent123");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
