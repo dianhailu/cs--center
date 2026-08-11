@@ -4,10 +4,12 @@ import Link from "next/link";
 import { FormEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  ApiError,
   assignMe,
   closeConversation,
   ConversationDetail,
   getConversation,
+  getStoredToken,
   Message,
   sendMessage,
   wsUrl,
@@ -69,7 +71,7 @@ function ChatInner() {
   }, []);
 
   useEffect(() => {
-    const t = localStorage.getItem("cs_token");
+    const t = getStoredToken();
     if (!t) {
       router.replace("/login/");
       return;
@@ -79,7 +81,10 @@ function ChatInner() {
       return;
     }
     setToken(t);
-    refresh(t, id).catch((err) => setError(String(err)));
+    refresh(t, id).catch((err) => {
+      if (err instanceof ApiError && err.authFailed) return;
+      setError(err instanceof Error ? err.message : "加载失败");
+    });
     const socket = new WebSocket(wsUrl(t));
     socket.onmessage = () => {
       refresh(t, id).catch(() => undefined);
@@ -101,7 +106,8 @@ function ChatInner() {
       setBody("");
       await refresh(token, id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Send failed");
+      if (err instanceof ApiError && err.authFailed) return;
+      setError(err instanceof Error ? err.message : "发送失败");
     } finally {
       setBusy(false);
     }
@@ -164,14 +170,28 @@ function ChatInner() {
             <button
               type="button"
               className="secondary"
-              onClick={() => assignMe(token, id).then(() => refresh(token, id))}
+              onClick={() =>
+                assignMe(token, id)
+                  .then(() => refresh(token, id))
+                  .catch((err) => {
+                    if (err instanceof ApiError && err.authFailed) return;
+                    setError(err instanceof Error ? err.message : "分配失败");
+                  })
+              }
             >
               分配给我
             </button>
             <button
               type="button"
               className="secondary"
-              onClick={() => closeConversation(token, id).then(() => refresh(token, id))}
+              onClick={() =>
+                closeConversation(token, id)
+                  .then(() => refresh(token, id))
+                  .catch((err) => {
+                    if (err instanceof ApiError && err.authFailed) return;
+                    setError(err instanceof Error ? err.message : "关闭失败");
+                  })
+              }
             >
               关闭
             </button>

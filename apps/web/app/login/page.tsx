@@ -1,15 +1,21 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-import { login } from "@/lib/api";
+import { FormEvent, Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ApiError, login, TOKEN_KEY, AGENT_KEY } from "@/lib/api";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const search = useSearchParams();
   const [email, setEmail] = useState("agent@pingo.com");
   const [password, setPassword] = useState("agent123");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const reason = search.get("reason");
+    if (reason) setError(reason);
+  }, [search]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -17,11 +23,15 @@ export default function LoginPage() {
     setError("");
     try {
       const result = await login(email, password);
-      localStorage.setItem("cs_token", result.access_token);
-      localStorage.setItem("cs_agent", JSON.stringify(result));
-      router.push("/inbox");
+      localStorage.setItem(TOKEN_KEY, result.access_token);
+      localStorage.setItem(AGENT_KEY, JSON.stringify(result));
+      router.push("/inbox/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      if (err instanceof ApiError) {
+        setError(err.detail);
+      } else {
+        setError(err instanceof Error ? err.message : "登录失败");
+      }
     } finally {
       setLoading(false);
     }
@@ -54,5 +64,13 @@ export default function LoginPage() {
         {error ? <div className="error">{error}</div> : null}
       </form>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="empty">加载中…</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

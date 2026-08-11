@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Conversation, listConversations, wsUrl } from "@/lib/api";
+import {
+  ApiError,
+  Conversation,
+  clearSession,
+  getStoredToken,
+  listConversations,
+  AGENT_KEY,
+  wsUrl,
+} from "@/lib/api";
 import { channelLabel, customerLine, shortTime, ticketTitle } from "@/lib/display";
 
 const QUEUES = [
@@ -27,17 +35,21 @@ export default function InboxPage() {
         setItems(data);
         setError("");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Load failed");
+        if (err instanceof ApiError && err.authFailed) {
+          // forceLogout already redirected
+          return;
+        }
+        setError(err instanceof Error ? err.message : "加载失败");
       }
     },
     []
   );
 
   useEffect(() => {
-    const t = localStorage.getItem("cs_token");
-    const agent = localStorage.getItem("cs_agent");
+    const t = getStoredToken();
+    const agent = localStorage.getItem(AGENT_KEY);
     if (!t) {
-      router.replace("/login");
+      router.replace("/login/");
       return;
     }
     if (agent) {
@@ -58,9 +70,8 @@ export default function InboxPage() {
   }, [load, queue, router]);
 
   function logout() {
-    localStorage.removeItem("cs_token");
-    localStorage.removeItem("cs_agent");
-    router.replace("/login");
+    clearSession();
+    router.replace("/login/");
   }
 
   return (

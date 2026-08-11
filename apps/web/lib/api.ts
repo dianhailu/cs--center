@@ -1,5 +1,8 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8080";
 
+const TOKEN_KEY = "cs_token";
+const AGENT_KEY = "cs_agent";
+
 export type LoginResult = {
   access_token: string;
   agent_id: string;
@@ -51,11 +54,115 @@ export type Message = {
   external_id?: string | null;
 };
 
+export class ApiError extends Error {
+  status: number;
+  detail: string;
+  authFailed: boolean;
+
+  constructor(status: number, detail: string, authFailed = false) {
+    super(detail);
+    this.name = "ApiError";
+    this.status = status;
+    this.detail = detail;
+    this.authFailed = authFailed;
+  }
+}
+
+export function clearSession() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(AGENT_KEY);
+}
+
+export function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+/** Clear session and send user to login when the API rejects the JWT. */
+export function forceLogout(message = "登录已失效，请重新登录") {
+  clearSession();
+  if (typeof window === "undefined") return;
+  const q = encodeURIComponent(message);
+  const target = `/login/?reason=${q}`;
+  if (!window.location.pathname.startsWith("/login")) {
+    window.location.replace(target);
+  }
+}
+
 function authHeaders(token: string) {
   return {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
+}
+
+function parseDetail(raw: string): string {
+  const text = (raw || "").trim();
+  if (!text) return "请求失败";
+  try {
+    const data = JSON.parse(text) as { detail?: unknown };
+    if (typeof data.detail === "string" && data.detail.trim()) {
+      return data.detail.trim();
+    }
+    if (Array.isArray(data.detail)) {
+      const parts = data.detail
+        .map((item) => {
+          if (typeof item === "string") return item;
+          if (item && typeof item === "object" && "msg" in item) {
+            return String((item as { msg: unknown }).msg);
+          }
+          return "";
+        })
+        .filter(Boolean);
+      if (parts.length) return parts.join("; ");
+    }
+  } catch {
+    /* not JSON */
+  }
+  return text.length > 200 ? `${text.slice(0, 200)}…` : text;
+}
+
+function isAuthFailure(status: number, detail: string): boolean {
+  if (status === 401) return true;
+  const d = detail.toLowerCase();
+  return (
+    d.includes("invalid token") ||
+    d.includes("missing token") ||
+    d.includes("agent inactive")
+  );
+}
+
+function friendlyAuthMessage(detail: string): string {
+  const d = detail.toLowerCase();
+  if (d.includes("invalid credentials")) return "邮箱或密码错误";
+  if (d.includes("agent inactive")) return "账号已停用，请联系管理员";
+  if (d.includes("invalid token") || d.includes("missing token")) {
+    return "登录已失效，请重新登录";
+  }
+  return "登录已失效，请重新登录";
+}
+
+async function handleResponse<T>(res: Response, opts?: { allowAuthRedirect?: boolean }): Promise<T> {
+  if (res.ok) return res.json() as Promise<T>;
+
+  const raw = await res.text();
+  const detail = parseDetail(raw);
+  const authFailed = isAuthFailure(res.status, detail);
+  const allowRedirect = opts?.allowAuthRedirect !== false;
+
+  if (authFailed && allowRedirect) {
+    forceLogout(friendlyAuthMessage(detail));
+  }
+
+  const message =
+    authFailed
+      ? friendlyAuthMessage(detail)
+      : res.status === 400 || res.status === 403 || res.status === 404 || res.status >= 500
+        ? detail
+        : detail;
+
+  throw new ApiError(res.status, message, authFailed);
 }
 
 export async function login(email: string, password: string): Promise<LoginResult> {
@@ -64,8 +171,8 @@ export async function login(email: string, password: string): Promise<LoginResul
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  // Login must not redirect on 401 (invalid credentials)
+  return handleResponse<LoginResult>(res, { allowAuthRedirect: false });
 }
 
 export async function listConversations(token: string, queue?: string): Promise<Conversation[]> {
@@ -74,8 +181,7 @@ export async function listConversations(token: string, queue?: string): Promise<
     headers: authHeaders(token),
     cache: "no-store",
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return handleResponse<Conversation[]>(res);
 }
 
 export async function getConversation(token: string, id: string): Promise<ConversationDetail> {
@@ -83,8 +189,7 @@ export async function getConversation(token: string, id: string): Promise<Conver
     headers: authHeaders(token),
     cache: "no-store",
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return handleResponse<ConversationDetail>(res);
 }
 
 export async function sendMessage(token: string, id: string, body: string, asNote = false) {
@@ -93,8 +198,7 @@ export async function sendMessage(token: string, id: string, body: string, asNot
     headers: authHeaders(token),
     body: JSON.stringify({ body, as_note: asNote }),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function assignMe(token: string, id: string) {
@@ -103,8 +207,7 @@ export async function assignMe(token: string, id: string) {
     headers: authHeaders(token),
     body: JSON.stringify({}),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function closeConversation(token: string, id: string) {
@@ -112,8 +215,7 @@ export async function closeConversation(token: string, id: string) {
     method: "POST",
     headers: authHeaders(token),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return handleResponse(res);
 }
 
 export function wsUrl(token: string) {
@@ -121,4 +223,4 @@ export function wsUrl(token: string) {
   return `${base}/ws?token=${encodeURIComponent(token)}`;
 }
 
-export { API_BASE };
+export { API_BASE, TOKEN_KEY, AGENT_KEY };
