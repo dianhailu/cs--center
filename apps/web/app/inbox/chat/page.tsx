@@ -1,39 +1,72 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   assignMe,
   closeConversation,
+  ConversationDetail,
   getConversation,
   Message,
   sendMessage,
   wsUrl,
 } from "@/lib/api";
+import {
+  channelLabel,
+  copyText,
+  customerLine,
+  ticketTitle,
+} from "@/lib/display";
+
+function IdChip({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | null;
+}) {
+  const [copied, setCopied] = useState(false);
+  const display = (value || "").trim() || "—";
+  const canCopy = display !== "—";
+
+  return (
+    <button
+      type="button"
+      className={`id-chip${copied ? " copied" : ""}`}
+      title={canCopy ? `复制 ${label}` : undefined}
+      disabled={!canCopy}
+      onClick={async () => {
+        if (!canCopy) return;
+        const ok = await copyText(display);
+        if (ok) {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 1200);
+        }
+      }}
+    >
+      <span className="lbl">{label}</span>
+      <span className="val">{copied ? "已复制" : display}</span>
+    </button>
+  );
+}
 
 function ChatInner() {
   const search = useSearchParams();
   const router = useRouter();
   const id = search.get("id") || "";
   const [token, setToken] = useState("");
-  const [subject, setSubject] = useState("");
-  const [meta, setMeta] = useState("");
+  const [detail, setDetail] = useState<ConversationDetail | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  async function refresh(t: string, conversationId: string) {
+  const refresh = useCallback(async (t: string, conversationId: string) => {
     const data = await getConversation(t, conversationId);
-    setSubject(data.subject || data.external_code || data.external_id);
-    setMeta(
-      [data.customer_name, data.customer_email, data.status, data.needs_human ? "needs_human" : null]
-        .filter(Boolean)
-        .join(" · ")
-    );
+    setDetail(data);
     setMessages(data.messages || []);
-  }
+  }, []);
 
   useEffect(() => {
     const t = localStorage.getItem("cs_token");
@@ -56,7 +89,7 @@ function ChatInner() {
       socket.close();
       clearInterval(timer);
     };
-  }, [id, router]);
+  }, [id, refresh, router]);
 
   async function onSend(e: FormEvent) {
     e.preventDefault();
@@ -74,21 +107,58 @@ function ChatInner() {
     }
   }
 
+  const snap = detail?.customer_snapshot || {};
+  const phone =
+    (typeof snap.phone === "string" && snap.phone) ||
+    null;
+  const contactId =
+    (typeof snap.owner_contactid === "string" && snap.owner_contactid) ||
+    null;
+  const title = detail ? ticketTitle(detail) : "…";
+
   return (
     <div className="shell">
       <header className="topbar">
-        <div>
-          <div className="brand">CS Midplatform</div>
-          <div className="muted">
-            <Link href="/inbox/">← Back to inbox</Link>
+        <div className="brand-mark">
+          <span className="brand-dot" aria-hidden />
+          <div>
+            <div className="brand">CS Midplatform</div>
+            <div className="muted">
+              <Link href="/inbox/">← 返回收件箱</Link>
+            </div>
           </div>
         </div>
       </header>
       <div className="detail">
         <div className="detail-header">
-          <div>
-            <h2 style={{ margin: 0, fontFamily: "var(--font)" }}>{subject}</h2>
-            <div className="muted">{meta}</div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <h2 className="detail-title">{title}</h2>
+            <div className="detail-customer">
+              {detail
+                ? customerLine({
+                    name: detail.customer_name || (snap.owner_name as string | null),
+                    email: detail.customer_email || (snap.owner_email as string | null),
+                    phone,
+                  })
+                : "加载中…"}
+            </div>
+            <div className="id-row">
+              <IdChip label="工单号" value={detail?.external_code || detail?.external_id} />
+              <IdChip label="会话ID" value={detail?.external_id} />
+              <IdChip label="联系人" value={contactId} />
+              <IdChip label="渠道" value={channelLabel(detail?.channel_type)} />
+              <IdChip label="LA状态" value={detail?.la_status} />
+              {detail?.status ? (
+                <span className="badge status" style={{ alignSelf: "center" }}>
+                  {detail.status}
+                </span>
+              ) : null}
+              {detail?.needs_human ? (
+                <span className="badge warn" style={{ alignSelf: "center" }}>
+                  待人工
+                </span>
+              ) : null}
+            </div>
           </div>
           <div className="actions">
             <button
@@ -96,14 +166,14 @@ function ChatInner() {
               className="secondary"
               onClick={() => assignMe(token, id).then(() => refresh(token, id))}
             >
-              Assign me
+              分配给我
             </button>
             <button
               type="button"
               className="secondary"
               onClick={() => closeConversation(token, id).then(() => refresh(token, id))}
             >
-              Close
+              关闭
             </button>
           </div>
         </div>
@@ -130,7 +200,11 @@ function ChatInner() {
             return (
               <div key={m.id} className={`bubble ${cls}`}>
                 <div className="meta">
-                  {roleLabel} · {m.send_status} · {new Date(m.created_at).toLocaleString()}
+                  <span className="role">{roleLabel}</span>
+                  <span>·</span>
+                  <span>{m.send_status}</span>
+                  <span>·</span>
+                  <span>{new Date(m.created_at).toLocaleString()}</span>
                 </div>
                 {m.body}
               </div>
@@ -142,10 +216,11 @@ function ChatInner() {
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Write a reply to the customer…"
+            placeholder="回复客户…"
+            rows={3}
           />
           <button type="submit" disabled={busy || !body.trim()}>
-            {busy ? "Sending…" : "Send"}
+            {busy ? "发送中…" : "发送"}
           </button>
         </form>
       </div>
@@ -155,7 +230,7 @@ function ChatInner() {
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="empty">Loading…</div>}>
+    <Suspense fallback={<div className="empty">加载中…</div>}>
       <ChatInner />
     </Suspense>
   );

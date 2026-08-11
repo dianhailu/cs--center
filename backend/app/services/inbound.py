@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -21,6 +22,25 @@ from app.models import (
 from app.redis_bus import conversation_event
 
 logger = logging.getLogger(__name__)
+
+_PHONE_LINE_RE = re.compile(r"(?i)^phone\s*:\s*(.+)$")
+
+
+def _enrich_snapshot_from_inbound(
+    conv: Conversation,
+    *,
+    body: str,
+    userid: str,
+    contact_id: str,
+) -> None:
+    snap = dict(conv.customer_snapshot or {})
+    phone_m = _PHONE_LINE_RE.match((body or "").strip())
+    if phone_m and not snap.get("phone"):
+        snap["phone"] = phone_m.group(1).strip()
+    uid = (userid or "").strip()
+    if uid and uid != contact_id and not snap.get("visitor_userid"):
+        snap["visitor_userid"] = uid
+    conv.customer_snapshot = snap
 
 
 def import_ticket(
@@ -67,12 +87,19 @@ def import_ticket(
     if isinstance(tags, str):
         tags = [t for t in tags.split(",") if t]
     conv.tags = tags
+    prev_snap = conv.customer_snapshot or {}
     conv.customer_snapshot = {
         "owner_contactid": ticket.get("owner_contactid"),
         "owner_email": ticket.get("owner_email"),
         "owner_name": ticket.get("owner_name"),
         "departmentid": ticket.get("departmentid"),
         "la_status": ticket.get("status"),
+        **({"phone": prev_snap["phone"]} if prev_snap.get("phone") else {}),
+        **(
+            {"visitor_userid": prev_snap["visitor_userid"]}
+            if prev_snap.get("visitor_userid")
+            else {}
+        ),
     }
 
     known_ai_bodies = {
@@ -121,6 +148,12 @@ def import_ticket(
                 }
             if direction == MessageDirection.inbound:
                 latest_inbound = existing
+                _enrich_snapshot_from_inbound(
+                    conv,
+                    body=str(item.get("body") or existing.body or ""),
+                    userid=str(item.get("userid") or ""),
+                    contact_id=contact_id,
+                )
             continue
 
         msg = Message(
@@ -142,6 +175,12 @@ def import_ticket(
         imported += 1
         if direction == MessageDirection.inbound:
             latest_inbound = msg
+            _enrich_snapshot_from_inbound(
+                conv,
+                body=str(item.get("body") or ""),
+                userid=str(item.get("userid") or ""),
+                contact_id=contact_id,
+            )
             created = item.get("datecreated")
             if created:
                 try:

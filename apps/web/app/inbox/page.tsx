@@ -4,17 +4,17 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Conversation, listConversations, wsUrl } from "@/lib/api";
+import { channelLabel, customerLine, shortTime, ticketTitle } from "@/lib/display";
 
 const QUEUES = [
-  { id: "human", label: "Human queue" },
-  { id: "", label: "All open" },
-  { id: "mine", label: "Mine" },
-  { id: "closed", label: "Closed" },
+  { id: "human", label: "待人工" },
+  { id: "", label: "全部开放" },
+  { id: "mine", label: "我的" },
+  { id: "closed", label: "已关闭" },
 ];
 
 export default function InboxPage() {
   const router = useRouter();
-  const [token, setToken] = useState("");
   const [agentName, setAgentName] = useState("");
   const [queue, setQueue] = useState("human");
   const [items, setItems] = useState<Conversation[]>([]);
@@ -40,7 +40,6 @@ export default function InboxPage() {
       router.replace("/login");
       return;
     }
-    setToken(t);
     if (agent) {
       try {
         setAgentName(JSON.parse(agent).name || "");
@@ -67,16 +66,23 @@ export default function InboxPage() {
   return (
     <div className="shell">
       <header className="topbar">
-        <div>
-          <div className="brand">CS Midplatform</div>
-          <div className="muted">{agentName || "Agent"} · PinGo ID</div>
+        <div className="brand-mark">
+          <span className="brand-dot" aria-hidden />
+          <div>
+            <div className="brand">CS Midplatform</div>
+            <div className="muted">{agentName || "Agent"} · PinGo 客服台</div>
+          </div>
         </div>
         <button className="secondary" onClick={logout} type="button">
-          Logout
+          退出
         </button>
       </header>
       <div className="workspace">
         <aside className="queue">
+          <div className="queue-head">
+            <h1>收件箱</h1>
+            <span className="queue-count">{items.length} 会话</span>
+          </div>
           <div className="tabs">
             {QUEUES.map((q) => (
               <button
@@ -90,20 +96,48 @@ export default function InboxPage() {
             ))}
           </div>
           {error ? <div className="error">{error}</div> : null}
-          {items.length === 0 ? <div className="empty">No conversations</div> : null}
+          {items.length === 0 && !error ? <div className="empty">暂无会话</div> : null}
           {items.map((c) => (
-            <Link key={c.id} href={`/inbox/chat/?id=${encodeURIComponent(c.id)}`} className="conv-item">
-              <strong>{c.subject || c.external_code || c.external_id}</strong>
-              <div className="muted">{c.customer_name || c.customer_email || "Unknown customer"}</div>
-              <div style={{ marginTop: 6 }}>
-                <span className="badge">{c.status}</span>
-                {c.needs_human ? <span className="badge warn">needs human</span> : null}
+            <Link
+              key={c.id}
+              href={`/inbox/chat/?id=${encodeURIComponent(c.id)}`}
+              className="conv-item"
+            >
+              <div className="conv-top">
+                <span className="conv-code">{ticketTitle(c)}</span>
+                <span className="conv-time">{shortTime(c.last_message_at)}</span>
+              </div>
+              <div className="conv-customer">
+                {customerLine({
+                  name: c.customer_name,
+                  email: c.customer_email,
+                })}
+              </div>
+              <div className="id-strip" aria-label="LiveAgent IDs">
+                <span title="会话ID">Conv {c.external_id}</span>
+                <span className="sep">·</span>
+                <span title="渠道">{channelLabel(c.channel_type)}</span>
+                {c.la_status ? (
+                  <>
+                    <span className="sep">·</span>
+                    <span title="LA status">{c.la_status}</span>
+                  </>
+                ) : null}
+              </div>
+              <div className="conv-flags">
+                <span className="badge status">{c.status}</span>
+                {c.needs_human ? <span className="badge warn">待人工</span> : null}
                 {c.ai_handled ? <span className="badge">Smart</span> : null}
               </div>
             </Link>
           ))}
         </aside>
-        <main className="empty">Select a conversation from the queue</main>
+        <main className="pane-placeholder">
+          <div>
+            <strong>选择左侧会话</strong>
+            <div className="muted">工单号优先展示 · LiveAgent 会话在此接入 PinGo 坐席</div>
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -9,6 +9,17 @@ export type LoginResult = {
   workspace_name: string;
 };
 
+export type CustomerSnapshot = {
+  owner_contactid?: string | null;
+  owner_email?: string | null;
+  owner_name?: string | null;
+  departmentid?: string | null;
+  la_status?: string | null;
+  phone?: string | null;
+  visitor_userid?: string | null;
+  [key: string]: unknown;
+};
+
 export type Conversation = {
   id: string;
   external_id: string;
@@ -22,6 +33,12 @@ export type Conversation = {
   ai_handled: boolean;
   last_message_at?: string | null;
   channel_type?: string | null;
+  la_status?: string | null;
+};
+
+export type ConversationDetail = Conversation & {
+  messages: Message[];
+  customer_snapshot: CustomerSnapshot;
 };
 
 export type Message = {
@@ -31,6 +48,7 @@ export type Message = {
   body: string;
   send_status: string;
   created_at: string;
+  external_id?: string | null;
 };
 
 function authHeaders(token: string) {
@@ -60,13 +78,13 @@ export async function listConversations(token: string, queue?: string): Promise<
   return res.json();
 }
 
-export async function getConversation(token: string, id: string) {
+export async function getConversation(token: string, id: string): Promise<ConversationDetail> {
   const res = await fetch(`${API_BASE}/api/conversations/${id}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
   if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<Conversation & { messages: Message[]; customer_snapshot: Record<string, unknown> }>;
+  return res.json();
 }
 
 export async function sendMessage(token: string, id: string, body: string, asNote = false) {

@@ -30,8 +30,11 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <form className="login-card" onSubmit={onSubmit}>
-        <h1>CS Midplatform</h1>
-        <p className="muted">PinGo Indonesia agent console · LiveAgent channel</p>
+        <div className="brand-mark" style={{ marginBottom: "0.35rem" }}>
+          <span className="brand-dot" aria-hidden />
+          <h1 style={{ margin: 0 }}>CS Midplatform</h1>
+        </div>
+        <p className="muted">PinGo 印尼客服台 · LiveAgent</p>
         <label className="field">
           <span>Email</span>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
