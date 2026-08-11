@@ -12,6 +12,7 @@ import {
   getStoredToken,
   Message,
   sendMessage,
+  userFacingError,
   wsUrl,
 } from "@/lib/api";
 import {
@@ -83,7 +84,7 @@ function ChatInner() {
     setToken(t);
     refresh(t, id).catch((err) => {
       if (err instanceof ApiError && err.authFailed) return;
-      setError(err instanceof Error ? err.message : "加载失败");
+      setError(userFacingError(err, "加载失败"));
     });
     const socket = new WebSocket(wsUrl(t));
     socket.onmessage = () => {
@@ -107,7 +108,7 @@ function ChatInner() {
       await refresh(token, id);
     } catch (err) {
       if (err instanceof ApiError && err.authFailed) return;
-      setError(err instanceof Error ? err.message : "发送失败");
+      setError(userFacingError(err, "发送失败"));
     } finally {
       setBusy(false);
     }
@@ -175,7 +176,7 @@ function ChatInner() {
                   .then(() => refresh(token, id))
                   .catch((err) => {
                     if (err instanceof ApiError && err.authFailed) return;
-                    setError(err instanceof Error ? err.message : "分配失败");
+                    setError(userFacingError(err, "分配失败"));
                   })
               }
             >
@@ -189,7 +190,7 @@ function ChatInner() {
                   .then(() => refresh(token, id))
                   .catch((err) => {
                     if (err instanceof ApiError && err.authFailed) return;
-                    setError(err instanceof Error ? err.message : "关闭失败");
+                    setError(userFacingError(err, "关闭失败"));
                   })
               }
             >

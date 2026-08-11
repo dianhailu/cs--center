@@ -45,6 +45,9 @@ function LoginForm() {
           <h1 style={{ margin: 0 }}>CS Midplatform</h1>
         </div>
         <p className="muted">PinGo 印尼客服台 · LiveAgent</p>
+        <p className="muted" style={{ fontSize: "0.85rem", marginTop: "-0.5rem" }}>
+          登录过期或更换设备后，请重新登录
+        </p>
         <label className="field">
           <span>Email</span>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />

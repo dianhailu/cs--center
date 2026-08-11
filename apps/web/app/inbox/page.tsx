@@ -9,6 +9,7 @@ import {
   clearSession,
   getStoredToken,
   listConversations,
+  userFacingError,
   AGENT_KEY,
   wsUrl,
 } from "@/lib/api";
@@ -39,7 +40,7 @@ export default function InboxPage() {
           // forceLogout already redirected
           return;
         }
-        setError(err instanceof Error ? err.message : "加载失败");
+        setError(userFacingError(err, "加载失败"));
       }
     },
     []

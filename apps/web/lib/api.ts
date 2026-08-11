@@ -129,6 +129,7 @@ function isAuthFailure(status: number, detail: string): boolean {
   return (
     d.includes("invalid token") ||
     d.includes("missing token") ||
+    d.includes("not authenticated") ||
     d.includes("agent inactive")
   );
 }
@@ -137,10 +138,25 @@ function friendlyAuthMessage(detail: string): string {
   const d = detail.toLowerCase();
   if (d.includes("invalid credentials")) return "邮箱或密码错误";
   if (d.includes("agent inactive")) return "账号已停用，请联系管理员";
-  if (d.includes("invalid token") || d.includes("missing token")) {
+  if (
+    d.includes("invalid token") ||
+    d.includes("missing token") ||
+    d.includes("not authenticated")
+  ) {
     return "登录已失效，请重新登录";
   }
   return "登录已失效，请重新登录";
+}
+
+/** Never surface raw API JSON blobs in the UI. */
+export function userFacingError(err: unknown, fallback = "请求失败"): string {
+  if (err instanceof ApiError) return err.detail;
+  const msg = err instanceof Error ? err.message : fallback;
+  const trimmed = msg.trim();
+  if (trimmed.startsWith("{") && trimmed.includes('"detail"')) {
+    return parseDetail(trimmed);
+  }
+  return msg || fallback;
 }
 
 async function handleResponse<T>(res: Response, opts?: { allowAuthRedirect?: boolean }): Promise<T> {
