@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,6 +18,7 @@ from app.models import (
     Conversation,
     ConversationStatus,
     Message,
+    MessageDirection,
     MessageSenderType,
 )
 from app.services.conversations import send_outbound_message
@@ -42,6 +44,76 @@ def get_support_agent() -> SupportAgent:
     return _agent
 
 
+def normalize_body(body: str | None) -> str:
+    return " ".join((body or "").strip().split())
+
+
+def human_replied_after_trigger(db: Session, conv_id: UUID, trigger: Message | None) -> bool:
+    """True if a real human agent outbound exists after this customer inbound."""
+    if not trigger:
+        return False
+    q = (
+        select(Message.id)
+        .where(
+            Message.conversation_id == conv_id,
+            Message.direction == MessageDirection.outbound,
+            Message.sender_type == MessageSenderType.agent,
+            Message.created_at >= trigger.created_at,
+        )
+        .limit(1)
+    )
+    return db.scalar(q) is not None
+
+
+def ai_replied_after_trigger(db: Session, conv_id: UUID, trigger: Message | None) -> bool:
+    """True if Smart already sent an outbound for this customer inbound."""
+    if not trigger:
+        return False
+    q = (
+        select(Message.id)
+        .where(
+            Message.conversation_id == conv_id,
+            Message.direction == MessageDirection.outbound,
+            Message.sender_type == MessageSenderType.ai,
+            Message.created_at >= trigger.created_at,
+        )
+        .limit(1)
+    )
+    return db.scalar(q) is not None
+
+
+def trigger_already_has_job(db: Session, trigger_id: UUID | None, *, exclude_job_id: UUID | None = None) -> AiJob | None:
+    """Return a non-failed AiJob already tied to this inbound message."""
+    if not trigger_id:
+        return None
+    q = select(AiJob).where(
+        AiJob.trigger_message_id == trigger_id,
+        AiJob.status.in_(["pending", "processing", "done"]),
+    )
+    if exclude_job_id:
+        q = q.where(AiJob.id != exclude_job_id)
+    for job in db.scalars(q):
+        # Skipped twins do not count as a real reply.
+        if job.status == "done" and (job.result or {}).get("skipped"):
+            continue
+        return job
+    return None
+
+
+def skip_reason_for_trigger(db: Session, conv: Conversation, trigger: Message | None, *, job_id: UUID | None = None) -> str | None:
+    """AI-first gate: skip only if human or AI already covered this inbound turn."""
+    if trigger is None:
+        return "missing_trigger"
+    if human_replied_after_trigger(db, conv.id, trigger):
+        return "human_already_replied"
+    if ai_replied_after_trigger(db, conv.id, trigger):
+        return "ai_already_replied"
+    prior = trigger_already_has_job(db, trigger.id, exclude_job_id=job_id)
+    if prior and prior.status == "done":
+        return "trigger_already_processed"
+    return None
+
+
 def process_ai_jobs(db: Session, limit: int = 10) -> int:
     settings = get_settings()
     if not settings.ai_enabled:
@@ -54,14 +126,36 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
     agent = get_support_agent()
     count = 0
     for job in jobs:
+        db.refresh(job)
+        if job.status != "pending":
+            continue
         job.status = "processing"
         job.updated_at = datetime.now(timezone.utc)
+        # At most one AI outbound per conversation turn: drop other pending twins.
+        for sibling in db.scalars(
+            select(AiJob).where(
+                AiJob.conversation_id == job.conversation_id,
+                AiJob.status == "pending",
+                AiJob.id != job.id,
+            )
+        ):
+            sibling.status = "done"
+            sibling.result = {"skipped": "duplicate_job", "superseded_by": str(job.id)}
+            sibling.updated_at = datetime.now(timezone.utc)
         db.commit()
         try:
             conv = db.get(Conversation, job.conversation_id)
             if not conv:
                 raise RuntimeError("conversation missing")
             trigger = db.get(Message, job.trigger_message_id) if job.trigger_message_id else None
+            reason = skip_reason_for_trigger(db, conv, trigger, job_id=job.id)
+            if reason:
+                job.status = "done"
+                job.result = {"skipped": reason}
+                job.updated_at = datetime.now(timezone.utc)
+                db.commit()
+                continue
+
             text = trigger.body if trigger else ""
             decision = agent.decide(text)
             result = {
@@ -69,6 +163,7 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 "reason": decision.reason,
                 "lang": decision.lang,
                 "reply": decision.reply,
+                "trigger_message_id": str(trigger.id) if trigger else None,
                 "faq": [
                     {"id": h.faq_id, "score": round(h.score, 4), "q": h.question}
                     for h in decision.faq_hits
@@ -78,6 +173,19 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                     for h in decision.history_hits
                 ],
             }
+            # Re-check after LLM (human may have replied, or sibling finished).
+            db.refresh(conv)
+            if trigger:
+                db.refresh(trigger)
+            reason = skip_reason_for_trigger(db, conv, trigger, job_id=job.id)
+            if reason:
+                job.status = "done"
+                job.result = {**result, "skipped": reason}
+                job.updated_at = datetime.now(timezone.utc)
+                db.commit()
+                continue
+
+            # One action per turn: either content reply OR handoff (never both).
             if decision.action == "reply" and decision.reply:
                 send_outbound_message(
                     db,
@@ -89,7 +197,6 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 assert conv
                 conv.ai_handled = True
                 conv.needs_human = False
-                # keep assigned/queued as answered-like
                 if conv.status == ConversationStatus.ai_pending:
                     conv.status = ConversationStatus.queued
                 _safe_tag(db, conv, "ai_replied")

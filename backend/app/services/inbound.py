@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import re
 from datetime import datetime, timezone
-from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -20,6 +19,10 @@ from app.models import (
     MessageSenderType,
 )
 from app.redis_bus import conversation_event
+from app.services.ai_loop import (
+    normalize_body,
+    skip_reason_for_trigger,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +44,35 @@ def _enrich_snapshot_from_inbound(
     if uid and uid != contact_id and not snap.get("visitor_userid"):
         snap["visitor_userid"] = uid
     conv.customer_snapshot = snap
+
+
+def _find_unlinked_ai_echo(
+    db: Session,
+    conv: Conversation,
+    *,
+    body: str,
+) -> Message | None:
+    """Match LA echo of a local Smart outbound that still lacks external_id."""
+    norm = normalize_body(body)
+    if not norm:
+        return None
+    candidates = list(
+        db.scalars(
+            select(Message)
+            .where(
+                Message.conversation_id == conv.id,
+                Message.sender_type == MessageSenderType.ai,
+                Message.direction == MessageDirection.outbound,
+                Message.external_id.is_(None),
+            )
+            .order_by(Message.created_at.desc())
+            .limit(20)
+        )
+    )
+    for m in candidates:
+        if normalize_body(m.body) == norm:
+            return m
+    return None
 
 
 def import_ticket(
@@ -103,21 +135,25 @@ def import_ticket(
     }
 
     known_ai_bodies = {
-        (m.body or "").strip()
+        normalize_body(m.body)
         for m in db.scalars(
             select(Message).where(
                 Message.conversation_id == conv.id,
                 Message.sender_type == MessageSenderType.ai,
             )
         )
-        if (m.body or "").strip()
+        if normalize_body(m.body)
     }
 
     imported = 0
     latest_inbound: Message | None = None
+    new_inbound = False
     for item in flat:
+        body_raw = str(item.get("body") or "")
+        body_norm = normalize_body(body_raw)
+        # Prefer body-match so LA echoes of Smart stay labeled ai (not PinGo CS human).
         direction_s, sender_s = LiveAgentClient.classify_sender(
-            item,
+            {**item, "body": body_raw},
             agent_user_ids=agent_dir["ids"],
             agent_emails=agent_dir["emails"],
             agent_names=agent_dir["names"],
@@ -125,6 +161,8 @@ def import_ticket(
             contact_id=contact_id,
             known_ai_bodies=known_ai_bodies,
         )
+        if body_norm and body_norm in known_ai_bodies:
+            direction_s, sender_s = "outbound", "ai"
         direction = MessageDirection(direction_s)
         sender_type = MessageSenderType(sender_s)
 
@@ -135,7 +173,10 @@ def import_ticket(
             )
         )
         if existing:
-            # Fix historical mis-labels (everything was treated as customer)
+            # Never demote local/imported Smart bubbles to human PinGo CS.
+            if existing.sender_type == MessageSenderType.ai:
+                sender_type = MessageSenderType.ai
+                direction = MessageDirection.outbound
             if existing.sender_type != sender_type or existing.direction != direction:
                 existing.sender_type = sender_type
                 existing.direction = direction
@@ -145,16 +186,39 @@ def import_ticket(
                     "user_email": item.get("user_email"),
                     "user_name": item.get("user_name"),
                     "datecreated": item.get("datecreated"),
+                    **({"la_echo_of_ai": True} if sender_type == MessageSenderType.ai else {}),
                 }
             if direction == MessageDirection.inbound:
                 latest_inbound = existing
                 _enrich_snapshot_from_inbound(
                     conv,
-                    body=str(item.get("body") or existing.body or ""),
+                    body=body_raw or existing.body or "",
                     userid=str(item.get("userid") or ""),
                     contact_id=contact_id,
                 )
             continue
+
+        # Link LA echo onto local Smart outbound (same body, no external_id yet).
+        if direction == MessageDirection.outbound or sender_type in {
+            MessageSenderType.agent,
+            MessageSenderType.ai,
+        }:
+            local_ai = _find_unlinked_ai_echo(db, conv, body=body_raw)
+            if local_ai:
+                local_ai.external_id = str(item["external_id"])
+                local_ai.sender_type = MessageSenderType.ai
+                local_ai.direction = MessageDirection.outbound
+                local_ai.send_status = MessageSendStatus.sent
+                local_ai.meta = {
+                    **(local_ai.meta or {}),
+                    "userid": item.get("userid"),
+                    "user_email": item.get("user_email"),
+                    "user_name": item.get("user_name"),
+                    "datecreated": item.get("datecreated"),
+                    "la_echo_of_ai": True,
+                }
+                known_ai_bodies.add(normalize_body(local_ai.body))
+                continue
 
         msg = Message(
             conversation_id=conv.id,
@@ -169,15 +233,19 @@ def import_ticket(
                 "user_email": item.get("user_email"),
                 "user_name": item.get("user_name"),
                 "datecreated": item.get("datecreated"),
+                **({"la_echo_of_ai": True} if sender_type == MessageSenderType.ai else {}),
             },
         )
         db.add(msg)
         imported += 1
+        if sender_type == MessageSenderType.ai and body_norm:
+            known_ai_bodies.add(body_norm)
         if direction == MessageDirection.inbound:
             latest_inbound = msg
+            new_inbound = True
             _enrich_snapshot_from_inbound(
                 conv,
-                body=str(item.get("body") or ""),
+                body=body_raw,
                 userid=str(item.get("userid") or ""),
                 contact_id=contact_id,
             )
@@ -193,9 +261,19 @@ def import_ticket(
             else:
                 conv.last_message_at = datetime.now(timezone.utc)
 
+    # New customer turn → AI may answer again unless human already covered it.
+    if new_inbound:
+        conv.ai_handled = False
+
     ai_enqueued = False
     db.flush()
-    if enqueue_ai and not conv.ai_handled and not conv.needs_human:
+    if enqueue_ai:
+        # Serialize enqueue against concurrent webhook+poll for this conversation.
+        locked = db.scalar(
+            select(Conversation).where(Conversation.id == conv.id).with_for_update()
+        )
+        if locked:
+            conv = locked
         trigger = latest_inbound
         if trigger is None:
             trigger = db.scalar(
@@ -212,7 +290,9 @@ def import_ticket(
                 AiJob.status.in_(["pending", "processing"]),
             )
         )
-        if trigger and not pending:
+        skip = skip_reason_for_trigger(db, conv, trigger) if trigger else "missing_trigger"
+        # AI-first: enqueue when no human/AI reply yet for this inbound.
+        if trigger and not pending and not skip:
             job = AiJob(
                 conversation_id=conv.id,
                 trigger_message_id=trigger.id,
@@ -221,6 +301,13 @@ def import_ticket(
             db.add(job)
             conv.status = ConversationStatus.ai_pending
             ai_enqueued = True
+        elif skip and trigger:
+            logger.info(
+                "skip ai enqueue conversation=%s trigger=%s reason=%s",
+                conv.id,
+                trigger.id,
+                skip,
+            )
 
     # reopen closed/queued if new inbound
     if latest_inbound and conv.status == ConversationStatus.closed:

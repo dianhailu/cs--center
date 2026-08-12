@@ -804,8 +804,9 @@ class LiveAgentClient:
         """
         if item.get("is_note"):
             return "note", "system"
-        body = (item.get("body") or "").strip()
-        if known_ai_bodies and body in known_ai_bodies:
+        # Collapse whitespace so LA echoes match local Smart bodies.
+        body = " ".join((item.get("body") or "").strip().split())
+        if known_ai_bodies and body and body in known_ai_bodies:
             return "outbound", "ai"
 
         userid = str(item.get("userid") or "").strip()

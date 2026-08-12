@@ -69,6 +69,7 @@ def send_outbound_message(
         sender_id=sender_id,
         body=body,
         send_status=MessageSendStatus.pending if not as_note else MessageSendStatus.local,
+        meta={"source": "ai"} if sender_type == MessageSenderType.ai else {},
     )
     db.add(msg)
     db.flush()
