@@ -1,0 +1,26 @@
+[
+  {
+    "scene": "放款超过24小时",
+    "department": "Finance / Operations"
+  },
+  {
+    "scene": "付款超过2小时未到账",
+    "department": "Finance"
+  },
+  {
+    "scene": "KYC异常",
+    "department": "Risk"
+  },
+  {
+    "scene": "系统Bug",
+    "department": "IT / Product"
+  },
+  {
+    "scene": "重大投诉",
+    "department": "Team Leader"
+  },
+  {
+    "scene": "法律/监管",
+    "department": "Compliance"
+  }
+]

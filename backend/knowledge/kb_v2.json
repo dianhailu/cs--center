@@ -1,0 +1,863 @@
+[
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Apa itu PinGo?",
+      "en": "1. What is PinGo?",
+      "zh": "PinGo是什么？"
+    },
+    "answer": {
+      "id": "PinGo adalah platform pinjaman digital.",
+      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app.",
+      "zh": "PinGo为印尼用户提供线上借款服务。"
+    },
+    "id": 1
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Bagaimana menghubungi CS?",
+      "en": "",
+      "zh": "客服联系方式？"
+    },
+    "answer": {
+      "id": "Saluran resmi: LiveChat di aplikasi.",
+      "en": "",
+      "zh": "官方渠道：App LiveChat。"
+    },
+    "id": 2
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Jam operasional?",
+      "en": "",
+      "zh": "客服时间？"
+    },
+    "answer": {
+      "id": "08.00-20.00 WIB",
+      "en": "",
+      "zh": "08:00-20:00 WIB"
+    },
+    "id": 3
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "Tidak menerima OTP?",
+      "en": "5. I’m not receiving the OTP. What should I do?",
+      "zh": "收不到OTP怎么办？"
+    },
+    "answer": {
+      "id": "Periksa jaringan dan nomor HP lalu coba lagi.",
+      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone.",
+      "zh": "检查网络、手机号并稍后重试。"
+    },
+    "id": 4
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "Satu nomor untuk berapa akun?",
+      "en": "",
+      "zh": "一个手机号几个账号？"
+    },
+    "answer": {
+      "id": "Satu nomor hanya satu akun.",
+      "en": "",
+      "zh": "一个手机号仅一个账号。"
+    },
+    "id": 5
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "Satu KTP untuk berapa akun?",
+      "en": "",
+      "zh": "一个KTP几个账号？"
+    },
+    "answer": {
+      "id": "Satu KTP hanya satu akun.",
+      "en": "",
+      "zh": "一个KTP仅一个账号。"
+    },
+    "id": 6
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": "SLA",
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Berapa lama verifikasi?",
+      "en": "",
+      "zh": "审核多久？"
+    },
+    "answer": {
+      "id": "Biasanya 10 menit, jika lebih lama hubungi CS.",
+      "en": "",
+      "zh": "正常10分钟内，超时联系客服。"
+    },
+    "id": 7
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Mengapa gagal?",
+      "en": "",
+      "zh": "审核失败？"
+    },
+    "answer": {
+      "id": "Hasil ditentukan sistem.",
+      "en": "",
+      "zh": "系统综合评估，客服无法修改。"
+    },
+    "id": 8
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Syarat foto KTP?",
+      "en": "",
+      "zh": "身份证照片要求？"
+    },
+    "answer": {
+      "id": "Foto harus jelas dan lengkap.",
+      "en": "",
+      "zh": "照片清晰、完整、无遮挡。"
+    },
+    "id": 9
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Syarat selfie?",
+      "en": "",
+      "zh": "自拍要求？"
+    },
+    "answer": {
+      "id": "Pastikan wajah jelas dan pencahayaan cukup.",
+      "en": "",
+      "zh": "光线充足，人脸完整。"
+    },
+    "id": 10
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Mengapa tidak ada limit?",
+      "en": "",
+      "zh": "为什么没有额度？"
+    },
+    "answer": {
+      "id": "Limit ditentukan sistem.",
+      "en": "",
+      "zh": "额度由系统评估。"
+    },
+    "id": 11
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Mengapa limit turun?",
+      "en": "",
+      "zh": "为什么额度降低？"
+    },
+    "answer": {
+      "id": "Limit disesuaikan berdasarkan risiko dan riwayat pembayaran.",
+      "en": "",
+      "zh": "根据风险和还款表现动态调整。"
+    },
+    "id": 12
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Bisakah menaikkan limit?",
+      "en": "",
+      "zh": "可以申请提额吗？"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, untul limit pinjaman yang bisa Anda ajukan ditentukan oleh sistem melalui evaluasi menyeluruh. Hasil evaluasi bersifat otomatis dan tidak dapat diubah secara manual.",
+      "en": "",
+      "zh": "目前不支持人工提额。"
+    },
+    "id": 13
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Jika bayar apa ada kenaikan limit?",
+      "en": "",
+      "zh": "还款后能否提额"
+    },
+    "answer": {
+      "id": "Apa limit Anda bisa naik setelah melunasi pinjaman akan dinilai secara menyeluruh oleh sistem. Kami menyarankan agar Anda selalu menjaga riwayat pembayaran yang baik.",
+      "en": "",
+      "zh": "还款后能否提额由系统综合评估，建议您保持良好的还款习惯。"
+    },
+    "id": 14
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "saya ditolak kenapa ga berubah",
+      "en": "",
+      "zh": "被拒后倒计时结束界面额度没有任何变化"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, saya mengerti kakak bingung karena limit pinjaman belum berubah meskipun pengajuan sebelumnya ditolak. Setiap penolakan pengajuan akan dievaluasi ulang secara otomatis oleh sistem, proses peninjauan data tidak langsung selesai saat itu juga. Perubahan limit akan muncul setelah sistem menyelesaikan seluruh penilaian.  Silakan tunggu beberapa waktu dan cek halaman akun secara berkala.",
+      "en": "",
+      "zh": "额度变化需要系统综合评估，请耐心等待，定期检查app"
+    },
+    "id": 15
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Kapan dana cair?",
+      "en": "",
+      "zh": "放款多久到账？"
+    },
+    "answer": {
+      "id": "Untuk waktu pencairan pinjaman di pingo minimal 2 jam dan maksimal adalah 1x24 jam.",
+      "en": "",
+      "zh": "通常2小时内，最长24小时。"
+    },
+    "id": 16
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": "Finance",
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Lebih dari 24 jam?",
+      "en": "",
+      "zh": "超过24小时？"
+    },
+    "answer": {
+      "id": "Jika lebih dari 1x24 jam dana belum cair mohon mengirimkan bukti mutasi rekening dari tanggal pengajuan hingga saat ini ke customer service.",
+      "en": "",
+      "zh": "联系客服核实。"
+    },
+    "id": 17
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Bisa dibatalkan?",
+      "en": "",
+      "zh": "可以取消申请吗？"
+    },
+    "answer": {
+      "id": "Mohon maaf, jika Anda sudah dalam proses pencairan tidak dapat dibatalkan.",
+      "en": "",
+      "zh": "目前不支持取消。"
+    },
+    "id": 18
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "kenapa pengajuan gagal?",
+      "en": "",
+      "zh": "申请被拒"
+    },
+    "answer": {
+      "id": "Mohon maaf sekali pengajuan kakak belum bisa kami setujui. Semua penilaian dilakukan secara otomatis oleh sistem berdasarkan berbagai data profil pengguna. Kakak dapat melakukan pengajuan ulang kembali di lain kesempatan.",
+      "en": "",
+      "zh": "由系统决定，下次再试"
+    },
+    "id": 19
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Kenapa saya tidak mendapatkan limit lagi setelah melunasi tagihan",
+      "en": "",
+      "zh": "还款后再次借款被拒"
+    },
+    "answer": {
+      "id": "Mohon maaf sekali atas kekecewaan ini. Untuk hasil penilaian sepenuhnya diputuskan sistem secara otomatis. Kami tidak bisa ubah hasilnya secara manual. Disarankan kakak menjaga catatan pembayaran lancar tanpa telat dalam jangka waktu beberapa bulan, nanti sistem akan lakukan evaluasi ulang saat kakak mengajukan pinjaman kembali.",
+      "en": "",
+      "zh": "由系统决定，系统会定期重新评估，请下次再试"
+    },
+    "id": 20
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Nama KTP tidak sesuai",
+      "en": "",
+      "zh": "KTP姓名有误导致无法绑卡"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak. Nama yang terdeteksi saat pemindaian KTP tidak cocok, sehingga tidak dapat menambahkan rekening. Tim kami akan membantu memperbaiki data nama kakak melalui backend sistem. Namun kakak perlu mengirimkan foto KTP asli yang jelas kepada kami untuk proses verifikasi data.",
+      "en": "",
+      "zh": "相关团队可协助在后台进行姓名更改，请提供身份证照片"
+    },
+    "id": 21
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "kak tetap tidak bisa isi rekening kK",
+      "en": "",
+      "zh": "绑卡验证频繁"
+    },
+    "answer": {
+      "id": "Maaf ya kak, kakak terlalu sering coba verifikasi kartu sehingga sistem menampilkan error. Kakak perlu tunggu sekitar 24 jam baru bisa coba verifikasi kartu kembali ya",
+      "en": "",
+      "zh": "24小时后再试"
+    },
+    "id": 22
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Cara pembayaran?",
+      "en": "",
+      "zh": "如何还款？"
+    },
+    "answer": {
+      "id": "Platform kami saat ini mendukung pembayaran melalui BNI, BRI, Mandiri dan Permata. Silakan pakai VA yang tersedia di aplikasi, lalu lakukan transfer melalui salah satu dari empat bank tersebut untuk menyelesaikan pembayaran tagihan kakak. Jika kakak kesulitan menemukan kode bayar, saya bisa bantu jelaskan langkahnya.",
+      "en": "",
+      "zh": "仅支持VA。"
+    },
+    "id": 23
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Pelunasan dipercepat?",
+      "en": "",
+      "zh": "提前还款？"
+    },
+    "answer": {
+      "id": "Didukung.",
+      "en": "",
+      "zh": "支持。"
+    },
+    "id": 24
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": "Finance",
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Pembayaran belum masuk?",
+      "en": "",
+      "zh": "付款未到账？"
+    },
+    "answer": {
+      "id": "Jika >2 jam kirim Bukti Pembayaran, Nomor VA, Waktu Transaksi.",
+      "en": "",
+      "zh": "超过2小时提供Payment Receipt、VA Number、Transaction Time。"
+    },
+    "id": 25
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Mendukung cicilan?",
+      "en": "",
+      "zh": "支持分期？"
+    },
+    "answer": {
+      "id": "Belum mendukung.",
+      "en": "",
+      "zh": "暂不支持。"
+    },
+    "id": 26
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Mendukung Extension?",
+      "en": "",
+      "zh": "支持展期？"
+    },
+    "answer": {
+      "id": "Jika memenuhi syarat dapat Extension setelah membayar bunga.",
+      "en": "",
+      "zh": "符合条件可展期，支付利息后延期。"
+    },
+    "id": 27
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Bagaimana saya membayar via bca?",
+      "en": "",
+      "zh": "如何使用bca还款"
+    },
+    "answer": {
+      "id": "Jika Anda menggunakan BCA Mobile atau myBCA, silakan pilih menu Transfer Antar Bank, kemudian pilih bank tujuan (BRI / Permata) dan masukkan Nomor Virtual Account yang tertera pada halaman pembayaran. Pastikan nominal transfer sesuai dengan jumlah tagihan agar pembayaran dapat diproses secara otomatis.",
+      "en": "",
+      "zh": "若您使用 BCA Mobile 或 myBCA 应用，请选择跨行转账菜单，接着选择收款银行（BRI / Permata），输入支付页面显示的虚拟账号。"
+    },
+    "id": 28
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Kenapa di situ tidak bisa masuk bank ***",
+      "en": "",
+      "zh": "不支持用户想使用的还款渠道"
+    },
+    "answer": {
+      "id": "Maaf ya kak, bank yang kakak gunakan belum masuk daftar bank yang didukung sistem kami, makanya tidak bisa terhubung kartu. Kakak bisa coba pakai rekening bank lain yang tersedia di halaman penautan kartu ya",
+      "en": "",
+      "zh": "系统不支持，请使用app里展示的还款渠道"
+    },
+    "id": 29
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Apa yang harus dilakukan?",
+      "en": "",
+      "zh": "逾期怎么办？"
+    },
+    "answer": {
+      "id": "Segera bayar, jika memenuhi syarat dapat Extension.",
+      "en": "",
+      "zh": "尽快还款，符合条件可申请展期。"
+    },
+    "id": 30
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Apakah ada pengingat?",
+      "en": "",
+      "zh": "会收到提醒吗？"
+    },
+    "answer": {
+      "id": "Sistem dapat mengirim SMS pengingat.",
+      "en": "",
+      "zh": "系统会发送短信提醒。"
+    },
+    "id": 31
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Spam dc",
+      "en": "",
+      "zh": "暴力催收"
+    },
+    "answer": {
+      "id": "Saya benar-benar menyesal dan sangat paham rasa tidak nyaman kakak akibat perilaku penagihan yang tidak sopan, terima kasih sudah mengirimkan bukti kepada kami ya kak. Tim khusus kami akan segera investigasi kasus ini secara menyeluruh. Jika ada keluhan lain kakak bisa sampaikan langsung ke saya.",
+      "en": "",
+      "zh": "提供证据，立即跟进"
+    },
+    "id": 32
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu KTP?",
+      "en": "",
+      "zh": "为什么需要KTP？"
+    },
+    "answer": {
+      "id": "Verifikasi identitas.",
+      "en": "",
+      "zh": "身份认证。"
+    },
+    "id": 33
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu kamera?",
+      "en": "",
+      "zh": "为什么需要相机？"
+    },
+    "answer": {
+      "id": "Selfie verification.",
+      "en": "",
+      "zh": "自拍认证。"
+    },
+    "id": 34
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu lokasi?",
+      "en": "",
+      "zh": "为什么需要定位？"
+    },
+    "answer": {
+      "id": "Analisis risiko.",
+      "en": "",
+      "zh": "风险评估。"
+    },
+    "id": 35
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Gimana cara hapus akun nya?",
+      "en": "",
+      "zh": "注销账户"
+    },
+    "answer": {
+      "id": "Jika kakak benar yakin menghapus akun, nanti saya akan memasukkan akun kak ke blacklist. Setelah itu kak tidak bisa mengajukan pinjaman lagi di aplikasi pingo.",
+      "en": "",
+      "zh": "可添加黑名单"
+    },
+    "id": 36
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "sudah buka izin tapi tidak bisa mengajukan pinjaman",
+      "en": "",
+      "zh": "权限未打开问题"
+    },
+    "answer": {
+      "id": "Silakan masuk ke pengaturan ponsel Anda, buka menu Aplikasi > PinGo, pastikan seluruh izin akses telah diaktifkan tanpa ada izin yang ditolak.",
+      "en": "",
+      "zh": "打开手机设置，找到“软件->PinGo”,然后打开所有的权限"
+    },
+    "id": 37
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Alur penanganan?",
+      "en": "",
+      "zh": "处理流程？"
+    },
+    "answer": {
+      "id": "Nomor HP→Nomor Pinjaman→Deskripsi→Screenshot→Tiket→Hasil.",
+      "en": "",
+      "zh": "手机号→订单号→问题描述→截图→提交工单→反馈结果。"
+    },
+    "id": 38
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Estimasi?",
+      "en": "",
+      "zh": "预计处理时间？"
+    },
+    "answer": {
+      "id": "Diproses sesuai tiket dan diinformasikan.",
+      "en": "",
+      "zh": "按工单进度处理并及时反馈。"
+    },
+    "id": 39
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Pinjaman saya 500rb knapa di cairkan uangnya hanya 300rb",
+      "en": "",
+      "zh": "投诉20%砍头息"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, platform akan mengenakan sejumlah biaya layanan sebelum dana dicairkan. Semua detail biaya sudah kelihatan jelas di aplikasi sebelum kakak setuju pinjaman.",
+      "en": "",
+      "zh": "系统在放款前会收取一定服务费"
+    },
+    "id": 40
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Bunga terlalu besar",
+      "en": "",
+      "zh": "利息高"
+    },
+    "answer": {
+      "id": "Saya mengerti kebingungan kakak terkait total biaya pinjaman yang dikenakan ya kak. Semua rincian suku bunga, biaya administrasi serta ketentuan total biaya layanan sudah ditampilkan secara jelas di aplikasi sebelum kakak menyetujui pengajuan pinjaman. Semua ketentuan tersebut sudah kakak setujui sebelum dana dicairkan.",
+      "en": "",
+      "zh": "费用明细已在app中展示，放款前您已同意"
+    },
+    "id": 41
+  }
+]

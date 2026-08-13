@@ -1,0 +1,596 @@
+[
+  {
+    "id": 1,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "1. Apa itu PinGo?",
+      "en": "1. What is PinGo?",
+      "zh": "1. PinGo 是什么？"
+    },
+    "answer": {
+      "id": "PinGo adalah layanan pinjaman tunai digital. Pengajuan pinjaman hanya dapat dilakukan melalui aplikasi resmi PinGo.",
+      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app.",
+      "zh": "PinGo 是数字现金贷服务。借款申请仅能通过 PinGo 官方 App 提交。"
+    }
+  },
+  {
+    "id": 2,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "2. Siapa yang bisa mendaftar?",
+      "en": "2. Who can register?",
+      "zh": "2. 谁可以注册？"
+    },
+    "answer": {
+      "id": "Warga Negara Indonesia dengan identitas valid, memenuhi syarat usia minimum sesuai kebijakan produk, memiliki nomor HP aktif, serta rekening bank atas nama sendiri bila diperlukan untuk pencairan.",
+      "en": "Indonesian citizens with valid ID, meeting the minimum age required by the product policy, with an active mobile number, and a bank account in your own name when required for disbursement.",
+      "zh": "持有效身份的印尼公民，满足产品规定的最低年龄，拥有有效手机号；如需放款则通常需本人名下银行账户。"
+    }
+  },
+  {
+    "id": 3,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "3. Bagaimana cara mendaftar dan mengajukan pinjaman?",
+      "en": "3. How do I register and apply?",
+      "zh": "3. 如何注册并申请？"
+    },
+    "answer": {
+      "id": "Unduh aplikasi resmi PinGo dari toko aplikasi resmi, daftar dengan nomor HP, lalu ikuti langkah di aplikasi. Pengajuan pinjaman tidak tersedia di luar aplikasi.",
+      "en": "Download the official PinGo app from an official app store, register with your mobile number, then follow the in-app steps. Loan applications are not available outside the app.",
+      "zh": "从官方应用商店下载 PinGo 官方 App，使用手机号注册并按提示完成流程。App 之外无法提交借款申请。"
+    }
+  },
+  {
+    "id": 4,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "4. Bagaimana verifikasi OTP dikirim?",
+      "en": "4. How is the OTP delivered?",
+      "zh": "4. 验证码（OTP）如何发送？"
+    },
+    "answer": {
+      "id": "OTP dapat dikirim melalui WhatsApp atau SMS sesuai ketersediaan channel dan kebijakan sistem pada saat itu.",
+      "en": "The OTP may be sent via WhatsApp or SMS, depending on channel availability and system policy at the time.",
+      "zh": "OTP 可能通过 WhatsApp 或短信（SMS）发送，具体以系统当时可用渠道与规则为准。"
+    }
+  },
+  {
+    "id": 5,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "5. OTP tidak masuk, apa yang harus dilakukan?",
+      "en": "5. I’m not receiving the OTP. What should I do?",
+      "zh": "5. 收不到 OTP 怎么办？"
+    },
+    "answer": {
+      "id": "Pastikan nomor HP aktif, sinyal stabil, dan Anda tidak memblokir pesan. Coba kirim ulang OTP. Jika masih gagal, hubungi layanan pelanggan resmi melalui kontak yang tertera di aplikasi. Jangan pernah memberikan OTP kepada siapa pun.",
+      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone.",
+      "zh": "确认号码可用、信号稳定、未拦截短信；可尝试重新获取。若仍失败，请通过 App 内公示的官方客服渠道联系。切勿向任何人透露 OTP。"
+    }
+  },
+  {
+    "id": 6,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "6. Apakah satu orang boleh memiliki lebih dari satu akun?",
+      "en": "6. Can I have more than one account?",
+      "zh": "6. 一个人可以注册多个账号吗？"
+    },
+    "answer": {
+      "id": "Umumnya tidak. Satu identitas biasanya hanya untuk satu akun demi keamanan dan penilaian risiko.",
+      "en": "Usually no. One identity is typically limited to one account for security and risk assessment.",
+      "zh": "一般不可以。同一身份通常仅限一个账户，用于安全与风控。"
+    }
+  },
+  {
+    "id": 7,
+    "category": {
+      "id": "Mengisi data",
+      "en": "Profile information",
+      "zh": "填写资料"
+    },
+    "question": {
+      "id": "7. Data apa saja yang perlu dilengkapi?",
+      "en": "7. What information do I need to provide?",
+      "zh": "7. 需要填写哪些信息？"
+    },
+    "answer": {
+      "id": "Biasanya mencakup data pribadi, pekerjaan/pendapatan, kontak darurat, dan informasi rekening penerima dana sesuai permintaan di aplikasi.",
+      "en": "Typically personal details, employment/income information, emergency contacts, and bank details as requested in the app.",
+      "zh": "通常包括个人信息、工作/收入、紧急联系人，以及 App 要求的收款账户信息。"
+    }
+  },
+  {
+    "id": 8,
+    "category": {
+      "id": "Mengisi data",
+      "en": "Profile information",
+      "zh": "填写资料"
+    },
+    "question": {
+      "id": "8. Mengapa aplikasi meminta izin tertentu (misalnya kamera)?",
+      "en": "8. Why does the app request permissions (e.g., camera)?",
+      "zh": "8. 为什么 App 会申请权限（如相机）？"
+    },
+    "answer": {
+      "id": "Untuk verifikasi identitas dan unggah dokumen sesuai kebijakan produk. Penjelasan lebih lengkap ada di Kebijakan Privasi.",
+      "en": "For identity verification and document upload per product policy. See the Privacy Policy for more details.",
+      "zh": "用于身份核验与资料上传，具体以产品政策与隐私政策说明为准。"
+    }
+  },
+  {
+    "id": 9,
+    "category": {
+      "id": "Mengisi data",
+      "en": "Profile information",
+      "zh": "填写资料"
+    },
+    "question": {
+      "id": "9. Dokumen apa yang sering diminta?",
+      "en": "9. What documents are commonly required?",
+      "zh": "9. 常见需要哪些材料？"
+    },
+    "answer": {
+      "id": "Contoh umum: KTP dan selfie verifikasi; dokumen pendukung pendapatan jika diminta sistem. Daftar final mengikuti instruksi di aplikasi.",
+      "en": "Examples: national ID (KTP) and a verification selfie; income-related documents if requested. The final list follows in-app instructions.",
+      "zh": "例如：身份证（KTP）、核验自拍；如系统要求则可能需要收入类证明。以 App 内实际提示为准。"
+    }
+  },
+  {
+    "id": 10,
+    "category": {
+      "id": "Mengisi data",
+      "en": "Profile information",
+      "zh": "填写资料"
+    },
+    "question": {
+      "id": "10. Bagaimana jika ada kesalahan penulisan data?",
+      "en": "10. I entered incorrect information. What should I do?",
+      "zh": "10. 信息填错了怎么办？"
+    },
+    "answer": {
+      "id": "Perbarui di bagian profil jika tersedia, atau hubungi CS resmi. Pastikan nama sesuai KTP dan rekening bank.",
+      "en": "Update it in your profile if available, or contact official support. Ensure your name matches your ID and bank account.",
+      "zh": "若支持可在资料页修改，或联系官方客服。姓名需与证件及银行账户一致。"
+    }
+  },
+  {
+    "id": 11,
+    "category": {
+      "id": "Mengisi data",
+      "en": "Profile information",
+      "zh": "填写资料"
+    },
+    "question": {
+      "id": "11. Apakah data saya dilindungi?",
+      "en": "11. Is my data protected?",
+      "zh": "11. 我的数据是否受保护？"
+    },
+    "answer": {
+      "id": "Perlindungan data mengikuti Kebijakan Privasi PinGo. Lindungi kata sandi/PIN dan jangan membagikan OTP.",
+      "en": "Data handling follows PinGo’s Privacy Policy. Protect your password/PIN and do not share OTPs.",
+      "zh": "数据处理遵循 PinGo《隐私政策》。请妥善保管密码/PIN，不要泄露 OTP。"
+    }
+  },
+  {
+    "id": 12,
+    "category": {
+      "id": "Verifikasi & penilaian risiko",
+      "en": "Verification & risk review",
+      "zh": "风控审核"
+    },
+    "question": {
+      "id": "12. Apa yang dinilai dalam proses verifikasi?",
+      "en": "12. What is assessed during verification?",
+      "zh": "12. 审核会评估什么？"
+    },
+    "answer": {
+      "id": "Sistem dapat menilai konsistensi data, kelayakan, parameter risiko internal, serta riwayat relevan sesuai kebijakan PinGo.",
+      "en": "The system may assess data consistency, eligibility, internal risk parameters, and relevant history per PinGo policy.",
+      "zh": "可能包括资料一致性、准入条件、内部风控参数及相关历史（如适用），以 PinGo 政策为准。"
+    }
+  },
+  {
+    "id": 13,
+    "category": {
+      "id": "Verifikasi & penilaian risiko",
+      "en": "Verification & risk review",
+      "zh": "风控审核"
+    },
+    "question": {
+      "id": "13. Berapa lama proses verifikasi?",
+      "en": "13. How long does verification take?",
+      "zh": "13. 审核需要多久？"
+    },
+    "answer": {
+      "id": "Waktu bervariasi. Pantau status di aplikasi. Kelengkapan dan kejelasan data membantu memperlancar proses.",
+      "en": "Timing varies. Check status in the app. Complete, clear information helps speed up processing.",
+      "zh": "时间因个案而异，请在 App 内查看进度；资料完整清晰有助于加快处理。"
+    }
+  },
+  {
+    "id": 14,
+    "category": {
+      "id": "Verifikasi & penilaian risiko",
+      "en": "Verification & risk review",
+      "zh": "风控审核"
+    },
+    "question": {
+      "id": "14. Mengapa pengajuan saya ditolak?",
+      "en": "14. Why was my application rejected?",
+      "zh": "14. 为什么会被拒？"
+    },
+    "answer": {
+      "id": "Bisa karena tidak memenuhi kriteria risiko, data tidak konsisten, atau kebijakan internal. Pengajuan ulang mungkin tersedia setelah periode tertentu jika fitur/ketentuan mengizinkan.",
+      "en": "You may not meet risk criteria, data may be inconsistent, or internal policy may apply. Re-application may be available after a waiting period if permitted.",
+      "zh": "可能未满足风控标准、资料不一致或内部政策限制；若允许，可能在等待期后再次申请。"
+    }
+  },
+  {
+    "id": 15,
+    "category": {
+      "id": "Verifikasi & penilaian risiko",
+      "en": "Verification & risk review",
+      "zh": "风控审核"
+    },
+    "question": {
+      "id": "15. Mengapa limit saya berbeda dengan pengguna lain?",
+      "en": "15. Why is my limit different from other users’?",
+      "zh": "15. 为什么我的额度和别人不同？"
+    },
+    "answer": {
+      "id": "Limit dipersonalisasi berdasarkan profil risiko dan kebijakan produk, dan dapat berubah seiring pembaruan data atau riwayat.",
+      "en": "Limits are personalized by risk profile and product policy and may change with updated data or history.",
+      "zh": "额度按风险画像与产品规则个性化，并可能随资料更新或历史记录变化。"
+    }
+  },
+  {
+    "id": 16,
+    "category": {
+      "id": "Verifikasi & penilaian risiko",
+      "en": "Verification & risk review",
+      "zh": "风控审核"
+    },
+    "question": {
+      "id": "16. Apakah ada pemeriksaan ke lembaga informasi kredit?",
+      "en": "16. Is there a credit bureau check?",
+      "zh": "16. 是否会查询征信/信用信息机构？"
+    },
+    "answer": {
+      "id": "Jika diwajibkan oleh produk dan regulasi yang berlaku, pemeriksaan dapat dilakukan sesuai ketentuan. Rujuk Syarat & Ketentuan serta Kebijakan Privasi.",
+      "en": "If required by the product and applicable regulations, checks may be performed as allowed. Refer to the Terms & Conditions and Privacy Policy.",
+      "zh": "如产品与法规要求，可能依法进行相关查询；详见用户协议与隐私政策。"
+    }
+  },
+  {
+    "id": 17,
+    "category": {
+      "id": "Pinjaman & pencairan",
+      "en": "Loan & disbursement",
+      "zh": "借款与放款"
+    },
+    "question": {
+      "id": "17. Bagaimana cara mengajukan pinjaman?",
+      "en": "17. How do I apply for a loan?",
+      "zh": "17. 如何申请借款？"
+    },
+    "answer": {
+      "id": "Hanya melalui aplikasi PinGo: pilih nominal dan tenor yang tersedia, tinjau rincian biaya, lalu konfirmasi pengajuan.",
+      "en": "Only in the PinGo app: choose the available amount and tenor, review fee details, then confirm and submit.",
+      "zh": "仅在 PinGo App 内选择可用金额与期限，核对费用明细后确认提交。"
+    }
+  },
+  {
+    "id": 18,
+    "category": {
+      "id": "Pinjaman & pencairan",
+      "en": "Loan & disbursement",
+      "zh": "借款与放款"
+    },
+    "question": {
+      "id": "18. Ke rekening mana dana dicairkan?",
+      "en": "18. Where is the money sent?",
+      "zh": "18. 放款到哪里？"
+    },
+    "answer": {
+      "id": "Biasanya ke rekening bank peminjam yang telah diverifikasi. Pastikan data rekening benar.",
+      "en": "Usually to the borrower’s verified bank account. Ensure your bank details are correct.",
+      "zh": "一般打入已验证的借款人本人银行账户，请确保账户信息正确。"
+    }
+  },
+  {
+    "id": 19,
+    "category": {
+      "id": "Pinjaman & pencairan",
+      "en": "Loan & disbursement",
+      "zh": "借款与放款"
+    },
+    "question": {
+      "id": "19. Dana belum masuk, apa yang harus dilakukan?",
+      "en": "19. The money hasn’t arrived. What should I do?",
+      "zh": "19. 钱还没到账怎么办？"
+    },
+    "answer": {
+      "id": "Periksa status pencairan di aplikasi dan kemungkinan keterlambatan dari pihak bank. Jika status sudah menunjukkan pencairan namun dana belum diterima, hubungi CS resmi dengan nomor referensi transaksi.",
+      "en": "Check disbursement status in the app and possible bank delays. If the app shows disbursed funds but you haven’t received them, contact official support with your transaction reference.",
+      "zh": "在 App 查看放款状态并留意银行侧延迟；若显示已放款仍未到账，请携带交易参考号联系官方客服。"
+    }
+  },
+  {
+    "id": 20,
+    "category": {
+      "id": "Pinjaman & pencairan",
+      "en": "Loan & disbursement",
+      "zh": "借款与放款"
+    },
+    "question": {
+      "id": "20. Bisakah saya membatalkan setelah disetujui?",
+      "en": "20. Can I cancel after approval?",
+      "zh": "20. 批准后能否取消？"
+    },
+    "answer": {
+      "id": "Mengikuti kebijakan produk pada saat itu. Lihat halaman konfirmasi di aplikasi atau tanyakan ke CS resmi.",
+      "en": "Follows the product policy at the time. Check the in-app confirmation screen or ask official support.",
+      "zh": "以当时产品规则为准，请查看 App 内确认页或咨询官方客服。"
+    }
+  },
+  {
+    "id": 21,
+    "category": {
+      "id": "Bunga, biaya & pembayaran",
+      "en": "Interest, fees & repayment",
+      "zh": "利息、费用与还款"
+    },
+    "question": {
+      "id": "21. Biaya apa saja yang mungkin berlaku?",
+      "en": "21. What fees may apply?",
+      "zh": "21. 可能有哪些费用？"
+    },
+    "answer": {
+      "id": "Umumnya mencakup bunga dan/atau biaya layanan sesuai paket. Rincian harus terlihat jelas sebelum Anda menyetujui pinjaman di aplikasi.",
+      "en": "Typically interest and/or service fees per plan. Details must be clearly shown before you accept the loan in the app.",
+      "zh": "通常包括利息及/或服务费；在 App 内确认借款前应展示清晰明细。"
+    }
+  },
+  {
+    "id": 22,
+    "category": {
+      "id": "Bunga, biaya & pembayaran",
+      "en": "Interest, fees & repayment",
+      "zh": "利息、费用与还款"
+    },
+    "question": {
+      "id": "22. Bagaimana cara melihat jadwal dan total pembayaran?",
+      "en": "22. How do I see the repayment schedule and total amount?",
+      "zh": "22. 如何查看还款计划与应还总额？"
+    },
+    "answer": {
+      "id": "Melalui menu pinjaman/tagihan di aplikasi.",
+      "en": "In the loan/bills section of the app.",
+      "zh": "在 App 的借款/账单相关页面查看。"
+    }
+  },
+  {
+    "id": 23,
+    "category": {
+      "id": "Bunga, biaya & pembayaran",
+      "en": "Interest, fees & repayment",
+      "zh": "利息、费用与还款"
+    },
+    "question": {
+      "id": "23. Metode pembayaran apa yang tersedia?",
+      "en": "23. What repayment methods are available?",
+      "zh": "23. 有哪些还款方式？"
+    },
+    "answer": {
+      "id": "Mengikuti channel resmi yang ditampilkan di aplikasi (misalnya virtual account, e-wallet, atau metode lain). Gunakan hanya instruksi resmi di aplikasi.",
+      "en": "Only official channels shown in the app (e.g., virtual account, e-wallet, or others). Follow in-app official instructions only.",
+      "zh": "仅使用 App 内展示的官方渠道（如 VA、电子钱包等）。务必只按 App 内官方指引操作。"
+    }
+  },
+  {
+    "id": 24,
+    "category": {
+      "id": "Bunga, biaya & pembayaran",
+      "en": "Interest, fees & repayment",
+      "zh": "利息、费用与还款"
+    },
+    "question": {
+      "id": "24. Apa yang terjadi jika terlambat membayar?",
+      "en": "24. What happens if I repay late?",
+      "zh": "24. 逾期会怎样？"
+    },
+    "answer": {
+      "id": "Denda/keterlambatan dapat berlaku sesuai perjanjian dan dapat mempengaruhi penilaian pada pengajuan berikutnya.",
+      "en": "Late fees may apply per your agreement and late repayment may affect future assessments.",
+      "zh": "可能产生逾期费用（以合同为准），并可能影响后续评估。"
+    }
+  },
+  {
+    "id": 25,
+    "category": {
+      "id": "Bunga, biaya & pembayaran",
+      "en": "Interest, fees & repayment",
+      "zh": "利息、费用与还款"
+    },
+    "question": {
+      "id": "25. Bisakah saya memperpanjang tenor?",
+      "en": "25. Can I extend the loan tenor?",
+      "zh": "25. 能否展期？"
+    },
+    "answer": {
+      "id": "Jika fitur tersedia, opsi akan muncul di aplikasi beserta ketentuan biaya tambahan. Jika tidak tersedia, selesaikan sesuai jadwal.",
+      "en": "If available, options will appear in the app with any additional fees. If not, repay on schedule.",
+      "zh": "若支持，App 会展示展期选项及费用；不支持则需按期还款。"
+    }
+  },
+  {
+    "id": 26,
+    "category": {
+      "id": "Keamanan & privasi",
+      "en": "Security & privacy",
+      "zh": "安全与隐私"
+    },
+    "question": {
+      "id": "26. Bagaimana menghindari penipuan?",
+      "en": "26. How do I avoid scams?",
+      "zh": "26. 如何防诈骗？"
+    },
+    "answer": {
+      "id": "Unduh aplikasi hanya dari toko aplikasi resmi. PinGo tidak meminta OTP/kata sandi melalui chat pribadi di luar saluran resmi aplikasi.",
+      "en": "Download the app only from official app stores. PinGo will not ask for your OTP/password via private chats outside official in-app channels.",
+      "zh": "仅从官方应用商店下载 App；官方不会通过 App 外私聊索要 OTP/密码。"
+    }
+  },
+  {
+    "id": 27,
+    "category": {
+      "id": "Keamanan & privasi",
+      "en": "Security & privacy",
+      "zh": "安全与隐私"
+    },
+    "question": {
+      "id": "27. Saya diminta transfer ke rekening pribadi “petugas”. Apakah ini benar?",
+      "en": "27. Someone asked me to transfer money to a personal “staff” account. Is this real?",
+      "zh": "27. 有人让我转到“员工”私人账户？"
+    },
+    "answer": {
+      "id": "Tidak. Pembayaran hanya mengikuti instruksi resmi di aplikasi.",
+      "en": "No. Repayments must follow official in-app instructions only.",
+      "zh": "不正常。还款必须仅按 App 内官方指引操作。"
+    }
+  },
+  {
+    "id": 28,
+    "category": {
+      "id": "Keamanan & privasi",
+      "en": "Security & privacy",
+      "zh": "安全与隐私"
+    },
+    "question": {
+      "id": "28. Bagaimana jika saya ingin berhenti menerima notifikasi atau berkaitan dengan data saya?",
+      "en": "28. Notifications and my personal data",
+      "zh": "28. 通知与个人数据相关"
+    },
+    "answer": {
+      "id": "Ikuti pengaturan aplikasi atau hubungi CS resmi sesuai Kebijakan Privasi dan ketentuan retensi data.",
+      "en": "Use in-app settings or contact official support per the Privacy Policy and data retention rules.",
+      "zh": "可在 App 设置中处理，或按《隐私政策》联系官方客服。"
+    }
+  },
+  {
+    "id": 29,
+    "category": {
+      "id": "Akun & aplikasi",
+      "en": "Account & app",
+      "zh": "账号与应用"
+    },
+    "question": {
+      "id": "29. Saya lupa PIN/kata sandi.",
+      "en": "29. I forgot my PIN/password.",
+      "zh": "29. 忘记 PIN/密码？"
+    },
+    "answer": {
+      "id": "Gunakan fitur pemulihan di halaman masuk dan ikuti verifikasi OTP (WhatsApp/SMS sesuai sistem).",
+      "en": "Use recovery on the sign-in screen and complete OTP verification (WhatsApp/SMS as provided by the system).",
+      "zh": "在登录页使用找回流程，并通过 OTP 验证（WhatsApp/短信以系统实际发送为准）。"
+    }
+  },
+  {
+    "id": 30,
+    "category": {
+      "id": "Akun & aplikasi",
+      "en": "Account & app",
+      "zh": "账号与应用"
+    },
+    "question": {
+      "id": "30. Nomor HP saya berubah.",
+      "en": "30. My phone number changed.",
+      "zh": "30. 手机号换了？"
+    },
+    "answer": {
+      "id": "Hubungi CS resmi dengan prosedur verifikasi identitas untuk pembaruan nomor.",
+      "en": "Contact official support and complete identity verification to update your number.",
+      "zh": "联系官方客服并完成身份核验后更新。"
+    }
+  },
+  {
+    "id": 31,
+    "category": {
+      "id": "Akun & aplikasi",
+      "en": "Account & app",
+      "zh": "账号与应用"
+    },
+    "question": {
+      "id": "31. Aplikasi lambat atau error.",
+      "en": "31. The app is slow or shows errors.",
+      "zh": "31. App 卡顿或报错？"
+    },
+    "answer": {
+      "id": "Perbarui aplikasi, bersihkan cache, atau ganti jaringan. Jika berlanjut, laporkan ke CS dengan tangkapan layar dan waktu kejadian.",
+      "en": "Update the app, clear cache, or switch networks. If it persists, report to support with screenshots and timestamps.",
+      "zh": "尝试更新 App、清理缓存或切换网络；若持续，请向客服反馈并附截图与时间。"
+    }
+  },
+  {
+    "id": 32,
+    "category": {
+      "id": "Akun & aplikasi",
+      "en": "Account & app",
+      "zh": "账号与应用"
+    },
+    "question": {
+      "id": "32. Bagaimana menghubungi layanan pelanggan resmi?",
+      "en": "32. How do I contact official customer service?",
+      "zh": "32. 如何联系官方客服？"
+    },
+    "answer": {
+      "id": "Gunakan kontak resmi yang ditampilkan di aplikasi PinGo (misalnya chat in-app, email, atau kanal resmi lain jika disediakan).",
+      "en": "Use the official contact methods shown in the PinGo app (e.g., in-app chat, email, or other official channels if provided).",
+      "zh": "以 PinGo App 内公示方式为准（如应用内客服、邮箱或其他官方渠道）。"
+    }
+  },
+  {
+    "id": 33,
+    "category": {
+      "id": "Akun & aplikasi",
+      "en": "Account & app",
+      "zh": "账号与应用"
+    },
+    "question": {
+      "id": "33. Bagaimana jika saya ingin mengajukan komplain?",
+      "en": "33. How do I file a complaint?",
+      "zh": "33. 如何投诉？"
+    },
+    "answer": {
+      "id": "Sampaikan melalui CS resmi dengan ID pengajuan/kontrak, bukti, dan urutan kejadian.",
+      "en": "Contact official support with your application/contract ID, evidence, and a clear timeline.",
+      "zh": "通过官方客服提交，附上申请/合同编号、凭证与时间线。"
+    }
+  }
+]

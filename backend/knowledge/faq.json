@@ -1,24 +1,867 @@
 [
   {
-    "id": 1,
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Apa itu PinGo?",
+      "en": "1. What is PinGo?",
+      "zh": "PinGo是什么？"
+    },
+    "answer": {
+      "id": "PinGo adalah platform pinjaman digital.",
+      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app.",
+      "zh": "PinGo为印尼用户提供线上借款服务。"
+    },
+    "id": 1
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Bagaimana menghubungi CS?",
+      "en": "",
+      "zh": "客服联系方式？"
+    },
+    "answer": {
+      "id": "Saluran resmi: LiveChat di aplikasi.",
+      "en": "",
+      "zh": "官方渠道：App LiveChat。"
+    },
+    "id": 2
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "02-产品介绍",
+    "note": null,
+    "category": {
+      "id": "Produk",
+      "en": "Product",
+      "zh": "产品"
+    },
+    "question": {
+      "id": "Jam operasional?",
+      "en": "",
+      "zh": "客服时间？"
+    },
+    "answer": {
+      "id": "08.00-20.00 WIB",
+      "en": "",
+      "zh": "08:00-20:00 WIB"
+    },
+    "id": 3
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
     "category": {
       "id": "Pendaftaran",
       "en": "Registration",
       "zh": "注册"
     },
     "question": {
-      "id": "1. Apa itu PinGo?",
-      "en": "1. What is PinGo?",
-      "zh": "1. PinGo 是什么？"
+      "id": "Tidak menerima OTP?",
+      "en": "5. I’m not receiving the OTP. What should I do?",
+      "zh": "收不到OTP怎么办？"
     },
     "answer": {
-      "id": "PinGo adalah layanan pinjaman tunai digital. Pengajuan pinjaman hanya dapat dilakukan melalui aplikasi resmi PinGo.",
-      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app.",
-      "zh": "PinGo 是数字现金贷服务。借款申请仅能通过 PinGo 官方 App 提交。"
-    }
+      "id": "Periksa jaringan dan nomor HP lalu coba lagi.",
+      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone.",
+      "zh": "检查网络、手机号并稍后重试。"
+    },
+    "id": 4
   },
   {
-    "id": 2,
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "Satu nomor untuk berapa akun?",
+      "en": "",
+      "zh": "一个手机号几个账号？"
+    },
+    "answer": {
+      "id": "Satu nomor hanya satu akun.",
+      "en": "",
+      "zh": "一个手机号仅一个账号。"
+    },
+    "id": 5
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "03-注册OTP",
+    "note": null,
+    "category": {
+      "id": "Pendaftaran",
+      "en": "Registration",
+      "zh": "注册"
+    },
+    "question": {
+      "id": "Satu KTP untuk berapa akun?",
+      "en": "",
+      "zh": "一个KTP几个账号？"
+    },
+    "answer": {
+      "id": "Satu KTP hanya satu akun.",
+      "en": "",
+      "zh": "一个KTP仅一个账号。"
+    },
+    "id": 6
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": "SLA",
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Berapa lama verifikasi?",
+      "en": "",
+      "zh": "审核多久？"
+    },
+    "answer": {
+      "id": "Biasanya 10 menit, jika lebih lama hubungi CS.",
+      "en": "",
+      "zh": "正常10分钟内，超时联系客服。"
+    },
+    "id": 7
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Mengapa gagal?",
+      "en": "",
+      "zh": "审核失败？"
+    },
+    "answer": {
+      "id": "Hasil ditentukan sistem.",
+      "en": "",
+      "zh": "系统综合评估，客服无法修改。"
+    },
+    "id": 8
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Syarat foto KTP?",
+      "en": "",
+      "zh": "身份证照片要求？"
+    },
+    "answer": {
+      "id": "Foto harus jelas dan lengkap.",
+      "en": "",
+      "zh": "照片清晰、完整、无遮挡。"
+    },
+    "id": 9
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "04-KYC",
+    "note": null,
+    "category": {
+      "id": "KYC",
+      "en": "KYC",
+      "zh": "KYC"
+    },
+    "question": {
+      "id": "Syarat selfie?",
+      "en": "",
+      "zh": "自拍要求？"
+    },
+    "answer": {
+      "id": "Pastikan wajah jelas dan pencahayaan cukup.",
+      "en": "",
+      "zh": "光线充足，人脸完整。"
+    },
+    "id": 10
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Mengapa tidak ada limit?",
+      "en": "",
+      "zh": "为什么没有额度？"
+    },
+    "answer": {
+      "id": "Limit ditentukan sistem.",
+      "en": "",
+      "zh": "额度由系统评估。"
+    },
+    "id": 11
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Mengapa limit turun?",
+      "en": "",
+      "zh": "为什么额度降低？"
+    },
+    "answer": {
+      "id": "Limit disesuaikan berdasarkan risiko dan riwayat pembayaran.",
+      "en": "",
+      "zh": "根据风险和还款表现动态调整。"
+    },
+    "id": 12
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Bisakah menaikkan limit?",
+      "en": "",
+      "zh": "可以申请提额吗？"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, untul limit pinjaman yang bisa Anda ajukan ditentukan oleh sistem melalui evaluasi menyeluruh. Hasil evaluasi bersifat otomatis dan tidak dapat diubah secara manual.",
+      "en": "",
+      "zh": "目前不支持人工提额。"
+    },
+    "id": 13
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "Jika bayar apa ada kenaikan limit?",
+      "en": "",
+      "zh": "还款后能否提额"
+    },
+    "answer": {
+      "id": "Apa limit Anda bisa naik setelah melunasi pinjaman akan dinilai secara menyeluruh oleh sistem. Kami menyarankan agar Anda selalu menjaga riwayat pembayaran yang baik.",
+      "en": "",
+      "zh": "还款后能否提额由系统综合评估，建议您保持良好的还款习惯。"
+    },
+    "id": 14
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "05-授信额度",
+    "note": null,
+    "category": {
+      "id": "Limit",
+      "en": "Limit",
+      "zh": "额度"
+    },
+    "question": {
+      "id": "saya ditolak kenapa ga berubah",
+      "en": "",
+      "zh": "被拒后倒计时结束界面额度没有任何变化"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, saya mengerti kakak bingung karena limit pinjaman belum berubah meskipun pengajuan sebelumnya ditolak. Setiap penolakan pengajuan akan dievaluasi ulang secara otomatis oleh sistem, proses peninjauan data tidak langsung selesai saat itu juga. Perubahan limit akan muncul setelah sistem menyelesaikan seluruh penilaian.  Silakan tunggu beberapa waktu dan cek halaman akun secara berkala.",
+      "en": "",
+      "zh": "额度变化需要系统综合评估，请耐心等待，定期检查app"
+    },
+    "id": 15
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Kapan dana cair?",
+      "en": "",
+      "zh": "放款多久到账？"
+    },
+    "answer": {
+      "id": "Untuk waktu pencairan pinjaman di pingo minimal 2 jam dan maksimal adalah 1x24 jam.",
+      "en": "",
+      "zh": "通常2小时内，最长24小时。"
+    },
+    "id": 16
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": "Finance",
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Lebih dari 24 jam?",
+      "en": "",
+      "zh": "超过24小时？"
+    },
+    "answer": {
+      "id": "Jika lebih dari 1x24 jam dana belum cair mohon mengirimkan bukti mutasi rekening dari tanggal pengajuan hingga saat ini ke customer service.",
+      "en": "",
+      "zh": "联系客服核实。"
+    },
+    "id": 17
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Bisa dibatalkan?",
+      "en": "",
+      "zh": "可以取消申请吗？"
+    },
+    "answer": {
+      "id": "Mohon maaf, jika Anda sudah dalam proses pencairan tidak dapat dibatalkan.",
+      "en": "",
+      "zh": "目前不支持取消。"
+    },
+    "id": 18
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "kenapa pengajuan gagal?",
+      "en": "",
+      "zh": "申请被拒"
+    },
+    "answer": {
+      "id": "Mohon maaf sekali pengajuan kakak belum bisa kami setujui. Semua penilaian dilakukan secara otomatis oleh sistem berdasarkan berbagai data profil pengguna. Kakak dapat melakukan pengajuan ulang kembali di lain kesempatan.",
+      "en": "",
+      "zh": "由系统决定，下次再试"
+    },
+    "id": 19
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Kenapa saya tidak mendapatkan limit lagi setelah melunasi tagihan",
+      "en": "",
+      "zh": "还款后再次借款被拒"
+    },
+    "answer": {
+      "id": "Mohon maaf sekali atas kekecewaan ini. Untuk hasil penilaian sepenuhnya diputuskan sistem secara otomatis. Kami tidak bisa ubah hasilnya secara manual. Disarankan kakak menjaga catatan pembayaran lancar tanpa telat dalam jangka waktu beberapa bulan, nanti sistem akan lakukan evaluasi ulang saat kakak mengajukan pinjaman kembali.",
+      "en": "",
+      "zh": "由系统决定，系统会定期重新评估，请下次再试"
+    },
+    "id": 20
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "Nama KTP tidak sesuai",
+      "en": "",
+      "zh": "KTP姓名有误导致无法绑卡"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak. Nama yang terdeteksi saat pemindaian KTP tidak cocok, sehingga tidak dapat menambahkan rekening. Tim kami akan membantu memperbaiki data nama kakak melalui backend sistem. Namun kakak perlu mengirimkan foto KTP asli yang jelas kepada kami untuk proses verifikasi data.",
+      "en": "",
+      "zh": "相关团队可协助在后台进行姓名更改，请提供身份证照片"
+    },
+    "id": 21
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "06-借款",
+    "note": null,
+    "category": {
+      "id": "Pinjaman",
+      "en": "Loan",
+      "zh": "借款"
+    },
+    "question": {
+      "id": "kak tetap tidak bisa isi rekening kK",
+      "en": "",
+      "zh": "绑卡验证频繁"
+    },
+    "answer": {
+      "id": "Maaf ya kak, kakak terlalu sering coba verifikasi kartu sehingga sistem menampilkan error. Kakak perlu tunggu sekitar 24 jam baru bisa coba verifikasi kartu kembali ya",
+      "en": "",
+      "zh": "24小时后再试"
+    },
+    "id": 22
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Cara pembayaran?",
+      "en": "",
+      "zh": "如何还款？"
+    },
+    "answer": {
+      "id": "Platform kami saat ini mendukung pembayaran melalui BNI, BRI, Mandiri dan Permata. Silakan pakai VA yang tersedia di aplikasi, lalu lakukan transfer melalui salah satu dari empat bank tersebut untuk menyelesaikan pembayaran tagihan kakak. Jika kakak kesulitan menemukan kode bayar, saya bisa bantu jelaskan langkahnya.",
+      "en": "",
+      "zh": "仅支持VA。"
+    },
+    "id": 23
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Pelunasan dipercepat?",
+      "en": "",
+      "zh": "提前还款？"
+    },
+    "answer": {
+      "id": "Didukung.",
+      "en": "",
+      "zh": "支持。"
+    },
+    "id": 24
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": "Finance",
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Pembayaran belum masuk?",
+      "en": "",
+      "zh": "付款未到账？"
+    },
+    "answer": {
+      "id": "Jika >2 jam kirim Bukti Pembayaran, Nomor VA, Waktu Transaksi.",
+      "en": "",
+      "zh": "超过2小时提供Payment Receipt、VA Number、Transaction Time。"
+    },
+    "id": 25
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Mendukung cicilan?",
+      "en": "",
+      "zh": "支持分期？"
+    },
+    "answer": {
+      "id": "Belum mendukung.",
+      "en": "",
+      "zh": "暂不支持。"
+    },
+    "id": 26
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Mendukung Extension?",
+      "en": "",
+      "zh": "支持展期？"
+    },
+    "answer": {
+      "id": "Jika memenuhi syarat dapat Extension setelah membayar bunga.",
+      "en": "",
+      "zh": "符合条件可展期，支付利息后延期。"
+    },
+    "id": 27
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Bagaimana saya membayar via bca?",
+      "en": "",
+      "zh": "如何使用bca还款"
+    },
+    "answer": {
+      "id": "Jika Anda menggunakan BCA Mobile atau myBCA, silakan pilih menu Transfer Antar Bank, kemudian pilih bank tujuan (BRI / Permata) dan masukkan Nomor Virtual Account yang tertera pada halaman pembayaran. Pastikan nominal transfer sesuai dengan jumlah tagihan agar pembayaran dapat diproses secara otomatis.",
+      "en": "",
+      "zh": "若您使用 BCA Mobile 或 myBCA 应用，请选择跨行转账菜单，接着选择收款银行（BRI / Permata），输入支付页面显示的虚拟账号。"
+    },
+    "id": 28
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "07-还款",
+    "note": null,
+    "category": {
+      "id": "Pembayaran",
+      "en": "Repayment",
+      "zh": "还款"
+    },
+    "question": {
+      "id": "Kenapa di situ tidak bisa masuk bank ***",
+      "en": "",
+      "zh": "不支持用户想使用的还款渠道"
+    },
+    "answer": {
+      "id": "Maaf ya kak, bank yang kakak gunakan belum masuk daftar bank yang didukung sistem kami, makanya tidak bisa terhubung kartu. Kakak bisa coba pakai rekening bank lain yang tersedia di halaman penautan kartu ya",
+      "en": "",
+      "zh": "系统不支持，请使用app里展示的还款渠道"
+    },
+    "id": 29
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Apa yang harus dilakukan?",
+      "en": "",
+      "zh": "逾期怎么办？"
+    },
+    "answer": {
+      "id": "Segera bayar, jika memenuhi syarat dapat Extension.",
+      "en": "",
+      "zh": "尽快还款，符合条件可申请展期。"
+    },
+    "id": 30
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Apakah ada pengingat?",
+      "en": "",
+      "zh": "会收到提醒吗？"
+    },
+    "answer": {
+      "id": "Sistem dapat mengirim SMS pengingat.",
+      "en": "",
+      "zh": "系统会发送短信提醒。"
+    },
+    "id": 31
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "08-逾期",
+    "note": null,
+    "category": {
+      "id": "Keterlambatan",
+      "en": "Overdue",
+      "zh": "逾期"
+    },
+    "question": {
+      "id": "Spam dc",
+      "en": "",
+      "zh": "暴力催收"
+    },
+    "answer": {
+      "id": "Saya benar-benar menyesal dan sangat paham rasa tidak nyaman kakak akibat perilaku penagihan yang tidak sopan, terima kasih sudah mengirimkan bukti kepada kami ya kak. Tim khusus kami akan segera investigasi kasus ini secara menyeluruh. Jika ada keluhan lain kakak bisa sampaikan langsung ke saya.",
+      "en": "",
+      "zh": "提供证据，立即跟进"
+    },
+    "id": 32
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu KTP?",
+      "en": "",
+      "zh": "为什么需要KTP？"
+    },
+    "answer": {
+      "id": "Verifikasi identitas.",
+      "en": "",
+      "zh": "身份认证。"
+    },
+    "id": 33
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu kamera?",
+      "en": "",
+      "zh": "为什么需要相机？"
+    },
+    "answer": {
+      "id": "Selfie verification.",
+      "en": "",
+      "zh": "自拍认证。"
+    },
+    "id": 34
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Mengapa perlu lokasi?",
+      "en": "",
+      "zh": "为什么需要定位？"
+    },
+    "answer": {
+      "id": "Analisis risiko.",
+      "en": "",
+      "zh": "风险评估。"
+    },
+    "id": 35
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "Gimana cara hapus akun nya?",
+      "en": "",
+      "zh": "注销账户"
+    },
+    "answer": {
+      "id": "Jika kakak benar yakin menghapus akun, nanti saya akan memasukkan akun kak ke blacklist. Setelah itu kak tidak bisa mengajukan pinjaman lagi di aplikasi pingo.",
+      "en": "",
+      "zh": "可添加黑名单"
+    },
+    "id": 36
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "09-账户安全",
+    "note": null,
+    "category": {
+      "id": "Keamanan",
+      "en": "Security",
+      "zh": "安全"
+    },
+    "question": {
+      "id": "sudah buka izin tapi tidak bisa mengajukan pinjaman",
+      "en": "",
+      "zh": "权限未打开问题"
+    },
+    "answer": {
+      "id": "Silakan masuk ke pengaturan ponsel Anda, buka menu Aplikasi > PinGo, pastikan seluruh izin akses telah diaktifkan tanpa ada izin yang ditolak.",
+      "en": "",
+      "zh": "打开手机设置，找到“软件->PinGo”,然后打开所有的权限"
+    },
+    "id": 37
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Alur penanganan?",
+      "en": "",
+      "zh": "处理流程？"
+    },
+    "answer": {
+      "id": "Nomor HP→Nomor Pinjaman→Deskripsi→Screenshot→Tiket→Hasil.",
+      "en": "",
+      "zh": "手机号→订单号→问题描述→截图→提交工单→反馈结果。"
+    },
+    "id": 38
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Estimasi?",
+      "en": "",
+      "zh": "预计处理时间？"
+    },
+    "answer": {
+      "id": "Diproses sesuai tiket dan diinformasikan.",
+      "en": "",
+      "zh": "按工单进度处理并及时反馈。"
+    },
+    "id": 39
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Pinjaman saya 500rb knapa di cairkan uangnya hanya 300rb",
+      "en": "",
+      "zh": "投诉20%砍头息"
+    },
+    "answer": {
+      "id": "Mohon maaf ya kak, platform akan mengenakan sejumlah biaya layanan sebelum dana dicairkan. Semua detail biaya sudah kelihatan jelas di aplikasi sebelum kakak setuju pinjaman.",
+      "en": "",
+      "zh": "系统在放款前会收取一定服务费"
+    },
+    "id": 40
+  },
+  {
+    "source": "kb_v2_xlsx",
+    "sheet": "10-投诉处理",
+    "note": null,
+    "category": {
+      "id": "Komplain",
+      "en": "Complaint",
+      "zh": "投诉"
+    },
+    "question": {
+      "id": "Bunga terlalu besar",
+      "en": "",
+      "zh": "利息高"
+    },
+    "answer": {
+      "id": "Saya mengerti kebingungan kakak terkait total biaya pinjaman yang dikenakan ya kak. Semua rincian suku bunga, biaya administrasi serta ketentuan total biaya layanan sudah ditampilkan secara jelas di aplikasi sebelum kakak menyetujui pengajuan pinjaman. Semua ketentuan tersebut sudah kakak setujui sebelum dana dicairkan.",
+      "en": "",
+      "zh": "费用明细已在app中展示，放款前您已同意"
+    },
+    "id": 41
+  },
+  {
+    "id": 42,
     "category": {
       "id": "Pendaftaran",
       "en": "Registration",
@@ -33,10 +876,11 @@
       "id": "Warga Negara Indonesia dengan identitas valid, memenuhi syarat usia minimum sesuai kebijakan produk, memiliki nomor HP aktif, serta rekening bank atas nama sendiri bila diperlukan untuk pencairan.",
       "en": "Indonesian citizens with valid ID, meeting the minimum age required by the product policy, with an active mobile number, and a bank account in your own name when required for disbursement.",
       "zh": "持有效身份的印尼公民，满足产品规定的最低年龄，拥有有效手机号；如需放款则通常需本人名下银行账户。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 3,
+    "id": 43,
     "category": {
       "id": "Pendaftaran",
       "en": "Registration",
@@ -51,10 +895,11 @@
       "id": "Unduh aplikasi resmi PinGo dari toko aplikasi resmi, daftar dengan nomor HP, lalu ikuti langkah di aplikasi. Pengajuan pinjaman tidak tersedia di luar aplikasi.",
       "en": "Download the official PinGo app from an official app store, register with your mobile number, then follow the in-app steps. Loan applications are not available outside the app.",
       "zh": "从官方应用商店下载 PinGo 官方 App，使用手机号注册并按提示完成流程。App 之外无法提交借款申请。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 4,
+    "id": 44,
     "category": {
       "id": "Pendaftaran",
       "en": "Registration",
@@ -69,28 +914,11 @@
       "id": "OTP dapat dikirim melalui WhatsApp atau SMS sesuai ketersediaan channel dan kebijakan sistem pada saat itu.",
       "en": "The OTP may be sent via WhatsApp or SMS, depending on channel availability and system policy at the time.",
       "zh": "OTP 可能通过 WhatsApp 或短信（SMS）发送，具体以系统当时可用渠道与规则为准。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 5,
-    "category": {
-      "id": "Pendaftaran",
-      "en": "Registration",
-      "zh": "注册"
-    },
-    "question": {
-      "id": "5. OTP tidak masuk, apa yang harus dilakukan?",
-      "en": "5. I’m not receiving the OTP. What should I do?",
-      "zh": "5. 收不到 OTP 怎么办？"
-    },
-    "answer": {
-      "id": "Pastikan nomor HP aktif, sinyal stabil, dan Anda tidak memblokir pesan. Coba kirim ulang OTP. Jika masih gagal, hubungi layanan pelanggan resmi melalui kontak yang tertera di aplikasi. Jangan pernah memberikan OTP kepada siapa pun.",
-      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone.",
-      "zh": "确认号码可用、信号稳定、未拦截短信；可尝试重新获取。若仍失败，请通过 App 内公示的官方客服渠道联系。切勿向任何人透露 OTP。"
-    }
-  },
-  {
-    "id": 6,
+    "id": 45,
     "category": {
       "id": "Pendaftaran",
       "en": "Registration",
@@ -105,10 +933,11 @@
       "id": "Umumnya tidak. Satu identitas biasanya hanya untuk satu akun demi keamanan dan penilaian risiko.",
       "en": "Usually no. One identity is typically limited to one account for security and risk assessment.",
       "zh": "一般不可以。同一身份通常仅限一个账户，用于安全与风控。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 7,
+    "id": 46,
     "category": {
       "id": "Mengisi data",
       "en": "Profile information",
@@ -123,10 +952,11 @@
       "id": "Biasanya mencakup data pribadi, pekerjaan/pendapatan, kontak darurat, dan informasi rekening penerima dana sesuai permintaan di aplikasi.",
       "en": "Typically personal details, employment/income information, emergency contacts, and bank details as requested in the app.",
       "zh": "通常包括个人信息、工作/收入、紧急联系人，以及 App 要求的收款账户信息。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 8,
+    "id": 47,
     "category": {
       "id": "Mengisi data",
       "en": "Profile information",
@@ -141,10 +971,11 @@
       "id": "Untuk verifikasi identitas dan unggah dokumen sesuai kebijakan produk. Penjelasan lebih lengkap ada di Kebijakan Privasi.",
       "en": "For identity verification and document upload per product policy. See the Privacy Policy for more details.",
       "zh": "用于身份核验与资料上传，具体以产品政策与隐私政策说明为准。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 9,
+    "id": 48,
     "category": {
       "id": "Mengisi data",
       "en": "Profile information",
@@ -159,10 +990,11 @@
       "id": "Contoh umum: KTP dan selfie verifikasi; dokumen pendukung pendapatan jika diminta sistem. Daftar final mengikuti instruksi di aplikasi.",
       "en": "Examples: national ID (KTP) and a verification selfie; income-related documents if requested. The final list follows in-app instructions.",
       "zh": "例如：身份证（KTP）、核验自拍；如系统要求则可能需要收入类证明。以 App 内实际提示为准。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 10,
+    "id": 49,
     "category": {
       "id": "Mengisi data",
       "en": "Profile information",
@@ -177,10 +1009,11 @@
       "id": "Perbarui di bagian profil jika tersedia, atau hubungi CS resmi. Pastikan nama sesuai KTP dan rekening bank.",
       "en": "Update it in your profile if available, or contact official support. Ensure your name matches your ID and bank account.",
       "zh": "若支持可在资料页修改，或联系官方客服。姓名需与证件及银行账户一致。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 11,
+    "id": 50,
     "category": {
       "id": "Mengisi data",
       "en": "Profile information",
@@ -195,10 +1028,11 @@
       "id": "Perlindungan data mengikuti Kebijakan Privasi PinGo. Lindungi kata sandi/PIN dan jangan membagikan OTP.",
       "en": "Data handling follows PinGo’s Privacy Policy. Protect your password/PIN and do not share OTPs.",
       "zh": "数据处理遵循 PinGo《隐私政策》。请妥善保管密码/PIN，不要泄露 OTP。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 12,
+    "id": 51,
     "category": {
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review",
@@ -213,10 +1047,11 @@
       "id": "Sistem dapat menilai konsistensi data, kelayakan, parameter risiko internal, serta riwayat relevan sesuai kebijakan PinGo.",
       "en": "The system may assess data consistency, eligibility, internal risk parameters, and relevant history per PinGo policy.",
       "zh": "可能包括资料一致性、准入条件、内部风控参数及相关历史（如适用），以 PinGo 政策为准。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 13,
+    "id": 52,
     "category": {
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review",
@@ -231,10 +1066,11 @@
       "id": "Waktu bervariasi. Pantau status di aplikasi. Kelengkapan dan kejelasan data membantu memperlancar proses.",
       "en": "Timing varies. Check status in the app. Complete, clear information helps speed up processing.",
       "zh": "时间因个案而异，请在 App 内查看进度；资料完整清晰有助于加快处理。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 14,
+    "id": 53,
     "category": {
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review",
@@ -249,10 +1085,11 @@
       "id": "Bisa karena tidak memenuhi kriteria risiko, data tidak konsisten, atau kebijakan internal. Pengajuan ulang mungkin tersedia setelah periode tertentu jika fitur/ketentuan mengizinkan.",
       "en": "You may not meet risk criteria, data may be inconsistent, or internal policy may apply. Re-application may be available after a waiting period if permitted.",
       "zh": "可能未满足风控标准、资料不一致或内部政策限制；若允许，可能在等待期后再次申请。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 15,
+    "id": 54,
     "category": {
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review",
@@ -267,10 +1104,11 @@
       "id": "Limit dipersonalisasi berdasarkan profil risiko dan kebijakan produk, dan dapat berubah seiring pembaruan data atau riwayat.",
       "en": "Limits are personalized by risk profile and product policy and may change with updated data or history.",
       "zh": "额度按风险画像与产品规则个性化，并可能随资料更新或历史记录变化。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 16,
+    "id": 55,
     "category": {
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review",
@@ -285,10 +1123,11 @@
       "id": "Jika diwajibkan oleh produk dan regulasi yang berlaku, pemeriksaan dapat dilakukan sesuai ketentuan. Rujuk Syarat & Ketentuan serta Kebijakan Privasi.",
       "en": "If required by the product and applicable regulations, checks may be performed as allowed. Refer to the Terms & Conditions and Privacy Policy.",
       "zh": "如产品与法规要求，可能依法进行相关查询；详见用户协议与隐私政策。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 17,
+    "id": 56,
     "category": {
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement",
@@ -303,10 +1142,11 @@
       "id": "Hanya melalui aplikasi PinGo: pilih nominal dan tenor yang tersedia, tinjau rincian biaya, lalu konfirmasi pengajuan.",
       "en": "Only in the PinGo app: choose the available amount and tenor, review fee details, then confirm and submit.",
       "zh": "仅在 PinGo App 内选择可用金额与期限，核对费用明细后确认提交。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 18,
+    "id": 57,
     "category": {
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement",
@@ -321,10 +1161,11 @@
       "id": "Biasanya ke rekening bank peminjam yang telah diverifikasi. Pastikan data rekening benar.",
       "en": "Usually to the borrower’s verified bank account. Ensure your bank details are correct.",
       "zh": "一般打入已验证的借款人本人银行账户，请确保账户信息正确。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 19,
+    "id": 58,
     "category": {
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement",
@@ -339,10 +1180,11 @@
       "id": "Periksa status pencairan di aplikasi dan kemungkinan keterlambatan dari pihak bank. Jika status sudah menunjukkan pencairan namun dana belum diterima, hubungi CS resmi dengan nomor referensi transaksi.",
       "en": "Check disbursement status in the app and possible bank delays. If the app shows disbursed funds but you haven’t received them, contact official support with your transaction reference.",
       "zh": "在 App 查看放款状态并留意银行侧延迟；若显示已放款仍未到账，请携带交易参考号联系官方客服。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 20,
+    "id": 59,
     "category": {
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement",
@@ -357,10 +1199,11 @@
       "id": "Mengikuti kebijakan produk pada saat itu. Lihat halaman konfirmasi di aplikasi atau tanyakan ke CS resmi.",
       "en": "Follows the product policy at the time. Check the in-app confirmation screen or ask official support.",
       "zh": "以当时产品规则为准，请查看 App 内确认页或咨询官方客服。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 21,
+    "id": 60,
     "category": {
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment",
@@ -375,10 +1218,11 @@
       "id": "Umumnya mencakup bunga dan/atau biaya layanan sesuai paket. Rincian harus terlihat jelas sebelum Anda menyetujui pinjaman di aplikasi.",
       "en": "Typically interest and/or service fees per plan. Details must be clearly shown before you accept the loan in the app.",
       "zh": "通常包括利息及/或服务费；在 App 内确认借款前应展示清晰明细。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 22,
+    "id": 61,
     "category": {
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment",
@@ -393,10 +1237,11 @@
       "id": "Melalui menu pinjaman/tagihan di aplikasi.",
       "en": "In the loan/bills section of the app.",
       "zh": "在 App 的借款/账单相关页面查看。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 23,
+    "id": 62,
     "category": {
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment",
@@ -411,10 +1256,11 @@
       "id": "Mengikuti channel resmi yang ditampilkan di aplikasi (misalnya virtual account, e-wallet, atau metode lain). Gunakan hanya instruksi resmi di aplikasi.",
       "en": "Only official channels shown in the app (e.g., virtual account, e-wallet, or others). Follow in-app official instructions only.",
       "zh": "仅使用 App 内展示的官方渠道（如 VA、电子钱包等）。务必只按 App 内官方指引操作。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 24,
+    "id": 63,
     "category": {
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment",
@@ -429,10 +1275,11 @@
       "id": "Denda/keterlambatan dapat berlaku sesuai perjanjian dan dapat mempengaruhi penilaian pada pengajuan berikutnya.",
       "en": "Late fees may apply per your agreement and late repayment may affect future assessments.",
       "zh": "可能产生逾期费用（以合同为准），并可能影响后续评估。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 25,
+    "id": 64,
     "category": {
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment",
@@ -447,10 +1294,11 @@
       "id": "Jika fitur tersedia, opsi akan muncul di aplikasi beserta ketentuan biaya tambahan. Jika tidak tersedia, selesaikan sesuai jadwal.",
       "en": "If available, options will appear in the app with any additional fees. If not, repay on schedule.",
       "zh": "若支持，App 会展示展期选项及费用；不支持则需按期还款。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 26,
+    "id": 65,
     "category": {
       "id": "Keamanan & privasi",
       "en": "Security & privacy",
@@ -465,10 +1313,11 @@
       "id": "Unduh aplikasi hanya dari toko aplikasi resmi. PinGo tidak meminta OTP/kata sandi melalui chat pribadi di luar saluran resmi aplikasi.",
       "en": "Download the app only from official app stores. PinGo will not ask for your OTP/password via private chats outside official in-app channels.",
       "zh": "仅从官方应用商店下载 App；官方不会通过 App 外私聊索要 OTP/密码。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 27,
+    "id": 66,
     "category": {
       "id": "Keamanan & privasi",
       "en": "Security & privacy",
@@ -483,10 +1332,11 @@
       "id": "Tidak. Pembayaran hanya mengikuti instruksi resmi di aplikasi.",
       "en": "No. Repayments must follow official in-app instructions only.",
       "zh": "不正常。还款必须仅按 App 内官方指引操作。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 28,
+    "id": 67,
     "category": {
       "id": "Keamanan & privasi",
       "en": "Security & privacy",
@@ -501,10 +1351,11 @@
       "id": "Ikuti pengaturan aplikasi atau hubungi CS resmi sesuai Kebijakan Privasi dan ketentuan retensi data.",
       "en": "Use in-app settings or contact official support per the Privacy Policy and data retention rules.",
       "zh": "可在 App 设置中处理，或按《隐私政策》联系官方客服。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 29,
+    "id": 68,
     "category": {
       "id": "Akun & aplikasi",
       "en": "Account & app",
@@ -519,10 +1370,11 @@
       "id": "Gunakan fitur pemulihan di halaman masuk dan ikuti verifikasi OTP (WhatsApp/SMS sesuai sistem).",
       "en": "Use recovery on the sign-in screen and complete OTP verification (WhatsApp/SMS as provided by the system).",
       "zh": "在登录页使用找回流程，并通过 OTP 验证（WhatsApp/短信以系统实际发送为准）。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 30,
+    "id": 69,
     "category": {
       "id": "Akun & aplikasi",
       "en": "Account & app",
@@ -537,10 +1389,11 @@
       "id": "Hubungi CS resmi dengan prosedur verifikasi identitas untuk pembaruan nomor.",
       "en": "Contact official support and complete identity verification to update your number.",
       "zh": "联系官方客服并完成身份核验后更新。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 31,
+    "id": 70,
     "category": {
       "id": "Akun & aplikasi",
       "en": "Account & app",
@@ -555,10 +1408,11 @@
       "id": "Perbarui aplikasi, bersihkan cache, atau ganti jaringan. Jika berlanjut, laporkan ke CS dengan tangkapan layar dan waktu kejadian.",
       "en": "Update the app, clear cache, or switch networks. If it persists, report to support with screenshots and timestamps.",
       "zh": "尝试更新 App、清理缓存或切换网络；若持续，请向客服反馈并附截图与时间。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 32,
+    "id": 71,
     "category": {
       "id": "Akun & aplikasi",
       "en": "Account & app",
@@ -573,10 +1427,11 @@
       "id": "Gunakan kontak resmi yang ditampilkan di aplikasi PinGo (misalnya chat in-app, email, atau kanal resmi lain jika disediakan).",
       "en": "Use the official contact methods shown in the PinGo app (e.g., in-app chat, email, or other official channels if provided).",
       "zh": "以 PinGo App 内公示方式为准（如应用内客服、邮箱或其他官方渠道）。"
-    }
+    },
+    "source": "legacy_faq"
   },
   {
-    "id": 33,
+    "id": 72,
     "category": {
       "id": "Akun & aplikasi",
       "en": "Account & app",
@@ -591,6 +1446,7 @@
       "id": "Sampaikan melalui CS resmi dengan ID pengajuan/kontrak, bukti, dan urutan kejadian.",
       "en": "Contact official support with your application/contract ID, evidence, and a clear timeline.",
       "zh": "通过官方客服提交，附上申请/合同编号、凭证与时间线。"
-    }
+    },
+    "source": "legacy_faq"
   }
 ]

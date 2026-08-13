@@ -57,6 +57,7 @@ class Settings(BaseSettings):
 
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
     history_path: Path = BACKEND_ROOT / "knowledge" / "history_pairs.json"
+    unknown_questions_path: Path = BACKEND_ROOT / "knowledge" / "unknown_questions.jsonl"
 
     @property
     def cors_origin_list(self) -> list[str]:

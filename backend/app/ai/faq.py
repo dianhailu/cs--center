@@ -27,21 +27,36 @@ class FaqHit:
 
 class FaqIndex:
     def __init__(self, path: Path):
-        raw = json.loads(path.read_text(encoding="utf-8"))
-        self.items: list[dict] = raw
+        self.path = path
+        self.items: list[dict] = []
         self._docs: list[dict] = []
+        self._idf: dict[str, float] = {}
+        self.mtime: float = 0.0
+        self.reload()
+
+    def reload(self) -> None:
+        if not self.path.exists():
+            self.items = []
+            self._docs = []
+            self._idf = {}
+            self.mtime = 0.0
+            return
+        self.mtime = self.path.stat().st_mtime
+        raw = json.loads(self.path.read_text(encoding="utf-8"))
+        self.items = raw if isinstance(raw, list) else []
+        self._docs = []
         for item in self.items:
             bag = " ".join(
                 [
-                    item["question"].get("id", ""),
-                    item["question"].get("en", ""),
-                    item["question"].get("zh", ""),
-                    item["answer"].get("id", ""),
-                    item["answer"].get("en", ""),
-                    item["answer"].get("zh", ""),
-                    item.get("category", {}).get("id", ""),
-                    item.get("category", {}).get("en", ""),
-                    item.get("category", {}).get("zh", ""),
+                    item.get("question", {}).get("id", "") or "",
+                    item.get("question", {}).get("en", "") or "",
+                    item.get("question", {}).get("zh", "") or "",
+                    item.get("answer", {}).get("id", "") or "",
+                    item.get("answer", {}).get("en", "") or "",
+                    item.get("answer", {}).get("zh", "") or "",
+                    (item.get("category") or {}).get("id", "") or "",
+                    (item.get("category") or {}).get("en", "") or "",
+                    (item.get("category") or {}).get("zh", "") or "",
                 ]
             )
             tokens = tokenize(bag)
@@ -54,7 +69,17 @@ class FaqIndex:
         n = max(len(self._docs), 1)
         self._idf = {t: math.log((n + 1) / (c + 1)) + 1.0 for t, c in df.items()}
 
+    def maybe_reload(self) -> None:
+        if not self.path.exists():
+            if self.items:
+                self.reload()
+            return
+        mtime = self.path.stat().st_mtime
+        if mtime != self.mtime:
+            self.reload()
+
     def search(self, query: str, lang: str = "id", top_k: int = 3) -> list[FaqHit]:
+        self.maybe_reload()
         q_tokens = tokenize(query)
         if not q_tokens:
             return []
@@ -64,9 +89,9 @@ class FaqIndex:
             score = _cosine(q_tf, doc["tf"], self._idf)
             # light boost for literal substring hits
             item = doc["item"]
-            q_zh = item["question"].get("zh", "")
-            q_id = item["question"].get("id", "")
-            q_en = item["question"].get("en", "")
+            q_zh = item.get("question", {}).get("zh", "") or ""
+            q_id = item.get("question", {}).get("id", "") or ""
+            q_en = item.get("question", {}).get("en", "") or ""
             ql = query.lower()
             if ql and (ql in q_zh.lower() or ql in q_id.lower() or ql in q_en.lower()):
                 score += 0.35
@@ -75,10 +100,16 @@ class FaqIndex:
             lang_key = _lang_key(lang)
             scored.append(
                 FaqHit(
-                    faq_id=item["id"],
+                    faq_id=int(item.get("id") or 0),
                     score=score,
-                    question=item["question"].get(lang_key) or item["question"].get("id") or "",
-                    answer=item["answer"].get(lang_key) or item["answer"].get("id") or "",
+                    question=item.get("question", {}).get(lang_key)
+                    or item.get("question", {}).get("id")
+                    or item.get("question", {}).get("zh")
+                    or "",
+                    answer=item.get("answer", {}).get(lang_key)
+                    or item.get("answer", {}).get("id")
+                    or item.get("answer", {}).get("zh")
+                    or "",
                     lang=lang_key,
                     category=(item.get("category") or {}).get(lang_key)
                     or (item.get("category") or {}).get("id")

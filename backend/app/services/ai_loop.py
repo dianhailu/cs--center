@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.ai.agent import SupportAgent
 from app.ai.faq import FaqIndex
 from app.ai.history import HistoryIndex
+from app.ai.unknown import append_unknown, should_record_unknown
 from app.channels.liveagent import client_from_connection
 from app.config import get_settings
 from app.models import (
@@ -35,6 +36,8 @@ def get_support_agent() -> SupportAgent:
     settings = get_settings()
     if _faq is None:
         _faq = FaqIndex(settings.faq_path)
+    else:
+        _faq.maybe_reload()
     if _history is None:
         _history = HistoryIndex(settings.history_path)
     else:
@@ -173,6 +176,24 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                     for h in decision.history_hits
                 ],
             }
+            # Knowledge gap: log for teaching (never forces customer delivery by itself).
+            if text and should_record_unknown(decision.action, decision.reason):
+                draft = None
+                if decision.action == "reply" and "weak retrieval" in (decision.reason or "").lower():
+                    draft = decision.reply
+                try:
+                    uq = append_unknown(
+                        settings.unknown_questions_path,
+                        question=text,
+                        conversation_id=str(conv.id),
+                        external_code=conv.external_code or conv.external_id,
+                        suggested_draft=draft,
+                        reason=decision.reason,
+                    )
+                    if uq:
+                        result["unknown_id"] = uq.get("id")
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("unknown question log failed: %s", exc)
             # Re-check after LLM (human may have replied, or sibling finished).
             db.refresh(conv)
             if trigger:

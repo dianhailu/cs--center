@@ -158,6 +158,19 @@ docker compose -f docker-compose.prod.yml --env-file .env.production exec worker
 docker compose -f docker-compose.prod.yml --env-file .env.production logs -f worker | grep 'history learn'
 ```
 
+### FAQ / Excel 知识库 + 未知问题教答
+
+- 主动 FAQ：`backend/knowledge/faq.json`（含 Excel V2 导入 + 旧库合并 + 人工教答），见 [backend/knowledge/README.md](backend/knowledge/README.md)。
+- 低置信 / handoff 时写入挂载目录 `unknown_questions.jsonl`（不投递客户）。
+- 列表 / 教答：
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env.production exec worker \
+  python scripts/list_unknown_questions.py
+docker compose -f docker-compose.prod.yml --env-file .env.production exec worker \
+  python scripts/teach_unknown.py uq_... --answer "..."
+```
+
 ## 5. 验收清单
 
 - [ ] `https://api.cs.originmount.com/health` 返回 ok  
