@@ -13,6 +13,11 @@ Metric definitions (Asia/Jakarta day boundaries):
 - **categories**: each inbound customer message that day is classified once into
   FAQ category_slug (from AiJob FAQ hit), reception (phone-like / pingo-reception),
   unknown (logged unknown / weak retrieval / uncertain handoff), or other.
+
+Day bucketing uses **actual LiveAgent consult time** (``meta.datecreated`` /
+``occurred_at``) via ``message_consult_at``, not import-time ``created_at``.
+A history refresh on 2026-08-08 stamped many rows' ``created_at`` to import time
+while preserving LA ``datecreated`` in meta.
 """
 
 from __future__ import annotations
@@ -32,6 +37,7 @@ from app.ai.kb_store import load_faq_raw, normalize_lang_block
 from app.ai.phone import is_phone_like
 from app.config import Settings, get_settings
 from app.models import AiJob, Conversation, Message, MessageDirection, MessageSenderType
+from app.services.message_time import message_consult_at
 
 TZ_NAME = "Asia/Jakarta"
 PHONE_LINE_RE = re.compile(
@@ -85,7 +91,6 @@ def extract_phone_from_text(body: str | None) -> str | None:
     if m:
         return _norm_phone(m.group(1))
     if is_phone_like(body):
-        # Strip common prefixes then normalize digits.
         stripped = re.sub(
             r"(?is)^\s*(?:phone|tel|telephone|hp|wa|whatsapp|mobile|nomor(?:\s+hp)?|"
             r"no\.?\s*hp|contact|kontak|手机|电话|号码)\s*[:：#-]?\s*",
@@ -204,10 +209,27 @@ def _classify_message(
             return slug
 
     if "history#" in reason:
-        # History-mimicked reply without a clear FAQ category.
         return "other"
 
     return "other"
+
+
+def _load_inbound_customer(
+    db: Session,
+    workspace_id: UUID,
+) -> list[tuple[Message, Conversation]]:
+    """All workspace customer inbounds (ops DB size; filter by LA consult time in Python)."""
+    return list(
+        db.execute(
+            select(Message, Conversation)
+            .join(Conversation, Message.conversation_id == Conversation.id)
+            .where(
+                Conversation.workspace_id == workspace_id,
+                Message.direction == MessageDirection.inbound,
+                Message.sender_type == MessageSenderType.customer,
+            )
+        ).all()
+    )
 
 
 def daily_stats(
@@ -220,7 +242,6 @@ def daily_stats(
     """List daily {date, unique_people, consultations_count} inclusive."""
     if to_day < from_day:
         from_day, to_day = to_day, from_day
-    # Cap range to avoid accidental huge scans
     if (to_day - from_day).days > 92:
         raise ValueError("date range too large (max 93 days)")
 
@@ -228,27 +249,15 @@ def daily_stats(
     start_utc, _ = day_bounds_utc(from_day, zone)
     _, end_utc = day_bounds_utc(to_day, zone)
 
-    rows = db.execute(
-        select(Message, Conversation)
-        .join(Conversation, Message.conversation_id == Conversation.id)
-        .where(
-            Conversation.workspace_id == workspace_id,
-            Message.direction == MessageDirection.inbound,
-            Message.sender_type == MessageSenderType.customer,
-            Message.created_at >= start_utc,
-            Message.created_at < end_utc,
-        )
-        .order_by(Message.created_at.asc())
-    ).all()
+    rows = _load_inbound_customer(db, workspace_id)
 
-    # date_str -> {conv_id -> [bodies]}
     by_day: dict[str, dict[UUID, list[str]]] = defaultdict(lambda: defaultdict(list))
     conv_cache: dict[UUID, Conversation] = {}
     for msg, conv in rows:
-        created = msg.created_at
-        if created.tzinfo is None:
-            created = created.replace(tzinfo=timezone.utc)
-        day_str = created.astimezone(zone).date().isoformat()
+        at = message_consult_at(msg)
+        if at < start_utc or at >= end_utc:
+            continue
+        day_str = at.astimezone(zone).date().isoformat()
         by_day[day_str][conv.id].append(msg.body or "")
         conv_cache[conv.id] = conv
 
@@ -284,18 +293,12 @@ def category_breakdown(
     zone = jakarta_tz()
     start_utc, end_utc = day_bounds_utc(day, zone)
 
-    rows = db.execute(
-        select(Message, Conversation)
-        .join(Conversation, Message.conversation_id == Conversation.id)
-        .where(
-            Conversation.workspace_id == workspace_id,
-            Message.direction == MessageDirection.inbound,
-            Message.sender_type == MessageSenderType.customer,
-            Message.created_at >= start_utc,
-            Message.created_at < end_utc,
-        )
-        .order_by(Message.created_at.asc())
-    ).all()
+    rows = [
+        (msg, conv)
+        for msg, conv in _load_inbound_customer(db, workspace_id)
+        if start_utc <= message_consult_at(msg) < end_utc
+    ]
+    rows.sort(key=lambda pair: message_consult_at(pair[0]))
 
     msg_ids = [msg.id for msg, _ in rows]
     jobs_by_trigger: dict[UUID, AiJob] = {}
@@ -306,7 +309,6 @@ def category_breakdown(
             if job.trigger_message_id and job.trigger_message_id not in jobs_by_trigger:
                 jobs_by_trigger[job.trigger_message_id] = job
             elif job.trigger_message_id:
-                # Prefer newest non-skipped job
                 prev = jobs_by_trigger[job.trigger_message_id]
                 prev_skip = isinstance(prev.result, dict) and prev.result.get("skipped")
                 cur_skip = isinstance(job.result, dict) and job.result.get("skipped")
@@ -324,7 +326,6 @@ def category_breakdown(
         bucket = _classify_message(msg.body or "", jobs_by_trigger.get(msg.id), faq_map)
         counts[bucket] += 1
 
-    # Stable order: known FAQ cats by slug, then reception, unknown, other
     ordered_slugs = sorted(k for k in counts if k not in {"reception", "unknown", "other"})
     for special in ("reception", "unknown", "other"):
         if special in counts:

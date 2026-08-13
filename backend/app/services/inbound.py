@@ -23,6 +23,7 @@ from app.services.ai_loop import (
     normalize_body,
     skip_reason_for_trigger,
 )
+from app.services.message_time import parse_la_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -180,14 +181,18 @@ def import_ticket(
             if existing.sender_type != sender_type or existing.direction != direction:
                 existing.sender_type = sender_type
                 existing.direction = direction
-                existing.meta = {
-                    **(existing.meta or {}),
-                    "userid": item.get("userid"),
-                    "user_email": item.get("user_email"),
-                    "user_name": item.get("user_name"),
-                    "datecreated": item.get("datecreated"),
-                    **({"la_echo_of_ai": True} if sender_type == MessageSenderType.ai else {}),
-                }
+            # Always refresh LA timestamp metadata (stats bucket by consult time).
+            existing.meta = {
+                **(existing.meta or {}),
+                "userid": item.get("userid"),
+                "user_email": item.get("user_email"),
+                "user_name": item.get("user_name"),
+                "datecreated": item.get("datecreated"),
+                **({"la_echo_of_ai": True} if sender_type == MessageSenderType.ai else {}),
+            }
+            la_at = parse_la_timestamp(item.get("datecreated"))
+            if la_at is not None:
+                existing.created_at = la_at
             if direction == MessageDirection.inbound:
                 latest_inbound = existing
                 _enrich_snapshot_from_inbound(
@@ -217,9 +222,13 @@ def import_ticket(
                     "datecreated": item.get("datecreated"),
                     "la_echo_of_ai": True,
                 }
+                la_at = parse_la_timestamp(item.get("datecreated"))
+                if la_at is not None:
+                    local_ai.created_at = la_at
                 known_ai_bodies.add(normalize_body(local_ai.body))
                 continue
 
+        la_at = parse_la_timestamp(item.get("datecreated"))
         msg = Message(
             conversation_id=conv.id,
             channel_connection_id=connection.id,
@@ -228,6 +237,7 @@ def import_ticket(
             sender_type=sender_type,
             body=item["body"],
             send_status=MessageSendStatus.sent,
+            created_at=la_at or datetime.now(timezone.utc),
             meta={
                 "userid": item.get("userid"),
                 "user_email": item.get("user_email"),

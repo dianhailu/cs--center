@@ -221,7 +221,7 @@ export default function StatsPage() {
           <div>
             <h1>数据统计</h1>
             <p className="muted">
-              按日统计咨询人数与咨询次数（时区 {timezone}）。点击某一天查看问题分类明细。
+              按日统计咨询人数与咨询次数（时区 {timezone}）。按 LiveAgent 实际咨询时间归日，点击某一天查看问题分类明细。
             </p>
           </div>
           <div className="stats-filters">
