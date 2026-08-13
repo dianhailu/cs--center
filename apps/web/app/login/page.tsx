@@ -41,9 +41,9 @@ function LoginForm() {
       <form className="login-card" onSubmit={onSubmit}>
         <div className="brand-mark" style={{ marginBottom: "0.35rem" }}>
           <span className="brand-dot" aria-hidden />
-          <h1 style={{ margin: 0 }}>CS Midplatform</h1>
+          <h1 style={{ margin: 0 }}>Smart-CS Center</h1>
         </div>
-        <p className="muted">多产品客服中台 · LiveAgent</p>
+        <p className="muted">智客中心 · LiveAgent</p>
         <p className="muted" style={{ fontSize: "0.85rem", marginTop: "-0.5rem" }}>
           登录过期或更换设备后，请重新登录
         </p>

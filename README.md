@@ -1,6 +1,6 @@
-# CS Midplatform
+# Smart-CS Center
 
-Multi-product / multi-country customer-service mid-platform.
+Multi-product / multi-country customer-service console (智客中心).
 
 - **System of record**: Postgres conversations & messages
 - **First channel adapter**: LiveAgent (`pingo.ladesk.com` → workspace `pingo-id`)

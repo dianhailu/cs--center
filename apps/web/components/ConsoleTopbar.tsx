@@ -85,7 +85,7 @@ export default function ConsoleTopbar({
         <div className="brand-mark">
           <span className="brand-dot" aria-hidden />
           <div>
-            <div className="brand">CS Midplatform</div>
+            <div className="brand">Smart-CS Center</div>
             <div className="muted">{displaySubtitle}</div>
           </div>
         </div>

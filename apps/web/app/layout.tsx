@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CS Midplatform",
-  description: "Multi-product customer service console",
+  title: "Smart-CS Center",
+  description: "Smart-CS Center · multi-product customer service console",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
