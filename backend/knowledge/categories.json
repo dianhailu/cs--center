@@ -119,6 +119,14 @@
         "id": "Akun & aplikasi",
         "en": "Account & app"
       }
+    },
+    {
+      "slug": "pingo-reception",
+      "label": {
+        "zh": "接待",
+        "id": "Sapaan",
+        "en": "Reception"
+      }
     }
   ]
 }

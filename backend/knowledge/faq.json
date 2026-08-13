@@ -1592,5 +1592,27 @@
     "source": "legacy_faq",
     "code": "pingo-account--05",
     "category_slug": "pingo-account"
+  },
+  {
+    "id": 73,
+    "category": {
+      "zh": "接待",
+      "id": "Sapaan",
+      "en": "Reception"
+    },
+    "question": {
+      "id": "Halo / nomor HP / Phone",
+      "en": "Hi / phone number greeting",
+      "zh": "你好 / 手机号打招呼"
+    },
+    "answer": {
+      "id": "Halo! Terima kasih sudah menghubungi PinGo CS. Ada yang bisa kami bantu hari ini?",
+      "en": "Hi! Thanks for contacting PinGo CS. How can we help you today?",
+      "zh": "您好！感谢联系 PinGo 客服，请问有什么可以帮您？"
+    },
+    "source": "reception_template",
+    "code": "pingo-reception--01",
+    "category_slug": "pingo-reception",
+    "note": "Phone-like inbound → reception greeting only; do not teach as unknown"
   }
 ]

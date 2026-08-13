@@ -18,6 +18,7 @@ from app.ai.kb_store import (
     file_lock,
     normalize_lang_block,
 )
+from app.ai.phone import is_phone_like
 
 JAKARTA = ZoneInfo("Asia/Jakarta")
 
@@ -57,6 +58,9 @@ def append_unknown(
     """Append one open unknown-question record (JSONL). Dedupes same question same day."""
     q = (question or "").strip()
     if not q:
+        return {}
+    # Phone-like messages are reception greetings — never teach into KB unknowns.
+    if is_phone_like(q):
         return {}
     path.parent.mkdir(parents=True, exist_ok=True)
     record = {

@@ -66,6 +66,10 @@ _LABEL_TO_SLUG: dict[str, str] = {
     "已教答": "pingo-taught",
     "diajarkan": "pingo-taught",
     "taught": "pingo-taught",
+    "接待": "pingo-reception",
+    "reception": "pingo-reception",
+    "greeting": "pingo-reception",
+    "sapaan": "pingo-reception",
 }
 
 _DEFAULT_LABELS: dict[str, dict[str, str]] = {
@@ -101,6 +105,7 @@ _DEFAULT_LABELS: dict[str, dict[str, str]] = {
         "en": "Security & privacy",
     },
     "pingo-taught": {"zh": "已教答", "id": "Diajarkan", "en": "Taught"},
+    "pingo-reception": {"zh": "接待", "id": "Sapaan", "en": "Reception"},
 }
 
 

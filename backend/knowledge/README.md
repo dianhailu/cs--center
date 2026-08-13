@@ -58,6 +58,17 @@ Agent 启动后按文件 mtime 热加载 FAQ，教答后一般无需重启 worke
 
 写入使用文件锁 + 原子替换；FAQ 按 mtime 热加载。
 
+## 接待（手机号打招呼）
+
+客户消息若**整体像手机号**（如 `08…`、`+62…`、`Phone: 08…`），**不写入** `unknown_questions.jsonl` / FAQ 教答，按接待话术回复（FAQ `pingo-reception--01` 或代码内固定模板）。
+
+清理已入库的手机号未知问题：
+
+```bash
+python scripts/cleanup_phone_unknowns.py --dry-run
+python scripts/cleanup_phone_unknowns.py --also-faq
+```
+
 ## 未知问题
 
 当 history/FAQ 不够自信（handoff / weak retrieval）时，worker 追加一行到 `unknown_questions.jsonl`（Jakarta 日期）。  

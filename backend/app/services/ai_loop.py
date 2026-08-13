@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.ai.agent import SupportAgent
 from app.ai.faq import FaqIndex
 from app.ai.history import HistoryIndex
+from app.ai.phone import is_phone_like
 from app.ai.unknown import append_unknown, should_record_unknown
 from app.channels.liveagent import client_from_connection
 from app.config import get_settings
@@ -177,7 +178,12 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 ],
             }
             # Knowledge gap: log for teaching (never forces customer delivery by itself).
-            if text and should_record_unknown(decision.action, decision.reason):
+            # Phone-like inbounds are reception only — skip unknown / FAQ capture.
+            if (
+                text
+                and not is_phone_like(text)
+                and should_record_unknown(decision.action, decision.reason)
+            ):
                 draft = None
                 if decision.action == "reply" and "weak retrieval" in (decision.reason or "").lower():
                     draft = decision.reply

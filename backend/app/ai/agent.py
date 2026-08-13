@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from app.ai.faq import FaqHit, FaqIndex, detect_lang
 from app.ai.history import HistoryHit, HistoryIndex
+from app.ai.phone import is_phone_like, reception_reply
 from app.config import Settings
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,17 @@ class SupportAgent:
                 [],
                 [],
                 "explicit handoff request",
+            )
+
+        # Phone-number-only inbound = reception greeting (never KB unknown).
+        if is_phone_like(text):
+            return AgentDecision(
+                "reply",
+                reception_reply(lang, faq_items=self.faq.items),
+                lang,
+                [],
+                [],
+                "phone-like reception greeting",
             )
 
         history_hits = self.history.search(text, top_k=5)
