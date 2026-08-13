@@ -181,15 +181,16 @@ class SupportAgent:
 
 def _openai_chat(settings: Settings, system: str, user: str) -> str | None:
     try:
-        from openai import OpenAI
+        from app.ai.openai_client import make_openai_client
+
+        client = make_openai_client(settings)
+        resp = client.chat.completions.create(
+            model=settings.openai_model,
+            temperature=0.3,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+        )
     except ImportError:
         return None
-    client = OpenAI(api_key=settings.openai_api_key)
-    resp = client.chat.completions.create(
-        model=settings.openai_model,
-        temperature=0.3,
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-    )
     return (resp.choices[0].message.content or "").strip()
 
 

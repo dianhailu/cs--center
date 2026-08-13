@@ -60,6 +60,22 @@ AI_SEND_TO_CUSTOMER=false
 
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
+### AI / OpenAI（香港 VPS 地区限制）
+
+阿里云 HK 直连 `api.openai.com` 常返回 `403 unsupported_country_region_territory`。密钥本身可能有效，但官方 endpoint 从 HK 不可达。**新加坡出口一般可用。**
+
+推荐：VPS 经新加坡 VPN/HTTP(S)/SOCKS 代理访问官方 API（agent 回复 + KB 自动翻译共用）：
+
+```env
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_PROXY=http://user:pass@host:port
+# 或 HTTPS_PROXY=... / HTTP_PROXY=... / ALL_PROXY=... / socks5://host:port
+```
+
+备选：把 `OPENAI_BASE_URL` 指到 OpenAI 兼容网关（不走 VPN）。改完后需 `up -d --build` api + worker。
+
 ### AI 是否发给客户（`AI_SEND_TO_CUSTOMER`）
 
 - **默认 / 当前建议：`false`**：Smart 仍生成并写入中台会话（客服可见 `local_only` 气泡），**不**经 outbox/`post_reply` 发给 LiveAgent 访客。人工客服在中台的回复仍正常投递。

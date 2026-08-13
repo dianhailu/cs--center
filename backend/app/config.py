@@ -37,6 +37,11 @@ class Settings(BaseSettings):
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
+    # OpenAI-compatible API root (default official). Use with OPENAI_PROXY on geo-blocked VPS.
+    openai_base_url: str = "https://api.openai.com/v1"
+    # Optional HTTP(S)/SOCKS proxy for OpenAI SDK only (Singapore VPN egress from Aliyun HK).
+    # Also honors HTTPS_PROXY / HTTP_PROXY / ALL_PROXY if this is empty.
+    openai_proxy: str = ""
     default_reply_lang: str = "id"
     min_faq_score: float = 0.18
     min_history_score: float = 0.22

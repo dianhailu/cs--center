@@ -158,7 +158,7 @@ def _openai_translate(
     source_lang: str,
     overwrite: bool,
 ) -> tuple[dict[str, str], dict[str, str]]:
-    from openai import OpenAI
+    from app.ai.openai_client import make_openai_client
 
     src_q = filled_langs(question)
     src_a = filled_langs(answer)
@@ -208,7 +208,7 @@ def _openai_translate(
         },
         ensure_ascii=False,
     )
-    client = OpenAI(api_key=settings.openai_api_key)
+    client = make_openai_client(settings)
     resp = client.chat.completions.create(
         model=settings.openai_model,
         temperature=0.2,
