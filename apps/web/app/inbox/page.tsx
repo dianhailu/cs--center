@@ -26,13 +26,20 @@ export default function InboxPage() {
   const router = useRouter();
   const [agentName, setAgentName] = useState("");
   const [queue, setQueue] = useState("human");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQ, setSearchQ] = useState("");
   const [items, setItems] = useState<Conversation[]>([]);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const t = window.setTimeout(() => setSearchQ(searchInput.trim()), 280);
+    return () => window.clearTimeout(t);
+  }, [searchInput]);
+
   const load = useMemo(
-    () => async (t: string, q: string) => {
+    () => async (t: string, q: string, search: string) => {
       try {
-        const data = await listConversations(t, q || undefined);
+        const data = await listConversations(t, q || undefined, search || undefined);
         setItems(data);
         setError("");
       } catch (err) {
@@ -60,15 +67,15 @@ export default function InboxPage() {
         /* ignore */
       }
     }
-    load(t, queue);
+    load(t, queue, searchQ);
     const socket = new WebSocket(wsUrl(t));
-    socket.onmessage = () => load(t, queue);
-    const timer = setInterval(() => load(t, queue), 8000);
+    socket.onmessage = () => load(t, queue, searchQ);
+    const timer = setInterval(() => load(t, queue, searchQ), 8000);
     return () => {
       socket.close();
       clearInterval(timer);
     };
-  }, [load, queue, router]);
+  }, [load, queue, searchQ, router]);
 
   return (
     <div className="shell">
@@ -78,6 +85,17 @@ export default function InboxPage() {
           <div className="queue-head">
             <h1>收件箱</h1>
             <span className="queue-count">{items.length} 会话</span>
+          </div>
+          <div className="inbox-search">
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="手机号 / 邮箱 / 工单号"
+              aria-label="搜索会话"
+              autoComplete="off"
+              spellCheck={false}
+            />
           </div>
           <div className="tabs">
             {QUEUES.map((q) => (
@@ -92,7 +110,9 @@ export default function InboxPage() {
             ))}
           </div>
           {error ? <div className="error">{error}</div> : null}
-          {items.length === 0 && !error ? <div className="empty">暂无会话</div> : null}
+          {items.length === 0 && !error ? (
+            <div className="empty">{searchQ ? "无匹配会话" : "暂无会话"}</div>
+          ) : null}
           {items.map((c) => (
             <Link
               key={c.id}

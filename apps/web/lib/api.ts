@@ -191,9 +191,17 @@ export async function login(email: string, password: string): Promise<LoginResul
   return handleResponse<LoginResult>(res, { allowAuthRedirect: false });
 }
 
-export async function listConversations(token: string, queue?: string): Promise<Conversation[]> {
-  const q = queue ? `?queue=${encodeURIComponent(queue)}` : "";
-  const res = await fetch(`${API_BASE}/api/conversations${q}`, {
+export async function listConversations(
+  token: string,
+  queue?: string,
+  search?: string
+): Promise<Conversation[]> {
+  const params = new URLSearchParams();
+  if (queue) params.set("queue", queue);
+  const trimmed = (search || "").trim();
+  if (trimmed) params.set("q", trimmed);
+  const qs = params.toString();
+  const res = await fetch(`${API_BASE}/api/conversations${qs ? `?${qs}` : ""}`, {
     headers: authHeaders(token),
     cache: "no-store",
   });

@@ -24,6 +24,7 @@ router = APIRouter(prefix="/conversations", tags=["conversations"])
 def list_conversations(
     queue: str | None = Query(default=None),
     status: str | None = Query(default=None),
+    q: str | None = Query(default=None, description="Fuzzy search: phone / email / ticket code"),
     auth: AuthContext = Depends(get_auth),
     db: Session = Depends(get_db),
 ) -> list:
@@ -33,6 +34,7 @@ def list_conversations(
         status=status,
         queue=queue,
         assignee_id=auth.agent.id,
+        q=q,
     )
 
 

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.config import get_settings
 from app.models import (
@@ -19,6 +21,52 @@ from app.models import (
 )
 from app.redis_bus import conversation_event
 
+_PHONE_SEP_RE = re.compile(r"[\s\-()./+]+")
+
+
+def _escape_like(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def _normalize_phone_digits(raw: str) -> str:
+    return _PHONE_SEP_RE.sub("", (raw or "").strip())
+
+
+def _sql_strip_phone(expr: ColumnElement) -> ColumnElement:
+    """Remove common phone separators so '0812' matches '0812-xxx'."""
+    out: ColumnElement = cast(expr, String)
+    for ch in (" ", "-", "(", ")", ".", "/", "+"):
+        out = func.replace(out, ch, "")
+    return out
+
+
+def _contains_ci(expr: ColumnElement, needle: str) -> ColumnElement:
+    pattern = f"%{_escape_like(needle.lower())}%"
+    return func.lower(func.coalesce(cast(expr, String), "")).like(pattern, escape="\\")
+
+
+def _search_filter(term: str) -> ColumnElement | None:
+    raw = (term or "").strip()
+    if not raw:
+        return None
+    clauses: list[ColumnElement] = [
+        _contains_ci(Conversation.customer_email, raw),
+        _contains_ci(Conversation.customer_name, raw),
+        _contains_ci(Conversation.external_code, raw),
+        _contains_ci(Conversation.external_id, raw),
+    ]
+    phone_json = Conversation.customer_snapshot["phone"].as_string()
+    owner_email_json = Conversation.customer_snapshot["owner_email"].as_string()
+    clauses.append(_contains_ci(phone_json, raw))
+    clauses.append(_contains_ci(owner_email_json, raw))
+
+    phone_q = _normalize_phone_digits(raw)
+    if phone_q and any(c.isdigit() for c in raw):
+        # Digits-only so "0812" matches snapshot "0812-3456-7890".
+        clauses.append(_contains_ci(_sql_strip_phone(phone_json), phone_q))
+
+    return or_(*clauses)
+
 
 def list_conversations(
     db: Session,
@@ -27,21 +75,25 @@ def list_conversations(
     status: str | None = None,
     queue: str | None = None,
     assignee_id: UUID | None = None,
+    q: str | None = None,
     limit: int = 50,
 ) -> list[Conversation]:
-    q = select(Conversation).where(Conversation.workspace_id == workspace_id)
+    stmt = select(Conversation).where(Conversation.workspace_id == workspace_id)
     if status:
-        q = q.where(Conversation.status == ConversationStatus(status))
+        stmt = stmt.where(Conversation.status == ConversationStatus(status))
     if queue == "human":
-        q = q.where(Conversation.needs_human.is_(True)).where(
+        stmt = stmt.where(Conversation.needs_human.is_(True)).where(
             Conversation.status.in_([ConversationStatus.queued, ConversationStatus.assigned])
         )
     if queue == "mine" and assignee_id:
-        q = q.where(Conversation.assignee_id == assignee_id)
+        stmt = stmt.where(Conversation.assignee_id == assignee_id)
     if queue == "closed":
-        q = q.where(Conversation.status == ConversationStatus.closed)
-    q = q.order_by(Conversation.last_message_at.desc().nullslast()).limit(limit)
-    return list(db.scalars(q))
+        stmt = stmt.where(Conversation.status == ConversationStatus.closed)
+    search = _search_filter(q or "")
+    if search is not None:
+        stmt = stmt.where(search)
+    stmt = stmt.order_by(Conversation.last_message_at.desc().nullslast()).limit(limit)
+    return list(db.scalars(stmt))
 
 
 def get_conversation(db: Session, conversation_id: UUID, workspace_id: UUID) -> Conversation | None:
