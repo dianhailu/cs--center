@@ -195,7 +195,8 @@ def append_faq_entry(
         question=q,
         answer=a,
         category={"zh": category_zh, "id": "Diajarkan", "en": "Taught"},
-        source="taught",
+        source="manual",
+        updated_by="system",
     )
 
 
@@ -207,8 +208,12 @@ def resolve_unknown(
     answer: dict[str, str] | Any,
     question: dict[str, str] | Any | None = None,
     category: dict[str, str] | Any | None = None,
+    updated_by: str | None = None,
+    source_detail: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Merge multilang answer into FAQ and mark unknown answered."""
+    from app.ai.kb_store import SOURCE_MANUAL
+
     rows = load_unknowns(unknown_path)
     row = next((r for r in rows if r.get("id") == uq_id), None)
     if not row:
@@ -234,12 +239,17 @@ def resolve_unknown(
             captured = (row.get("question") or "").strip()
             q[detect_lang(captured, "id")] = captured
 
+    detail = source_detail
+    if not detail and row.get("external_code"):
+        detail = f"external_code={row.get('external_code')}"
     entry = create_faq(
         faq_path,
         question=q,
         answer=a,
         category=category,
-        source="taught_unknown",
+        source=SOURCE_MANUAL,
+        updated_by=updated_by or "agent",
+        source_detail=detail,
     )
     updated = mark_answered(
         unknown_path,

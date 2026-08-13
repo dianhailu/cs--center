@@ -179,10 +179,12 @@ docker compose -f docker-compose.prod.yml --env-file .env.production exec worker
   python scripts/build_history_knowledge.py
 ```
 
-日志关键字：`history learn start` / `history learn finished`。
+日志关键字：`history learn start` / `history learn finished` / `faq auto-promote`。
+
+学习完成后（`FAQ_AUTO_PROMOTE=true`，默认）会把高质量「客户→人工坐席」回复晋升进 `faq.json`（每晚最多 `FAQ_PROMOTE_MAX_PER_NIGHT`，默认 50），带来源标记 `source=ai_learn`。
 
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env.production logs -f worker | grep 'history learn'
+docker compose -f docker-compose.prod.yml --env-file .env.production logs -f worker | grep -E 'history learn|faq auto-promote'
 ```
 
 ### FAQ / Excel 知识库 + 未知问题教答

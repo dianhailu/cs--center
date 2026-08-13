@@ -305,6 +305,8 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .badge.warn { background: var(--warn-soft); color: var(--warn); }
 .badge.neutral { background: #f3f0ea; color: var(--muted); }
 .badge.status { background: #eef2f7; color: #334155; text-transform: lowercase; }
+.badge.manual-edit { background: #eef2ff; color: #3730a3; }
+.badge.ai-learn { background: #ecfeff; color: #0e7490; }
 
 .id-strip {
   display: flex;

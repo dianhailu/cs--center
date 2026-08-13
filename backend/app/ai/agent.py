@@ -61,7 +61,7 @@ class SupportAgent:
         if any(re.search(p, text, flags=re.I) for p in HANDOFF_PATTERNS):
             return AgentDecision(
                 "handoff",
-                _handoff_text(lang),
+                _explicit_handoff_text(lang),
                 lang,
                 [],
                 [],
@@ -119,7 +119,7 @@ class SupportAgent:
 
         return AgentDecision(
             "handoff",
-            _handoff_text(lang),
+            _unrecognized_handoff_text(lang),
             lang,
             faq_hits,
             history_hits,
@@ -215,12 +215,31 @@ def _openai_chat(settings: Settings, system: str, user: str) -> str | None:
     return (resp.choices[0].message.content or "").strip()
 
 
-def _handoff_text(lang: str) -> str:
+def _explicit_handoff_text(lang: str) -> str:
+    """Customer explicitly asked for a human (keep distinct from unrecognized path)."""
     if lang == "zh":
-        return "抱歉，这个问题需要人工客服处理。请稍等，PinGo CS 坐席会尽快为您服务。"
+        return "好的，已为您转接人工客服，请稍候。"
     if lang == "en":
-        return "Sorry, I can't resolve this myself. Please wait a moment — a PinGo CS agent will assist you shortly."
+        return "Sure — I've connected you to a human agent. Please wait a moment."
+    return "Baik, kami sedang menghubungkan Anda ke agen manusia. Mohon menunggu sebentar."
+
+
+def _unrecognized_handoff_text(lang: str) -> str:
+    """Low-confidence / unrecognized question → waiting-for-human script (forced product lang)."""
+    if lang == "zh":
+        return "您的问题需要人工服务，已帮您找空闲客服，请耐心等待"
+    if lang == "en":
+        return (
+            "Your question needs a human agent. "
+            "We've found an available agent for you — please wait patiently."
+        )
+    # PinGo default forced reply lang = id
     return (
-        "Mohon maaf, pertanyaan ini perlu ditangani oleh agen manusia. "
-        "Silakan menunggu sebentar, PinGo CS akan segera membantu Anda."
+        "Pertanyaan Anda perlu ditangani oleh agen manusia. "
+        "Kami sudah mencarikan agen yang tersedia, mohon menunggu dengan sabar."
     )
+
+
+def _handoff_text(lang: str) -> str:
+    """Backward-compatible alias (unrecognized waiting script)."""
+    return _unrecognized_handoff_text(lang)

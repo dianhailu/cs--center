@@ -57,6 +57,16 @@ class Settings(BaseSettings):
     history_learn_timezone: str = "Asia/Jakarta"
     history_learn_limit_conversations: int = 8000
 
+    # After HISTORY_LEARN: promote high-quality human replies into faq.json
+    faq_auto_promote: bool = True
+    faq_promote_max_per_night: int = 50
+    faq_promote_min_answer_chars: int = 20
+    faq_promote_max_answer_chars: int = 2000
+    faq_promote_min_question_chars: int = 8
+    faq_promote_min_repeat: int = 2  # prefer questions seen >= N times
+    faq_promote_dedupe_similarity: float = 0.82
+    faq_promote_category_similarity: float = 0.35
+
     seed_agent_email: str = "agent@pingo.com"
     seed_agent_password: str = "agent123"
     # Optional system admin (created on seed when both set)

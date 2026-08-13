@@ -91,11 +91,22 @@ function matchesQuery(item: FaqItem, q: string): boolean {
     item.category.zh,
     item.category.en,
     item.sheet || "",
+    item.source || "",
+    item.updated_by || "",
     String(item.id ?? ""),
   ]
     .join(" ")
     .toLowerCase();
   return hay.includes(q);
+}
+
+function sourceBadge(item: FaqItem): { className: string; text: string } {
+  const src = (item.source || "").toLowerCase();
+  if (src === "ai_learn" || src === "ai-learn") {
+    return { className: "badge ai-learn", text: "AI 学习" };
+  }
+  const who = (item.updated_by || "system").trim() || "system";
+  return { className: "badge manual-edit", text: `人工编辑 · ${who}` };
 }
 
 type EditorMode =
@@ -775,6 +786,14 @@ export default function KnowledgePage() {
                       <article key={String(item.id)} className="kb-card">
                         <div className="kb-card-top">
                           <span className="badge">{item.code || "—"}</span>
+                          {(() => {
+                            const b = sourceBadge(item);
+                            return (
+                              <span className={b.className} title={item.source_detail || item.updated_at || undefined}>
+                                {b.text}
+                              </span>
+                            );
+                          })()}
                           <span className="muted kb-id">#{item.id}</span>
                           {canEdit ? (
                             <>

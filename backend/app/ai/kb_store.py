@@ -8,6 +8,7 @@ import os
 import tempfile
 import threading
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -15,6 +16,77 @@ from app.ai.faq import detect_lang
 
 _THREAD_LOCK = threading.Lock()
 LANGS = ("zh", "id", "en")
+
+# Canonical attribution sources for Knowledge UI.
+SOURCE_MANUAL = "manual"
+SOURCE_AI_LEARN = "ai_learn"
+_LEGACY_MANUAL_SOURCES = {
+    "console",
+    "taught",
+    "taught_unknown",
+    "kb_v2_xlsx",
+    "import",
+    "system",
+    "xlsx",
+}
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def normalize_source(raw: Any) -> str:
+    s = str(raw or "").strip().lower()
+    if s == SOURCE_AI_LEARN or s in {"ai-learn", "ai_learned", "smart", "history_learn"}:
+        return SOURCE_AI_LEARN
+    return SOURCE_MANUAL
+
+
+def attribution_fields(
+    item: dict[str, Any] | None = None,
+    *,
+    source: str | None = None,
+    updated_by: str | None = None,
+    updated_at: str | None = None,
+    source_detail: str | None = None,
+) -> dict[str, Any]:
+    """Build / merge FAQ source attribution fields."""
+    base = item if isinstance(item, dict) else {}
+    src = normalize_source(source if source is not None else base.get("source"))
+    by = (
+        str(updated_by).strip()
+        if updated_by is not None
+        else str(base.get("updated_by") or "").strip()
+    )
+    if not by:
+        if src == SOURCE_AI_LEARN:
+            by = "Smart"
+        else:
+            # Prefer import/system for legacy rows without an editor.
+            legacy = str(base.get("source") or "").strip().lower()
+            by = "system/import" if legacy in _LEGACY_MANUAL_SOURCES or not legacy else "system"
+    at = (
+        str(updated_at).strip()
+        if updated_at is not None
+        else str(base.get("updated_at") or "").strip()
+    )
+    if not at:
+        at = _utc_now_iso()
+    detail = (
+        str(source_detail).strip()
+        if source_detail is not None
+        else str(base.get("source_detail") or "").strip()
+    )
+    out: dict[str, Any] = {
+        "source": src,
+        "updated_by": by,
+        "updated_at": at,
+    }
+    if detail:
+        out["source_detail"] = detail
+    elif base.get("source_detail"):
+        out["source_detail"] = base.get("source_detail")
+    return out
 
 
 def empty_lang() -> dict[str, str]:
@@ -119,12 +191,16 @@ def normalize_faq_item(item: dict[str, Any]) -> dict[str, Any]:
         if parsed:
             category_slug = parsed[0]
     product_code = str(item.get("product_code") or "").strip().lower() or None
+    attr = attribution_fields(item)
     return {
         "id": item.get("id"),
         "code": code,
         "product_code": product_code,
         "category_slug": category_slug,
-        "source": item.get("source"),
+        "source": attr["source"],
+        "updated_by": attr["updated_by"],
+        "updated_at": attr["updated_at"],
+        "source_detail": attr.get("source_detail"),
         "sheet": item.get("sheet"),
         "note": item.get("note"),
         "category": {**cat, "label": _pick_label(cat, "zh")},
@@ -138,13 +214,18 @@ def faq_persist_shape(item: dict[str, Any]) -> dict[str, Any]:
     cat = normalize_lang_block(item.get("category"))
     q = normalize_lang_block(item.get("question"))
     a = normalize_lang_block(item.get("answer"))
+    attr = attribution_fields(item)
     out: dict[str, Any] = {
         "id": item.get("id"),
-        "source": item.get("source") or "console",
+        "source": attr["source"],
+        "updated_by": attr["updated_by"],
+        "updated_at": attr["updated_at"],
         "category": cat,
         "question": q,
         "answer": a,
     }
+    if attr.get("source_detail"):
+        out["source_detail"] = attr["source_detail"]
     if item.get("code"):
         out["code"] = item["code"]
     if item.get("product_code"):
@@ -228,7 +309,10 @@ def create_faq(
     category_slug: str | None = None,
     code: str | None = None,
     product_code: str | None = None,
-    source: str = "console",
+    source: str = SOURCE_MANUAL,
+    updated_by: str | None = None,
+    updated_at: str | None = None,
+    source_detail: str | None = None,
     categories_path: Path | None = None,
 ) -> dict[str, Any]:
     from app.ai.kb_categories import (
@@ -253,6 +337,12 @@ def create_faq(
         category=category,
         categories_path=cat_path,
     )
+    attr = attribution_fields(
+        source=source,
+        updated_by=updated_by,
+        updated_at=updated_at or _utc_now_iso(),
+        source_detail=source_detail,
+    )
 
     with file_lock(path):
         items = load_faq_raw(path)
@@ -276,11 +366,15 @@ def create_faq(
             "id": next_faq_id(items),
             "code": entry_code,
             "category_slug": normalize_slug(slug),
-            "source": source,
+            "source": attr["source"],
+            "updated_by": attr["updated_by"],
+            "updated_at": attr["updated_at"],
             "category": cat,
             "question": q,
             "answer": a,
         }
+        if attr.get("source_detail"):
+            entry["source_detail"] = attr["source_detail"]
         pc = (product_code or "").strip().lower()
         if pc:
             entry["product_code"] = pc
@@ -298,6 +392,9 @@ def update_faq(
     category: dict[str, str] | Any | None = None,
     category_slug: str | None = None,
     code: str | None = None,
+    updated_by: str | None = None,
+    source: str | None = SOURCE_MANUAL,
+    source_detail: str | None = None,
     categories_path: Path | None = None,
 ) -> dict[str, Any] | None:
     from app.ai.kb_categories import (
@@ -362,6 +459,20 @@ def update_faq(
             item["category"] = normalize_lang_block(item.get("category"))
             if not has_any_text(item["question"]) or not has_any_text(item["answer"]):
                 raise ValueError("question and answer required in at least one language")
+            # Manual edits via console stamp attribution
+            if updated_by is not None or source is not None:
+                attr = attribution_fields(
+                    item,
+                    source=source if source is not None else SOURCE_MANUAL,
+                    updated_by=updated_by,
+                    updated_at=_utc_now_iso(),
+                    source_detail=source_detail,
+                )
+                item["source"] = attr["source"]
+                item["updated_by"] = attr["updated_by"]
+                item["updated_at"] = attr["updated_at"]
+                if attr.get("source_detail"):
+                    item["source_detail"] = attr["source_detail"]
             found = item
             break
         if not found:
@@ -371,25 +482,45 @@ def update_faq(
 
 
 def migrate_faq_file(path: Path) -> int:
-    """Rewrite faq.json into nested multilang if any row needs coercion. Returns changed count."""
+    """Rewrite faq.json into nested multilang + source attribution. Returns changed count."""
     with file_lock(path):
         items = load_faq_raw(path)
         changed = 0
         migrated: list[dict[str, Any]] = []
         for item in items:
-            norm = normalize_faq_item(item)
-            disk = faq_persist_shape(norm)
-            # preserve original id/source/sheet/note already in disk
             before_q = item.get("question") if isinstance(item.get("question"), dict) else None
             before_a = item.get("answer") if isinstance(item.get("answer"), dict) else None
-            needs = (
+            legacy_src = str(item.get("source") or "").strip()
+            needs_shape = (
                 before_q is None
                 or before_a is None
                 or any(k in item for k in ("q_zh", "q_id", "q_en", "lang"))
                 or not all(k in (before_q or {}) for k in LANGS)
                 or not all(k in (before_a or {}) for k in LANGS)
             )
-            if needs:
+            needs_attr = (
+                normalize_source(legacy_src) != str(item.get("source") or "").strip().lower()
+                or not str(item.get("updated_by") or "").strip()
+                or not str(item.get("updated_at") or "").strip()
+            )
+            # Preserve import provenance in source_detail when rewriting legacy source.
+            detail = item.get("source_detail")
+            if needs_attr and legacy_src and normalize_source(legacy_src) == SOURCE_MANUAL:
+                if legacy_src.lower() not in {SOURCE_MANUAL, SOURCE_AI_LEARN} and not detail:
+                    detail = f"imported_from={legacy_src}"
+            attr = attribution_fields(
+                item,
+                source=normalize_source(legacy_src) if legacy_src else SOURCE_MANUAL,
+                updated_by=item.get("updated_by") or "system/import",
+                updated_at=item.get("updated_at") or _utc_now_iso(),
+                source_detail=detail,
+            )
+            # Keep stable updated_at for rows that already had one; only stamp missing.
+            if item.get("updated_at") and not needs_attr:
+                attr["updated_at"] = str(item.get("updated_at"))
+            norm = normalize_faq_item({**item, **attr})
+            disk = faq_persist_shape(norm)
+            if needs_shape or needs_attr:
                 changed += 1
             migrated.append(disk)
         if changed:

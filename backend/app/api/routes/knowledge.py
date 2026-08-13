@@ -13,8 +13,10 @@ from app.ai.kb_categories import (
     migrate_faq_codes,
 )
 from app.ai.kb_store import (
+    SOURCE_MANUAL,
     create_faq,
     load_faq_raw,
+    migrate_faq_file,
     normalize_faq_item,
     normalize_lang_block,
     update_faq,
@@ -31,6 +33,12 @@ def _product_code(auth: AuthContext) -> str:
     if not code:
         raise HTTPException(400, "no product context; switch product first")
     return assert_product_access(auth.agent, code)
+
+
+def _editor_label(auth: AuthContext) -> str:
+    email = (getattr(auth.agent, "email", None) or "").strip()
+    name = (getattr(auth.agent, "name", None) or "").strip()
+    return email or name or "agent"
 
 
 def _filter_faq_for_product(items: list[dict[str, Any]], product_code: str) -> list[dict[str, Any]]:
@@ -177,6 +185,7 @@ def list_faq(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
     product_code = _product_code(auth)
     settings = get_settings()
     migrate_faq_codes(settings.faq_path, settings.categories_path)
+    migrate_faq_file(settings.faq_path)
     items = load_faq_raw(settings.faq_path)
     normalized = _filter_faq_for_product(items, product_code)
     return {
@@ -214,7 +223,8 @@ def create_faq_item(
             category_slug=body.category_slug,
             code=body.code,
             product_code=product_code,
-            source="console",
+            source=SOURCE_MANUAL,
+            updated_by=_editor_label(auth),
             categories_path=settings.categories_path,
         )
     except ValueError as exc:
@@ -288,6 +298,8 @@ def update_faq_item(
             category=body.category.model_dump() if body.category else None,
             category_slug=body.category_slug,
             code=body.code,
+            updated_by=_editor_label(auth),
+            source=SOURCE_MANUAL,
             categories_path=settings.categories_path,
         )
     except ValueError as exc:
@@ -395,6 +407,8 @@ def resolve_unknown_item(
             answer=a,
             question=q,
             category=body.category.model_dump() if body.category else None,
+            updated_by=_editor_label(auth),
+            source_detail=f"unknown_id={uq_id}",
         )
         # Stamp product on newly created FAQ
         if faq_item and faq_item.get("id") is not None:
@@ -429,6 +443,8 @@ def resolve_unknown_item(
                     question=tq,
                     answer=ta,
                     category_slug=body.category_slug,
+                    updated_by=_editor_label(auth),
+                    source=SOURCE_MANUAL,
                     categories_path=settings.categories_path,
                 )
                 if updated:
@@ -438,6 +454,8 @@ def resolve_unknown_item(
                 settings.faq_path,
                 int(faq_item["id"]),
                 category_slug=body.category_slug,
+                updated_by=_editor_label(auth),
+                source=SOURCE_MANUAL,
                 categories_path=settings.categories_path,
             )
             if updated:

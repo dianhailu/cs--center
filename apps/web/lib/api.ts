@@ -470,7 +470,11 @@ export type FaqItem = {
   id: number | string | null;
   code?: string | null;
   category_slug?: string | null;
+  product_code?: string | null;
   source?: string | null;
+  updated_by?: string | null;
+  updated_at?: string | null;
+  source_detail?: string | null;
   sheet?: string | null;
   category: LangBlock;
   question: LangBlock;

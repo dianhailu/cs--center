@@ -6,6 +6,7 @@ import time
 from sqlalchemy import select
 
 from app.ai.learn_history import build_history_pairs, needs_initial_learn, should_run_nightly_learn
+from app.ai.promote_faq import promote_history_to_faq
 from app.channels.liveagent import client_from_connection
 from app.config import get_settings
 from app.db import SessionLocal
@@ -45,6 +46,16 @@ def _maybe_learn(*, force_initial: bool = False) -> None:
             stamp.get("conversations_scanned"),
             stamp.get("built_at"),
         )
+        try:
+            promo = promote_history_to_faq(settings)
+            logger.info(
+                "faq auto-promote finished reason=%s promoted=%s candidates=%s",
+                reason,
+                promo.get("promoted"),
+                promo.get("candidates"),
+            )
+        except Exception as promo_exc:  # noqa: BLE001
+            logger.exception("faq auto-promote failed: %s", promo_exc)
     except Exception as exc:  # noqa: BLE001
         logger.exception("history learn failed: %s", exc)
     finally:

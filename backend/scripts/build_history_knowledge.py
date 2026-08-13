@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from app.ai.learn_history import build_history_pairs
+from app.ai.promote_faq import promote_history_to_faq
 from app.config import get_settings
 from app.db import SessionLocal
 
@@ -25,6 +26,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit-conversations", type=int, default=None)
     parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument(
+        "--skip-promote",
+        action="store_true",
+        help="Only rebuild history_pairs.json; skip FAQ auto-promote",
+    )
     args = parser.parse_args()
     settings = get_settings()
     db = SessionLocal()
@@ -35,7 +41,10 @@ def main() -> int:
             limit_conversations=args.limit_conversations,
             out_path=args.out,
         )
-        logger.info("done %s", stamp)
+        logger.info("history learn done %s", stamp)
+        if not args.skip_promote:
+            promo = promote_history_to_faq(settings)
+            logger.info("faq auto-promote done %s", promo)
         return 0
     finally:
         db.close()

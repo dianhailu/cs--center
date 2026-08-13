@@ -35,11 +35,17 @@ Agent 启动后按文件 mtime 热加载 FAQ，教答后一般无需重启 worke
   "id": 1,
   "code": "pingo-product--01",
   "category_slug": "pingo-product",
+  "source": "manual",
+  "updated_by": "system/import",
+  "updated_at": "2026-08-13T11:00:00Z",
+  "source_detail": "optional note",
   "category": { "zh": "产品", "id": "Produk", "en": "Product" },
   "question": { "zh": "...", "id": "...", "en": "..." },
   "answer": { "zh": "...", "id": "...", "en": "..." }
 }
 ```
+
+`source`：`manual`（人工/导入）或 `ai_learn`（HISTORY_LEARN 后自动晋升）。知识库 UI 显示「人工编辑 · {账号}」或「AI 学习」。
 
 分类注册表：`categories.json`（slug + 三语 label）。编码格式：`{slug}--{NN}`。
 

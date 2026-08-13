@@ -127,6 +127,14 @@
         "id": "Sapaan",
         "en": "Reception"
       }
+    },
+    {
+      "slug": "pingo-learned",
+      "label": {
+        "zh": "AI学习",
+        "id": "Pembelajaran AI",
+        "en": "AI learned"
+      }
     }
   ]
 }

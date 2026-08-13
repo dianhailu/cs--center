@@ -1,1691 +1,1872 @@
 [
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "02-产品介绍",
-    "note": null,
-    "category": {
-      "zh": "产品",
-      "id": "Produk",
-      "en": "Product"
-    },
-    "question": {
-      "id": "Apa itu PinGo?",
-      "en": "1. What is PinGo?",
-      "zh": "PinGo是什么？"
-    },
-    "answer": {
-      "id": "PinGo adalah platform pinjaman digital.",
-      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app.",
-      "zh": "PinGo为印尼用户提供线上借款服务。"
-    },
     "id": 1,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "产品",
+      "id": "Produk",
+      "en": "Product"
+    },
+    "question": {
+      "zh": "PinGo是什么？",
+      "id": "Apa itu PinGo?",
+      "en": "1. What is PinGo?"
+    },
+    "answer": {
+      "zh": "PinGo为印尼用户提供线上借款服务。",
+      "id": "PinGo adalah platform pinjaman digital.",
+      "en": "PinGo is a digital cash loan service. Loan applications can only be submitted through the official PinGo mobile app."
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-product--01",
+    "product_code": "pingo",
     "category_slug": "pingo-product",
-    "product_code": "pingo"
+    "sheet": "02-产品介绍"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "02-产品介绍",
-    "note": null,
-    "category": {
-      "zh": "产品",
-      "id": "Produk",
-      "en": "Product"
-    },
-    "question": {
-      "id": "Bagaimana menghubungi CS?",
-      "en": "",
-      "zh": "客服联系方式？"
-    },
-    "answer": {
-      "id": "Saluran resmi: LiveChat di aplikasi.",
-      "en": "",
-      "zh": "官方渠道：App LiveChat。"
-    },
     "id": 2,
-    "code": "pingo-product--02",
-    "category_slug": "pingo-product",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "02-产品介绍",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "产品",
       "id": "Produk",
       "en": "Product"
     },
     "question": {
-      "id": "Jam operasional?",
-      "en": "",
-      "zh": "客服时间？"
+      "zh": "客服联系方式？",
+      "id": "Bagaimana menghubungi CS?",
+      "en": ""
     },
     "answer": {
-      "id": "08.00-20.00 WIB",
-      "en": "",
-      "zh": "08:00-20:00 WIB"
+      "zh": "官方渠道：App LiveChat。",
+      "id": "Saluran resmi: LiveChat di aplikasi.",
+      "en": ""
     },
-    "id": 3,
-    "code": "pingo-product--03",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-product--02",
+    "product_code": "pingo",
     "category_slug": "pingo-product",
-    "product_code": "pingo"
+    "sheet": "02-产品介绍"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "03-注册OTP",
-    "note": null,
+    "id": 3,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "注册",
-      "id": "Pendaftaran",
-      "en": "Registration"
+      "zh": "产品",
+      "id": "Produk",
+      "en": "Product"
     },
     "question": {
-      "id": "Tidak menerima OTP?",
-      "en": "5. I’m not receiving the OTP. What should I do?",
-      "zh": "收不到OTP怎么办？"
+      "zh": "客服时间？",
+      "id": "Jam operasional?",
+      "en": ""
     },
     "answer": {
-      "id": "Periksa jaringan dan nomor HP lalu coba lagi.",
-      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone.",
-      "zh": "检查网络、手机号并稍后重试。"
+      "zh": "08:00-20:00 WIB",
+      "id": "08.00-20.00 WIB",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-product--03",
+    "product_code": "pingo",
+    "category_slug": "pingo-product",
+    "sheet": "02-产品介绍"
+  },
+  {
     "id": 4,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "注册",
+      "id": "Pendaftaran",
+      "en": "Registration"
+    },
+    "question": {
+      "zh": "收不到OTP怎么办？",
+      "id": "Tidak menerima OTP?",
+      "en": "5. I’m not receiving the OTP. What should I do?"
+    },
+    "answer": {
+      "zh": "检查网络、手机号并稍后重试。",
+      "id": "Periksa jaringan dan nomor HP lalu coba lagi.",
+      "en": "Make sure your number is active, your signal is stable, and messages aren’t blocked. Resend the OTP. If it still fails, contact official customer service using the contact details shown in the app. Never share your OTP with anyone."
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-otp--01",
+    "product_code": "pingo",
     "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "sheet": "03-注册OTP"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "03-注册OTP",
-    "note": null,
-    "category": {
-      "zh": "注册",
-      "id": "Pendaftaran",
-      "en": "Registration"
-    },
-    "question": {
-      "id": "Satu nomor untuk berapa akun?",
-      "en": "",
-      "zh": "一个手机号几个账号？"
-    },
-    "answer": {
-      "id": "Satu nomor hanya satu akun.",
-      "en": "",
-      "zh": "一个手机号仅一个账号。"
-    },
     "id": 5,
-    "code": "pingo-otp--02",
-    "category_slug": "pingo-otp",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "03-注册OTP",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "注册",
       "id": "Pendaftaran",
       "en": "Registration"
     },
     "question": {
-      "id": "Satu KTP untuk berapa akun?",
-      "en": "",
-      "zh": "一个KTP几个账号？"
+      "zh": "一个手机号几个账号？",
+      "id": "Satu nomor untuk berapa akun?",
+      "en": ""
     },
     "answer": {
-      "id": "Satu KTP hanya satu akun.",
-      "en": "",
-      "zh": "一个KTP仅一个账号。"
+      "zh": "一个手机号仅一个账号。",
+      "id": "Satu nomor hanya satu akun.",
+      "en": ""
     },
-    "id": 6,
-    "code": "pingo-otp--03",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-otp--02",
+    "product_code": "pingo",
     "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "sheet": "03-注册OTP"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "04-KYC",
-    "note": "SLA",
+    "id": 6,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "KYC",
-      "id": "KYC",
-      "en": "KYC"
+      "zh": "注册",
+      "id": "Pendaftaran",
+      "en": "Registration"
     },
     "question": {
-      "id": "Berapa lama verifikasi?",
-      "en": "",
-      "zh": "审核多久？"
+      "zh": "一个KTP几个账号？",
+      "id": "Satu KTP untuk berapa akun?",
+      "en": ""
     },
     "answer": {
-      "id": "Biasanya 10 menit, jika lebih lama hubungi CS.",
-      "en": "",
-      "zh": "正常10分钟内，超时联系客服。"
+      "zh": "一个KTP仅一个账号。",
+      "id": "Satu KTP hanya satu akun.",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-otp--03",
+    "product_code": "pingo",
+    "category_slug": "pingo-otp",
+    "sheet": "03-注册OTP"
+  },
+  {
     "id": 7,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "KYC",
+      "id": "KYC",
+      "en": "KYC"
+    },
+    "question": {
+      "zh": "审核多久？",
+      "id": "Berapa lama verifikasi?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "正常10分钟内，超时联系客服。",
+      "id": "Biasanya 10 menit, jika lebih lama hubungi CS.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-kyc--01",
+    "product_code": "pingo",
     "category_slug": "pingo-kyc",
-    "product_code": "pingo"
+    "sheet": "04-KYC",
+    "note": "SLA"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "04-KYC",
-    "note": null,
-    "category": {
-      "zh": "KYC",
-      "id": "KYC",
-      "en": "KYC"
-    },
-    "question": {
-      "id": "Mengapa gagal?",
-      "en": "",
-      "zh": "审核失败？"
-    },
-    "answer": {
-      "id": "Hasil ditentukan sistem.",
-      "en": "",
-      "zh": "系统综合评估，客服无法修改。"
-    },
     "id": 8,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "KYC",
+      "id": "KYC",
+      "en": "KYC"
+    },
+    "question": {
+      "zh": "审核失败？",
+      "id": "Mengapa gagal?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "系统综合评估，客服无法修改。",
+      "id": "Hasil ditentukan sistem.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-kyc--02",
+    "product_code": "pingo",
     "category_slug": "pingo-kyc",
-    "product_code": "pingo"
+    "sheet": "04-KYC"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "04-KYC",
-    "note": null,
-    "category": {
-      "zh": "KYC",
-      "id": "KYC",
-      "en": "KYC"
-    },
-    "question": {
-      "id": "Syarat foto KTP?",
-      "en": "",
-      "zh": "身份证照片要求？"
-    },
-    "answer": {
-      "id": "Foto harus jelas dan lengkap.",
-      "en": "",
-      "zh": "照片清晰、完整、无遮挡。"
-    },
     "id": 9,
-    "code": "pingo-kyc--03",
-    "category_slug": "pingo-kyc",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "04-KYC",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "KYC",
       "id": "KYC",
       "en": "KYC"
     },
     "question": {
-      "id": "Syarat selfie?",
-      "en": "",
-      "zh": "自拍要求？"
+      "zh": "身份证照片要求？",
+      "id": "Syarat foto KTP?",
+      "en": ""
     },
     "answer": {
-      "id": "Pastikan wajah jelas dan pencahayaan cukup.",
-      "en": "",
-      "zh": "光线充足，人脸完整。"
+      "zh": "照片清晰、完整、无遮挡。",
+      "id": "Foto harus jelas dan lengkap.",
+      "en": ""
     },
-    "id": 10,
-    "code": "pingo-kyc--04",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-kyc--03",
+    "product_code": "pingo",
     "category_slug": "pingo-kyc",
-    "product_code": "pingo"
+    "sheet": "04-KYC"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "05-授信额度",
-    "note": null,
+    "id": 10,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "额度",
-      "id": "Limit",
-      "en": "Limit"
+      "zh": "KYC",
+      "id": "KYC",
+      "en": "KYC"
     },
     "question": {
-      "id": "Mengapa tidak ada limit?",
-      "en": "",
-      "zh": "为什么没有额度？"
+      "zh": "自拍要求？",
+      "id": "Syarat selfie?",
+      "en": ""
     },
     "answer": {
-      "id": "Limit ditentukan sistem.",
-      "en": "",
-      "zh": "额度由系统评估。"
+      "zh": "光线充足，人脸完整。",
+      "id": "Pastikan wajah jelas dan pencahayaan cukup.",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-kyc--04",
+    "product_code": "pingo",
+    "category_slug": "pingo-kyc",
+    "sheet": "04-KYC"
+  },
+  {
     "id": 11,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "额度",
+      "id": "Limit",
+      "en": "Limit"
+    },
+    "question": {
+      "zh": "为什么没有额度？",
+      "id": "Mengapa tidak ada limit?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "额度由系统评估。",
+      "id": "Limit ditentukan sistem.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-limit--01",
+    "product_code": "pingo",
     "category_slug": "pingo-limit",
-    "product_code": "pingo"
+    "sheet": "05-授信额度"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "05-授信额度",
-    "note": null,
-    "category": {
-      "zh": "额度",
-      "id": "Limit",
-      "en": "Limit"
-    },
-    "question": {
-      "id": "Mengapa limit turun?",
-      "en": "",
-      "zh": "为什么额度降低？"
-    },
-    "answer": {
-      "id": "Limit disesuaikan berdasarkan risiko dan riwayat pembayaran.",
-      "en": "",
-      "zh": "根据风险和还款表现动态调整。"
-    },
     "id": 12,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "额度",
+      "id": "Limit",
+      "en": "Limit"
+    },
+    "question": {
+      "zh": "为什么额度降低？",
+      "id": "Mengapa limit turun?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "根据风险和还款表现动态调整。",
+      "id": "Limit disesuaikan berdasarkan risiko dan riwayat pembayaran.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-limit--02",
+    "product_code": "pingo",
     "category_slug": "pingo-limit",
-    "product_code": "pingo"
+    "sheet": "05-授信额度"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "05-授信额度",
-    "note": null,
-    "category": {
-      "zh": "额度",
-      "id": "Limit",
-      "en": "Limit"
-    },
-    "question": {
-      "id": "Bisakah menaikkan limit?",
-      "en": "",
-      "zh": "可以申请提额吗？"
-    },
-    "answer": {
-      "id": "Mohon maaf ya kak, untul limit pinjaman yang bisa Anda ajukan ditentukan oleh sistem melalui evaluasi menyeluruh. Hasil evaluasi bersifat otomatis dan tidak dapat diubah secara manual.",
-      "en": "",
-      "zh": "目前不支持人工提额。"
-    },
     "id": 13,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "额度",
+      "id": "Limit",
+      "en": "Limit"
+    },
+    "question": {
+      "zh": "可以申请提额吗？",
+      "id": "Bisakah menaikkan limit?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "目前不支持人工提额。",
+      "id": "Mohon maaf ya kak, untul limit pinjaman yang bisa Anda ajukan ditentukan oleh sistem melalui evaluasi menyeluruh. Hasil evaluasi bersifat otomatis dan tidak dapat diubah secara manual.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-limit--03",
+    "product_code": "pingo",
     "category_slug": "pingo-limit",
-    "product_code": "pingo"
+    "sheet": "05-授信额度"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "05-授信额度",
-    "note": null,
-    "category": {
-      "zh": "额度",
-      "id": "Limit",
-      "en": "Limit"
-    },
-    "question": {
-      "id": "Jika bayar apa ada kenaikan limit?",
-      "en": "",
-      "zh": "还款后能否提额"
-    },
-    "answer": {
-      "id": "Apa limit Anda bisa naik setelah melunasi pinjaman akan dinilai secara menyeluruh oleh sistem. Kami menyarankan agar Anda selalu menjaga riwayat pembayaran yang baik.",
-      "en": "",
-      "zh": "还款后能否提额由系统综合评估，建议您保持良好的还款习惯。"
-    },
     "id": 14,
-    "code": "pingo-limit--04",
-    "category_slug": "pingo-limit",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "05-授信额度",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "额度",
       "id": "Limit",
       "en": "Limit"
     },
     "question": {
-      "id": "saya ditolak kenapa ga berubah",
-      "en": "",
-      "zh": "被拒后倒计时结束界面额度没有任何变化"
+      "zh": "还款后能否提额",
+      "id": "Jika bayar apa ada kenaikan limit?",
+      "en": ""
     },
     "answer": {
-      "id": "Mohon maaf ya kak, saya mengerti kakak bingung karena limit pinjaman belum berubah meskipun pengajuan sebelumnya ditolak. Setiap penolakan pengajuan akan dievaluasi ulang secara otomatis oleh sistem, proses peninjauan data tidak langsung selesai saat itu juga. Perubahan limit akan muncul setelah sistem menyelesaikan seluruh penilaian.  Silakan tunggu beberapa waktu dan cek halaman akun secara berkala.",
-      "en": "",
-      "zh": "额度变化需要系统综合评估，请耐心等待，定期检查app"
+      "zh": "还款后能否提额由系统综合评估，建议您保持良好的还款习惯。",
+      "id": "Apa limit Anda bisa naik setelah melunasi pinjaman akan dinilai secara menyeluruh oleh sistem. Kami menyarankan agar Anda selalu menjaga riwayat pembayaran yang baik.",
+      "en": ""
     },
-    "id": 15,
-    "code": "pingo-limit--05",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-limit--04",
+    "product_code": "pingo",
     "category_slug": "pingo-limit",
-    "product_code": "pingo"
+    "sheet": "05-授信额度"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
+    "id": 15,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
+      "zh": "额度",
+      "id": "Limit",
+      "en": "Limit"
     },
     "question": {
-      "id": "Kapan dana cair?",
-      "en": "",
-      "zh": "放款多久到账？"
+      "zh": "被拒后倒计时结束界面额度没有任何变化",
+      "id": "saya ditolak kenapa ga berubah",
+      "en": ""
     },
     "answer": {
-      "id": "Untuk waktu pencairan pinjaman di pingo minimal 2 jam dan maksimal adalah 1x24 jam.",
-      "en": "",
-      "zh": "通常2小时内，最长24小时。"
+      "zh": "额度变化需要系统综合评估，请耐心等待，定期检查app",
+      "id": "Mohon maaf ya kak, saya mengerti kakak bingung karena limit pinjaman belum berubah meskipun pengajuan sebelumnya ditolak. Setiap penolakan pengajuan akan dievaluasi ulang secara otomatis oleh sistem, proses peninjauan data tidak langsung selesai saat itu juga. Perubahan limit akan muncul setelah sistem menyelesaikan seluruh penilaian.  Silakan tunggu beberapa waktu dan cek halaman akun secara berkala.",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-limit--05",
+    "product_code": "pingo",
+    "category_slug": "pingo-limit",
+    "sheet": "05-授信额度"
+  },
+  {
     "id": 16,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
+    },
+    "question": {
+      "zh": "放款多久到账？",
+      "id": "Kapan dana cair?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "通常2小时内，最长24小时。",
+      "id": "Untuk waktu pencairan pinjaman di pingo minimal 2 jam dan maksimal adalah 1x24 jam.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-loan--01",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": "Finance",
-    "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
-    },
-    "question": {
-      "id": "Lebih dari 24 jam?",
-      "en": "",
-      "zh": "超过24小时？"
-    },
-    "answer": {
-      "id": "Jika lebih dari 1x24 jam dana belum cair mohon mengirimkan bukti mutasi rekening dari tanggal pengajuan hingga saat ini ke customer service.",
-      "en": "",
-      "zh": "联系客服核实。"
-    },
     "id": 17,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
+    },
+    "question": {
+      "zh": "超过24小时？",
+      "id": "Lebih dari 24 jam?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "联系客服核实。",
+      "id": "Jika lebih dari 1x24 jam dana belum cair mohon mengirimkan bukti mutasi rekening dari tanggal pengajuan hingga saat ini ke customer service.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-loan--02",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款",
+    "note": "Finance"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
-    "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
-    },
-    "question": {
-      "id": "Bisa dibatalkan?",
-      "en": "",
-      "zh": "可以取消申请吗？"
-    },
-    "answer": {
-      "id": "Mohon maaf, jika Anda sudah dalam proses pencairan tidak dapat dibatalkan.",
-      "en": "",
-      "zh": "目前不支持取消。"
-    },
     "id": 18,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
+    },
+    "question": {
+      "zh": "可以取消申请吗？",
+      "id": "Bisa dibatalkan?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "目前不支持取消。",
+      "id": "Mohon maaf, jika Anda sudah dalam proses pencairan tidak dapat dibatalkan.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-loan--03",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
-    "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
-    },
-    "question": {
-      "id": "kenapa pengajuan gagal?",
-      "en": "",
-      "zh": "申请被拒"
-    },
-    "answer": {
-      "id": "Mohon maaf sekali pengajuan kakak belum bisa kami setujui. Semua penilaian dilakukan secara otomatis oleh sistem berdasarkan berbagai data profil pengguna. Kakak dapat melakukan pengajuan ulang kembali di lain kesempatan.",
-      "en": "",
-      "zh": "由系统决定，下次再试"
-    },
     "id": 19,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
+    },
+    "question": {
+      "zh": "申请被拒",
+      "id": "kenapa pengajuan gagal?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "由系统决定，下次再试",
+      "id": "Mohon maaf sekali pengajuan kakak belum bisa kami setujui. Semua penilaian dilakukan secara otomatis oleh sistem berdasarkan berbagai data profil pengguna. Kakak dapat melakukan pengajuan ulang kembali di lain kesempatan.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-loan--04",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
-    "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
-    },
-    "question": {
-      "id": "Kenapa saya tidak mendapatkan limit lagi setelah melunasi tagihan",
-      "en": "",
-      "zh": "还款后再次借款被拒"
-    },
-    "answer": {
-      "id": "Mohon maaf sekali atas kekecewaan ini. Untuk hasil penilaian sepenuhnya diputuskan sistem secara otomatis. Kami tidak bisa ubah hasilnya secara manual. Disarankan kakak menjaga catatan pembayaran lancar tanpa telat dalam jangka waktu beberapa bulan, nanti sistem akan lakukan evaluasi ulang saat kakak mengajukan pinjaman kembali.",
-      "en": "",
-      "zh": "由系统决定，系统会定期重新评估，请下次再试"
-    },
     "id": 20,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
+    },
+    "question": {
+      "zh": "还款后再次借款被拒",
+      "id": "Kenapa saya tidak mendapatkan limit lagi setelah melunasi tagihan",
+      "en": ""
+    },
+    "answer": {
+      "zh": "由系统决定，系统会定期重新评估，请下次再试",
+      "id": "Mohon maaf sekali atas kekecewaan ini. Untuk hasil penilaian sepenuhnya diputuskan sistem secara otomatis. Kami tidak bisa ubah hasilnya secara manual. Disarankan kakak menjaga catatan pembayaran lancar tanpa telat dalam jangka waktu beberapa bulan, nanti sistem akan lakukan evaluasi ulang saat kakak mengajukan pinjaman kembali.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-loan--05",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
-    "category": {
-      "zh": "借款",
-      "id": "Pinjaman",
-      "en": "Loan"
-    },
-    "question": {
-      "id": "Nama KTP tidak sesuai",
-      "en": "",
-      "zh": "KTP姓名有误导致无法绑卡"
-    },
-    "answer": {
-      "id": "Mohon maaf ya kak. Nama yang terdeteksi saat pemindaian KTP tidak cocok, sehingga tidak dapat menambahkan rekening. Tim kami akan membantu memperbaiki data nama kakak melalui backend sistem. Namun kakak perlu mengirimkan foto KTP asli yang jelas kepada kami untuk proses verifikasi data.",
-      "en": "",
-      "zh": "相关团队可协助在后台进行姓名更改，请提供身份证照片"
-    },
     "id": 21,
-    "code": "pingo-loan--06",
-    "category_slug": "pingo-loan",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "06-借款",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "借款",
       "id": "Pinjaman",
       "en": "Loan"
     },
     "question": {
-      "id": "kak tetap tidak bisa isi rekening kK",
-      "en": "",
-      "zh": "绑卡验证频繁"
+      "zh": "KTP姓名有误导致无法绑卡",
+      "id": "Nama KTP tidak sesuai",
+      "en": ""
     },
     "answer": {
-      "id": "Maaf ya kak, kakak terlalu sering coba verifikasi kartu sehingga sistem menampilkan error. Kakak perlu tunggu sekitar 24 jam baru bisa coba verifikasi kartu kembali ya",
-      "en": "",
-      "zh": "24小时后再试"
+      "zh": "相关团队可协助在后台进行姓名更改，请提供身份证照片",
+      "id": "Mohon maaf ya kak. Nama yang terdeteksi saat pemindaian KTP tidak cocok, sehingga tidak dapat menambahkan rekening. Tim kami akan membantu memperbaiki data nama kakak melalui backend sistem. Namun kakak perlu mengirimkan foto KTP asli yang jelas kepada kami untuk proses verifikasi data.",
+      "en": ""
     },
-    "id": 22,
-    "code": "pingo-loan--07",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-loan--06",
+    "product_code": "pingo",
     "category_slug": "pingo-loan",
-    "product_code": "pingo"
+    "sheet": "06-借款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
+    "id": 22,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
+      "zh": "借款",
+      "id": "Pinjaman",
+      "en": "Loan"
     },
     "question": {
-      "id": "Cara pembayaran?",
-      "en": "",
-      "zh": "如何还款？"
+      "zh": "绑卡验证频繁",
+      "id": "kak tetap tidak bisa isi rekening kK",
+      "en": ""
     },
     "answer": {
-      "id": "Platform kami saat ini mendukung pembayaran melalui BNI, BRI, Mandiri dan Permata. Silakan pakai VA yang tersedia di aplikasi, lalu lakukan transfer melalui salah satu dari empat bank tersebut untuk menyelesaikan pembayaran tagihan kakak. Jika kakak kesulitan menemukan kode bayar, saya bisa bantu jelaskan langkahnya.",
-      "en": "",
-      "zh": "仅支持VA。"
+      "zh": "24小时后再试",
+      "id": "Maaf ya kak, kakak terlalu sering coba verifikasi kartu sehingga sistem menampilkan error. Kakak perlu tunggu sekitar 24 jam baru bisa coba verifikasi kartu kembali ya",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-loan--07",
+    "product_code": "pingo",
+    "category_slug": "pingo-loan",
+    "sheet": "06-借款"
+  },
+  {
     "id": 23,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
+    },
+    "question": {
+      "zh": "如何还款？",
+      "id": "Cara pembayaran?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "仅支持VA。",
+      "id": "Platform kami saat ini mendukung pembayaran melalui BNI, BRI, Mandiri dan Permata. Silakan pakai VA yang tersedia di aplikasi, lalu lakukan transfer melalui salah satu dari empat bank tersebut untuk menyelesaikan pembayaran tagihan kakak. Jika kakak kesulitan menemukan kode bayar, saya bisa bantu jelaskan langkahnya.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-repayment--01",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
-    "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
-    },
-    "question": {
-      "id": "Pelunasan dipercepat?",
-      "en": "",
-      "zh": "提前还款？"
-    },
-    "answer": {
-      "id": "Didukung.",
-      "en": "",
-      "zh": "支持。"
-    },
     "id": 24,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
+    },
+    "question": {
+      "zh": "提前还款？",
+      "id": "Pelunasan dipercepat?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "支持。",
+      "id": "Didukung.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-repayment--02",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": "Finance",
-    "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
-    },
-    "question": {
-      "id": "Pembayaran belum masuk?",
-      "en": "",
-      "zh": "付款未到账？"
-    },
-    "answer": {
-      "id": "Jika >2 jam kirim Bukti Pembayaran, Nomor VA, Waktu Transaksi.",
-      "en": "",
-      "zh": "超过2小时提供Payment Receipt、VA Number、Transaction Time。"
-    },
     "id": 25,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
+    },
+    "question": {
+      "zh": "付款未到账？",
+      "id": "Pembayaran belum masuk?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "超过2小时提供Payment Receipt、VA Number、Transaction Time。",
+      "id": "Jika >2 jam kirim Bukti Pembayaran, Nomor VA, Waktu Transaksi.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-repayment--03",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款",
+    "note": "Finance"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
-    "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
-    },
-    "question": {
-      "id": "Mendukung cicilan?",
-      "en": "",
-      "zh": "支持分期？"
-    },
-    "answer": {
-      "id": "Belum mendukung.",
-      "en": "",
-      "zh": "暂不支持。"
-    },
     "id": 26,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
+    },
+    "question": {
+      "zh": "支持分期？",
+      "id": "Mendukung cicilan?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "暂不支持。",
+      "id": "Belum mendukung.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-repayment--04",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
-    "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
-    },
-    "question": {
-      "id": "Mendukung Extension?",
-      "en": "",
-      "zh": "支持展期？"
-    },
-    "answer": {
-      "id": "Jika memenuhi syarat dapat Extension setelah membayar bunga.",
-      "en": "",
-      "zh": "符合条件可展期，支付利息后延期。"
-    },
     "id": 27,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
+    },
+    "question": {
+      "zh": "支持展期？",
+      "id": "Mendukung Extension?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "符合条件可展期，支付利息后延期。",
+      "id": "Jika memenuhi syarat dapat Extension setelah membayar bunga.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-repayment--05",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
-    "category": {
-      "zh": "还款",
-      "id": "Pembayaran",
-      "en": "Repayment"
-    },
-    "question": {
-      "id": "Bagaimana saya membayar via bca?",
-      "en": "",
-      "zh": "如何使用bca还款"
-    },
-    "answer": {
-      "id": "Jika Anda menggunakan BCA Mobile atau myBCA, silakan pilih menu Transfer Antar Bank, kemudian pilih bank tujuan (BRI / Permata) dan masukkan Nomor Virtual Account yang tertera pada halaman pembayaran. Pastikan nominal transfer sesuai dengan jumlah tagihan agar pembayaran dapat diproses secara otomatis.",
-      "en": "",
-      "zh": "若您使用 BCA Mobile 或 myBCA 应用，请选择跨行转账菜单，接着选择收款银行（BRI / Permata），输入支付页面显示的虚拟账号。"
-    },
     "id": 28,
-    "code": "pingo-repayment--06",
-    "category_slug": "pingo-repayment",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "07-还款",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "还款",
       "id": "Pembayaran",
       "en": "Repayment"
     },
     "question": {
-      "id": "Kenapa di situ tidak bisa masuk bank ***",
-      "en": "",
-      "zh": "不支持用户想使用的还款渠道"
+      "zh": "如何使用bca还款",
+      "id": "Bagaimana saya membayar via bca?",
+      "en": ""
     },
     "answer": {
-      "id": "Maaf ya kak, bank yang kakak gunakan belum masuk daftar bank yang didukung sistem kami, makanya tidak bisa terhubung kartu. Kakak bisa coba pakai rekening bank lain yang tersedia di halaman penautan kartu ya",
-      "en": "",
-      "zh": "系统不支持，请使用app里展示的还款渠道"
+      "zh": "若您使用 BCA Mobile 或 myBCA 应用，请选择跨行转账菜单，接着选择收款银行（BRI / Permata），输入支付页面显示的虚拟账号。",
+      "id": "Jika Anda menggunakan BCA Mobile atau myBCA, silakan pilih menu Transfer Antar Bank, kemudian pilih bank tujuan (BRI / Permata) dan masukkan Nomor Virtual Account yang tertera pada halaman pembayaran. Pastikan nominal transfer sesuai dengan jumlah tagihan agar pembayaran dapat diproses secara otomatis.",
+      "en": ""
     },
-    "id": 29,
-    "code": "pingo-repayment--07",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-repayment--06",
+    "product_code": "pingo",
     "category_slug": "pingo-repayment",
-    "product_code": "pingo"
+    "sheet": "07-还款"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "08-逾期",
-    "note": null,
+    "id": 29,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "逾期",
-      "id": "Keterlambatan",
-      "en": "Overdue"
+      "zh": "还款",
+      "id": "Pembayaran",
+      "en": "Repayment"
     },
     "question": {
-      "id": "Apa yang harus dilakukan?",
-      "en": "",
-      "zh": "逾期怎么办？"
+      "zh": "不支持用户想使用的还款渠道",
+      "id": "Kenapa di situ tidak bisa masuk bank ***",
+      "en": ""
     },
     "answer": {
-      "id": "Segera bayar, jika memenuhi syarat dapat Extension.",
-      "en": "",
-      "zh": "尽快还款，符合条件可申请展期。"
+      "zh": "系统不支持，请使用app里展示的还款渠道",
+      "id": "Maaf ya kak, bank yang kakak gunakan belum masuk daftar bank yang didukung sistem kami, makanya tidak bisa terhubung kartu. Kakak bisa coba pakai rekening bank lain yang tersedia di halaman penautan kartu ya",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-repayment--07",
+    "product_code": "pingo",
+    "category_slug": "pingo-repayment",
+    "sheet": "07-还款"
+  },
+  {
     "id": 30,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "逾期",
+      "id": "Keterlambatan",
+      "en": "Overdue"
+    },
+    "question": {
+      "zh": "逾期怎么办？",
+      "id": "Apa yang harus dilakukan?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "尽快还款，符合条件可申请展期。",
+      "id": "Segera bayar, jika memenuhi syarat dapat Extension.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-overdue--01",
+    "product_code": "pingo",
     "category_slug": "pingo-overdue",
-    "product_code": "pingo"
+    "sheet": "08-逾期"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "08-逾期",
-    "note": null,
-    "category": {
-      "zh": "逾期",
-      "id": "Keterlambatan",
-      "en": "Overdue"
-    },
-    "question": {
-      "id": "Apakah ada pengingat?",
-      "en": "",
-      "zh": "会收到提醒吗？"
-    },
-    "answer": {
-      "id": "Sistem dapat mengirim SMS pengingat.",
-      "en": "",
-      "zh": "系统会发送短信提醒。"
-    },
     "id": 31,
-    "code": "pingo-overdue--02",
-    "category_slug": "pingo-overdue",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "08-逾期",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "逾期",
       "id": "Keterlambatan",
       "en": "Overdue"
     },
     "question": {
-      "id": "Spam dc",
-      "en": "",
-      "zh": "暴力催收"
+      "zh": "会收到提醒吗？",
+      "id": "Apakah ada pengingat?",
+      "en": ""
     },
     "answer": {
-      "id": "Saya benar-benar menyesal dan sangat paham rasa tidak nyaman kakak akibat perilaku penagihan yang tidak sopan, terima kasih sudah mengirimkan bukti kepada kami ya kak. Tim khusus kami akan segera investigasi kasus ini secara menyeluruh. Jika ada keluhan lain kakak bisa sampaikan langsung ke saya.",
-      "en": "",
-      "zh": "提供证据，立即跟进"
+      "zh": "系统会发送短信提醒。",
+      "id": "Sistem dapat mengirim SMS pengingat.",
+      "en": ""
     },
-    "id": 32,
-    "code": "pingo-overdue--03",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-overdue--02",
+    "product_code": "pingo",
     "category_slug": "pingo-overdue",
-    "product_code": "pingo"
+    "sheet": "08-逾期"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "09-账户安全",
-    "note": null,
+    "id": 32,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "安全",
-      "id": "Keamanan",
-      "en": "Security"
+      "zh": "逾期",
+      "id": "Keterlambatan",
+      "en": "Overdue"
     },
     "question": {
-      "id": "Mengapa perlu KTP?",
-      "en": "",
-      "zh": "为什么需要KTP？"
+      "zh": "暴力催收",
+      "id": "Spam dc",
+      "en": ""
     },
     "answer": {
-      "id": "Verifikasi identitas.",
-      "en": "",
-      "zh": "身份认证。"
+      "zh": "提供证据，立即跟进",
+      "id": "Saya benar-benar menyesal dan sangat paham rasa tidak nyaman kakak akibat perilaku penagihan yang tidak sopan, terima kasih sudah mengirimkan bukti kepada kami ya kak. Tim khusus kami akan segera investigasi kasus ini secara menyeluruh. Jika ada keluhan lain kakak bisa sampaikan langsung ke saya.",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-overdue--03",
+    "product_code": "pingo",
+    "category_slug": "pingo-overdue",
+    "sheet": "08-逾期"
+  },
+  {
     "id": 33,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "安全",
+      "id": "Keamanan",
+      "en": "Security"
+    },
+    "question": {
+      "zh": "为什么需要KTP？",
+      "id": "Mengapa perlu KTP?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "身份认证。",
+      "id": "Verifikasi identitas.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-security--01",
+    "product_code": "pingo",
     "category_slug": "pingo-security",
-    "product_code": "pingo"
+    "sheet": "09-账户安全"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "09-账户安全",
-    "note": null,
-    "category": {
-      "zh": "安全",
-      "id": "Keamanan",
-      "en": "Security"
-    },
-    "question": {
-      "id": "Mengapa perlu kamera?",
-      "en": "",
-      "zh": "为什么需要相机？"
-    },
-    "answer": {
-      "id": "Selfie verification.",
-      "en": "",
-      "zh": "自拍认证。"
-    },
     "id": 34,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "安全",
+      "id": "Keamanan",
+      "en": "Security"
+    },
+    "question": {
+      "zh": "为什么需要相机？",
+      "id": "Mengapa perlu kamera?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "自拍认证。",
+      "id": "Selfie verification.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-security--02",
+    "product_code": "pingo",
     "category_slug": "pingo-security",
-    "product_code": "pingo"
+    "sheet": "09-账户安全"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "09-账户安全",
-    "note": null,
-    "category": {
-      "zh": "安全",
-      "id": "Keamanan",
-      "en": "Security"
-    },
-    "question": {
-      "id": "Mengapa perlu lokasi?",
-      "en": "",
-      "zh": "为什么需要定位？"
-    },
-    "answer": {
-      "id": "Analisis risiko.",
-      "en": "",
-      "zh": "风险评估。"
-    },
     "id": 35,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "安全",
+      "id": "Keamanan",
+      "en": "Security"
+    },
+    "question": {
+      "zh": "为什么需要定位？",
+      "id": "Mengapa perlu lokasi?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "风险评估。",
+      "id": "Analisis risiko.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-security--03",
+    "product_code": "pingo",
     "category_slug": "pingo-security",
-    "product_code": "pingo"
+    "sheet": "09-账户安全"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "09-账户安全",
-    "note": null,
-    "category": {
-      "zh": "安全",
-      "id": "Keamanan",
-      "en": "Security"
-    },
-    "question": {
-      "id": "Gimana cara hapus akun nya?",
-      "en": "",
-      "zh": "注销账户"
-    },
-    "answer": {
-      "id": "Jika kakak benar yakin menghapus akun, nanti saya akan memasukkan akun kak ke blacklist. Setelah itu kak tidak bisa mengajukan pinjaman lagi di aplikasi pingo.",
-      "en": "",
-      "zh": "可添加黑名单"
-    },
     "id": 36,
-    "code": "pingo-security--04",
-    "category_slug": "pingo-security",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "09-账户安全",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "安全",
       "id": "Keamanan",
       "en": "Security"
     },
     "question": {
-      "id": "sudah buka izin tapi tidak bisa mengajukan pinjaman",
-      "en": "",
-      "zh": "权限未打开问题"
+      "zh": "注销账户",
+      "id": "Gimana cara hapus akun nya?",
+      "en": ""
     },
     "answer": {
-      "id": "Silakan masuk ke pengaturan ponsel Anda, buka menu Aplikasi > PinGo, pastikan seluruh izin akses telah diaktifkan tanpa ada izin yang ditolak.",
-      "en": "",
-      "zh": "打开手机设置，找到“软件->PinGo”,然后打开所有的权限"
+      "zh": "可添加黑名单",
+      "id": "Jika kakak benar yakin menghapus akun, nanti saya akan memasukkan akun kak ke blacklist. Setelah itu kak tidak bisa mengajukan pinjaman lagi di aplikasi pingo.",
+      "en": ""
     },
-    "id": 37,
-    "code": "pingo-security--05",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-security--04",
+    "product_code": "pingo",
     "category_slug": "pingo-security",
-    "product_code": "pingo"
+    "sheet": "09-账户安全"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "10-投诉处理",
-    "note": null,
+    "id": 37,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
-      "zh": "投诉",
-      "id": "Komplain",
-      "en": "Complaint"
+      "zh": "安全",
+      "id": "Keamanan",
+      "en": "Security"
     },
     "question": {
-      "id": "Alur penanganan?",
-      "en": "",
-      "zh": "处理流程？"
+      "zh": "权限未打开问题",
+      "id": "sudah buka izin tapi tidak bisa mengajukan pinjaman",
+      "en": ""
     },
     "answer": {
-      "id": "Nomor HP→Nomor Pinjaman→Deskripsi→Screenshot→Tiket→Hasil.",
-      "en": "",
-      "zh": "手机号→订单号→问题描述→截图→提交工单→反馈结果。"
+      "zh": "打开手机设置，找到“软件->PinGo”,然后打开所有的权限",
+      "id": "Silakan masuk ke pengaturan ponsel Anda, buka menu Aplikasi > PinGo, pastikan seluruh izin akses telah diaktifkan tanpa ada izin yang ditolak.",
+      "en": ""
     },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-security--05",
+    "product_code": "pingo",
+    "category_slug": "pingo-security",
+    "sheet": "09-账户安全"
+  },
+  {
     "id": 38,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "投诉",
+      "id": "Komplain",
+      "en": "Complaint"
+    },
+    "question": {
+      "zh": "处理流程？",
+      "id": "Alur penanganan?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "手机号→订单号→问题描述→截图→提交工单→反馈结果。",
+      "id": "Nomor HP→Nomor Pinjaman→Deskripsi→Screenshot→Tiket→Hasil.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-complaint--01",
+    "product_code": "pingo",
     "category_slug": "pingo-complaint",
-    "product_code": "pingo"
+    "sheet": "10-投诉处理"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "10-投诉处理",
-    "note": null,
-    "category": {
-      "zh": "投诉",
-      "id": "Komplain",
-      "en": "Complaint"
-    },
-    "question": {
-      "id": "Estimasi?",
-      "en": "",
-      "zh": "预计处理时间？"
-    },
-    "answer": {
-      "id": "Diproses sesuai tiket dan diinformasikan.",
-      "en": "",
-      "zh": "按工单进度处理并及时反馈。"
-    },
     "id": 39,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "投诉",
+      "id": "Komplain",
+      "en": "Complaint"
+    },
+    "question": {
+      "zh": "预计处理时间？",
+      "id": "Estimasi?",
+      "en": ""
+    },
+    "answer": {
+      "zh": "按工单进度处理并及时反馈。",
+      "id": "Diproses sesuai tiket dan diinformasikan.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
     "code": "pingo-complaint--02",
+    "product_code": "pingo",
     "category_slug": "pingo-complaint",
-    "product_code": "pingo"
+    "sheet": "10-投诉处理"
   },
   {
-    "source": "kb_v2_xlsx",
-    "sheet": "10-投诉处理",
-    "note": null,
-    "category": {
-      "zh": "投诉",
-      "id": "Komplain",
-      "en": "Complaint"
-    },
-    "question": {
-      "id": "Pinjaman saya 500rb knapa di cairkan uangnya hanya 300rb",
-      "en": "",
-      "zh": "投诉20%砍头息"
-    },
-    "answer": {
-      "id": "Mohon maaf ya kak, platform akan mengenakan sejumlah biaya layanan sebelum dana dicairkan. Semua detail biaya sudah kelihatan jelas di aplikasi sebelum kakak setuju pinjaman.",
-      "en": "",
-      "zh": "系统在放款前会收取一定服务费"
-    },
     "id": 40,
-    "code": "pingo-complaint--03",
-    "category_slug": "pingo-complaint",
-    "product_code": "pingo"
-  },
-  {
-    "source": "kb_v2_xlsx",
-    "sheet": "10-投诉处理",
-    "note": null,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "投诉",
       "id": "Komplain",
       "en": "Complaint"
     },
     "question": {
-      "id": "Bunga terlalu besar",
-      "en": "",
-      "zh": "利息高"
+      "zh": "投诉20%砍头息",
+      "id": "Pinjaman saya 500rb knapa di cairkan uangnya hanya 300rb",
+      "en": ""
     },
     "answer": {
-      "id": "Saya mengerti kebingungan kakak terkait total biaya pinjaman yang dikenakan ya kak. Semua rincian suku bunga, biaya administrasi serta ketentuan total biaya layanan sudah ditampilkan secara jelas di aplikasi sebelum kakak menyetujui pengajuan pinjaman. Semua ketentuan tersebut sudah kakak setujui sebelum dana dicairkan.",
-      "en": "",
-      "zh": "费用明细已在app中展示，放款前您已同意"
+      "zh": "系统在放款前会收取一定服务费",
+      "id": "Mohon maaf ya kak, platform akan mengenakan sejumlah biaya layanan sebelum dana dicairkan. Semua detail biaya sudah kelihatan jelas di aplikasi sebelum kakak setuju pinjaman.",
+      "en": ""
     },
-    "id": 41,
-    "code": "pingo-complaint--04",
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-complaint--03",
+    "product_code": "pingo",
     "category_slug": "pingo-complaint",
-    "product_code": "pingo"
+    "sheet": "10-投诉处理"
+  },
+  {
+    "id": 41,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
+    "category": {
+      "zh": "投诉",
+      "id": "Komplain",
+      "en": "Complaint"
+    },
+    "question": {
+      "zh": "利息高",
+      "id": "Bunga terlalu besar",
+      "en": ""
+    },
+    "answer": {
+      "zh": "费用明细已在app中展示，放款前您已同意",
+      "id": "Saya mengerti kebingungan kakak terkait total biaya pinjaman yang dikenakan ya kak. Semua rincian suku bunga, biaya administrasi serta ketentuan total biaya layanan sudah ditampilkan secara jelas di aplikasi sebelum kakak menyetujui pengajuan pinjaman. Semua ketentuan tersebut sudah kakak setujui sebelum dana dicairkan.",
+      "en": ""
+    },
+    "source_detail": "imported_from=kb_v2_xlsx",
+    "code": "pingo-complaint--04",
+    "product_code": "pingo",
+    "category_slug": "pingo-complaint",
+    "sheet": "10-投诉处理"
   },
   {
     "id": 42,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "注册",
       "id": "Pendaftaran",
       "en": "Registration"
     },
     "question": {
+      "zh": "2. 谁可以注册？",
       "id": "2. Siapa yang bisa mendaftar?",
-      "en": "2. Who can register?",
-      "zh": "2. 谁可以注册？"
+      "en": "2. Who can register?"
     },
     "answer": {
+      "zh": "持有效身份的印尼公民，满足产品规定的最低年龄，拥有有效手机号；如需放款则通常需本人名下银行账户。",
       "id": "Warga Negara Indonesia dengan identitas valid, memenuhi syarat usia minimum sesuai kebijakan produk, memiliki nomor HP aktif, serta rekening bank atas nama sendiri bila diperlukan untuk pencairan.",
-      "en": "Indonesian citizens with valid ID, meeting the minimum age required by the product policy, with an active mobile number, and a bank account in your own name when required for disbursement.",
-      "zh": "持有效身份的印尼公民，满足产品规定的最低年龄，拥有有效手机号；如需放款则通常需本人名下银行账户。"
+      "en": "Indonesian citizens with valid ID, meeting the minimum age required by the product policy, with an active mobile number, and a bank account in your own name when required for disbursement."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-otp--04",
-    "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-otp"
   },
   {
     "id": 43,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "注册",
       "id": "Pendaftaran",
       "en": "Registration"
     },
     "question": {
+      "zh": "3. 如何注册并申请？",
       "id": "3. Bagaimana cara mendaftar dan mengajukan pinjaman?",
-      "en": "3. How do I register and apply?",
-      "zh": "3. 如何注册并申请？"
+      "en": "3. How do I register and apply?"
     },
     "answer": {
+      "zh": "从官方应用商店下载 PinGo 官方 App，使用手机号注册并按提示完成流程。App 之外无法提交借款申请。",
       "id": "Unduh aplikasi resmi PinGo dari toko aplikasi resmi, daftar dengan nomor HP, lalu ikuti langkah di aplikasi. Pengajuan pinjaman tidak tersedia di luar aplikasi.",
-      "en": "Download the official PinGo app from an official app store, register with your mobile number, then follow the in-app steps. Loan applications are not available outside the app.",
-      "zh": "从官方应用商店下载 PinGo 官方 App，使用手机号注册并按提示完成流程。App 之外无法提交借款申请。"
+      "en": "Download the official PinGo app from an official app store, register with your mobile number, then follow the in-app steps. Loan applications are not available outside the app."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-otp--05",
-    "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-otp"
   },
   {
     "id": 44,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "注册",
       "id": "Pendaftaran",
       "en": "Registration"
     },
     "question": {
+      "zh": "4. 验证码（OTP）如何发送？",
       "id": "4. Bagaimana verifikasi OTP dikirim?",
-      "en": "4. How is the OTP delivered?",
-      "zh": "4. 验证码（OTP）如何发送？"
+      "en": "4. How is the OTP delivered?"
     },
     "answer": {
+      "zh": "OTP 可能通过 WhatsApp 或短信（SMS）发送，具体以系统当时可用渠道与规则为准。",
       "id": "OTP dapat dikirim melalui WhatsApp atau SMS sesuai ketersediaan channel dan kebijakan sistem pada saat itu.",
-      "en": "The OTP may be sent via WhatsApp or SMS, depending on channel availability and system policy at the time.",
-      "zh": "OTP 可能通过 WhatsApp 或短信（SMS）发送，具体以系统当时可用渠道与规则为准。"
+      "en": "The OTP may be sent via WhatsApp or SMS, depending on channel availability and system policy at the time."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-otp--06",
-    "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-otp"
   },
   {
     "id": 45,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "注册",
       "id": "Pendaftaran",
       "en": "Registration"
     },
     "question": {
+      "zh": "6. 一个人可以注册多个账号吗？",
       "id": "6. Apakah satu orang boleh memiliki lebih dari satu akun?",
-      "en": "6. Can I have more than one account?",
-      "zh": "6. 一个人可以注册多个账号吗？"
+      "en": "6. Can I have more than one account?"
     },
     "answer": {
+      "zh": "一般不可以。同一身份通常仅限一个账户，用于安全与风控。",
       "id": "Umumnya tidak. Satu identitas biasanya hanya untuk satu akun demi keamanan dan penilaian risiko.",
-      "en": "Usually no. One identity is typically limited to one account for security and risk assessment.",
-      "zh": "一般不可以。同一身份通常仅限一个账户，用于安全与风控。"
+      "en": "Usually no. One identity is typically limited to one account for security and risk assessment."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-otp--07",
-    "category_slug": "pingo-otp",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-otp"
   },
   {
     "id": 46,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "填写资料",
       "id": "Mengisi data",
       "en": "Profile information"
     },
     "question": {
+      "zh": "7. 需要填写哪些信息？",
       "id": "7. Data apa saja yang perlu dilengkapi?",
-      "en": "7. What information do I need to provide?",
-      "zh": "7. 需要填写哪些信息？"
+      "en": "7. What information do I need to provide?"
     },
     "answer": {
+      "zh": "通常包括个人信息、工作/收入、紧急联系人，以及 App 要求的收款账户信息。",
       "id": "Biasanya mencakup data pribadi, pekerjaan/pendapatan, kontak darurat, dan informasi rekening penerima dana sesuai permintaan di aplikasi.",
-      "en": "Typically personal details, employment/income information, emergency contacts, and bank details as requested in the app.",
-      "zh": "通常包括个人信息、工作/收入、紧急联系人，以及 App 要求的收款账户信息。"
+      "en": "Typically personal details, employment/income information, emergency contacts, and bank details as requested in the app."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-profile--01",
-    "category_slug": "pingo-profile",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-profile"
   },
   {
     "id": 47,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "填写资料",
       "id": "Mengisi data",
       "en": "Profile information"
     },
     "question": {
+      "zh": "8. 为什么 App 会申请权限（如相机）？",
       "id": "8. Mengapa aplikasi meminta izin tertentu (misalnya kamera)?",
-      "en": "8. Why does the app request permissions (e.g., camera)?",
-      "zh": "8. 为什么 App 会申请权限（如相机）？"
+      "en": "8. Why does the app request permissions (e.g., camera)?"
     },
     "answer": {
+      "zh": "用于身份核验与资料上传，具体以产品政策与隐私政策说明为准。",
       "id": "Untuk verifikasi identitas dan unggah dokumen sesuai kebijakan produk. Penjelasan lebih lengkap ada di Kebijakan Privasi.",
-      "en": "For identity verification and document upload per product policy. See the Privacy Policy for more details.",
-      "zh": "用于身份核验与资料上传，具体以产品政策与隐私政策说明为准。"
+      "en": "For identity verification and document upload per product policy. See the Privacy Policy for more details."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-profile--02",
-    "category_slug": "pingo-profile",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-profile"
   },
   {
     "id": 48,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "填写资料",
       "id": "Mengisi data",
       "en": "Profile information"
     },
     "question": {
+      "zh": "9. 常见需要哪些材料？",
       "id": "9. Dokumen apa yang sering diminta?",
-      "en": "9. What documents are commonly required?",
-      "zh": "9. 常见需要哪些材料？"
+      "en": "9. What documents are commonly required?"
     },
     "answer": {
+      "zh": "例如：身份证（KTP）、核验自拍；如系统要求则可能需要收入类证明。以 App 内实际提示为准。",
       "id": "Contoh umum: KTP dan selfie verifikasi; dokumen pendukung pendapatan jika diminta sistem. Daftar final mengikuti instruksi di aplikasi.",
-      "en": "Examples: national ID (KTP) and a verification selfie; income-related documents if requested. The final list follows in-app instructions.",
-      "zh": "例如：身份证（KTP）、核验自拍；如系统要求则可能需要收入类证明。以 App 内实际提示为准。"
+      "en": "Examples: national ID (KTP) and a verification selfie; income-related documents if requested. The final list follows in-app instructions."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-profile--03",
-    "category_slug": "pingo-profile",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-profile"
   },
   {
     "id": 49,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "填写资料",
       "id": "Mengisi data",
       "en": "Profile information"
     },
     "question": {
+      "zh": "10. 信息填错了怎么办？",
       "id": "10. Bagaimana jika ada kesalahan penulisan data?",
-      "en": "10. I entered incorrect information. What should I do?",
-      "zh": "10. 信息填错了怎么办？"
+      "en": "10. I entered incorrect information. What should I do?"
     },
     "answer": {
+      "zh": "若支持可在资料页修改，或联系官方客服。姓名需与证件及银行账户一致。",
       "id": "Perbarui di bagian profil jika tersedia, atau hubungi CS resmi. Pastikan nama sesuai KTP dan rekening bank.",
-      "en": "Update it in your profile if available, or contact official support. Ensure your name matches your ID and bank account.",
-      "zh": "若支持可在资料页修改，或联系官方客服。姓名需与证件及银行账户一致。"
+      "en": "Update it in your profile if available, or contact official support. Ensure your name matches your ID and bank account."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-profile--04",
-    "category_slug": "pingo-profile",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-profile"
   },
   {
     "id": 50,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "填写资料",
       "id": "Mengisi data",
       "en": "Profile information"
     },
     "question": {
+      "zh": "11. 我的数据是否受保护？",
       "id": "11. Apakah data saya dilindungi?",
-      "en": "11. Is my data protected?",
-      "zh": "11. 我的数据是否受保护？"
+      "en": "11. Is my data protected?"
     },
     "answer": {
+      "zh": "数据处理遵循 PinGo《隐私政策》。请妥善保管密码/PIN，不要泄露 OTP。",
       "id": "Perlindungan data mengikuti Kebijakan Privasi PinGo. Lindungi kata sandi/PIN dan jangan membagikan OTP.",
-      "en": "Data handling follows PinGo’s Privacy Policy. Protect your password/PIN and do not share OTPs.",
-      "zh": "数据处理遵循 PinGo《隐私政策》。请妥善保管密码/PIN，不要泄露 OTP。"
+      "en": "Data handling follows PinGo’s Privacy Policy. Protect your password/PIN and do not share OTPs."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-profile--05",
-    "category_slug": "pingo-profile",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-profile"
   },
   {
     "id": 51,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "风控审核",
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review"
     },
     "question": {
+      "zh": "12. 审核会评估什么？",
       "id": "12. Apa yang dinilai dalam proses verifikasi?",
-      "en": "12. What is assessed during verification?",
-      "zh": "12. 审核会评估什么？"
+      "en": "12. What is assessed during verification?"
     },
     "answer": {
+      "zh": "可能包括资料一致性、准入条件、内部风控参数及相关历史（如适用），以 PinGo 政策为准。",
       "id": "Sistem dapat menilai konsistensi data, kelayakan, parameter risiko internal, serta riwayat relevan sesuai kebijakan PinGo.",
-      "en": "The system may assess data consistency, eligibility, internal risk parameters, and relevant history per PinGo policy.",
-      "zh": "可能包括资料一致性、准入条件、内部风控参数及相关历史（如适用），以 PinGo 政策为准。"
+      "en": "The system may assess data consistency, eligibility, internal risk parameters, and relevant history per PinGo policy."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-risk--01",
-    "category_slug": "pingo-risk",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-risk"
   },
   {
     "id": 52,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "风控审核",
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review"
     },
     "question": {
+      "zh": "13. 审核需要多久？",
       "id": "13. Berapa lama proses verifikasi?",
-      "en": "13. How long does verification take?",
-      "zh": "13. 审核需要多久？"
+      "en": "13. How long does verification take?"
     },
     "answer": {
+      "zh": "时间因个案而异，请在 App 内查看进度；资料完整清晰有助于加快处理。",
       "id": "Waktu bervariasi. Pantau status di aplikasi. Kelengkapan dan kejelasan data membantu memperlancar proses.",
-      "en": "Timing varies. Check status in the app. Complete, clear information helps speed up processing.",
-      "zh": "时间因个案而异，请在 App 内查看进度；资料完整清晰有助于加快处理。"
+      "en": "Timing varies. Check status in the app. Complete, clear information helps speed up processing."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-risk--02",
-    "category_slug": "pingo-risk",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-risk"
   },
   {
     "id": 53,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "风控审核",
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review"
     },
     "question": {
+      "zh": "14. 为什么会被拒？",
       "id": "14. Mengapa pengajuan saya ditolak?",
-      "en": "14. Why was my application rejected?",
-      "zh": "14. 为什么会被拒？"
+      "en": "14. Why was my application rejected?"
     },
     "answer": {
+      "zh": "可能未满足风控标准、资料不一致或内部政策限制；若允许，可能在等待期后再次申请。",
       "id": "Bisa karena tidak memenuhi kriteria risiko, data tidak konsisten, atau kebijakan internal. Pengajuan ulang mungkin tersedia setelah periode tertentu jika fitur/ketentuan mengizinkan.",
-      "en": "You may not meet risk criteria, data may be inconsistent, or internal policy may apply. Re-application may be available after a waiting period if permitted.",
-      "zh": "可能未满足风控标准、资料不一致或内部政策限制；若允许，可能在等待期后再次申请。"
+      "en": "You may not meet risk criteria, data may be inconsistent, or internal policy may apply. Re-application may be available after a waiting period if permitted."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-risk--03",
-    "category_slug": "pingo-risk",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-risk"
   },
   {
     "id": 54,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "风控审核",
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review"
     },
     "question": {
+      "zh": "15. 为什么我的额度和别人不同？",
       "id": "15. Mengapa limit saya berbeda dengan pengguna lain?",
-      "en": "15. Why is my limit different from other users’?",
-      "zh": "15. 为什么我的额度和别人不同？"
+      "en": "15. Why is my limit different from other users’?"
     },
     "answer": {
+      "zh": "额度按风险画像与产品规则个性化，并可能随资料更新或历史记录变化。",
       "id": "Limit dipersonalisasi berdasarkan profil risiko dan kebijakan produk, dan dapat berubah seiring pembaruan data atau riwayat.",
-      "en": "Limits are personalized by risk profile and product policy and may change with updated data or history.",
-      "zh": "额度按风险画像与产品规则个性化，并可能随资料更新或历史记录变化。"
+      "en": "Limits are personalized by risk profile and product policy and may change with updated data or history."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-risk--04",
-    "category_slug": "pingo-risk",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-risk"
   },
   {
     "id": 55,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "风控审核",
       "id": "Verifikasi & penilaian risiko",
       "en": "Verification & risk review"
     },
     "question": {
+      "zh": "16. 是否会查询征信/信用信息机构？",
       "id": "16. Apakah ada pemeriksaan ke lembaga informasi kredit?",
-      "en": "16. Is there a credit bureau check?",
-      "zh": "16. 是否会查询征信/信用信息机构？"
+      "en": "16. Is there a credit bureau check?"
     },
     "answer": {
+      "zh": "如产品与法规要求，可能依法进行相关查询；详见用户协议与隐私政策。",
       "id": "Jika diwajibkan oleh produk dan regulasi yang berlaku, pemeriksaan dapat dilakukan sesuai ketentuan. Rujuk Syarat & Ketentuan serta Kebijakan Privasi.",
-      "en": "If required by the product and applicable regulations, checks may be performed as allowed. Refer to the Terms & Conditions and Privacy Policy.",
-      "zh": "如产品与法规要求，可能依法进行相关查询；详见用户协议与隐私政策。"
+      "en": "If required by the product and applicable regulations, checks may be performed as allowed. Refer to the Terms & Conditions and Privacy Policy."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-risk--05",
-    "category_slug": "pingo-risk",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-risk"
   },
   {
     "id": 56,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "借款与放款",
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement"
     },
     "question": {
+      "zh": "17. 如何申请借款？",
       "id": "17. Bagaimana cara mengajukan pinjaman?",
-      "en": "17. How do I apply for a loan?",
-      "zh": "17. 如何申请借款？"
+      "en": "17. How do I apply for a loan?"
     },
     "answer": {
+      "zh": "仅在 PinGo App 内选择可用金额与期限，核对费用明细后确认提交。",
       "id": "Hanya melalui aplikasi PinGo: pilih nominal dan tenor yang tersedia, tinjau rincian biaya, lalu konfirmasi pengajuan.",
-      "en": "Only in the PinGo app: choose the available amount and tenor, review fee details, then confirm and submit.",
-      "zh": "仅在 PinGo App 内选择可用金额与期限，核对费用明细后确认提交。"
+      "en": "Only in the PinGo app: choose the available amount and tenor, review fee details, then confirm and submit."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-disbursement--01",
-    "category_slug": "pingo-disbursement",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-disbursement"
   },
   {
     "id": 57,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "借款与放款",
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement"
     },
     "question": {
+      "zh": "18. 放款到哪里？",
       "id": "18. Ke rekening mana dana dicairkan?",
-      "en": "18. Where is the money sent?",
-      "zh": "18. 放款到哪里？"
+      "en": "18. Where is the money sent?"
     },
     "answer": {
+      "zh": "一般打入已验证的借款人本人银行账户，请确保账户信息正确。",
       "id": "Biasanya ke rekening bank peminjam yang telah diverifikasi. Pastikan data rekening benar.",
-      "en": "Usually to the borrower’s verified bank account. Ensure your bank details are correct.",
-      "zh": "一般打入已验证的借款人本人银行账户，请确保账户信息正确。"
+      "en": "Usually to the borrower’s verified bank account. Ensure your bank details are correct."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-disbursement--02",
-    "category_slug": "pingo-disbursement",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-disbursement"
   },
   {
     "id": 58,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "借款与放款",
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement"
     },
     "question": {
+      "zh": "19. 钱还没到账怎么办？",
       "id": "19. Dana belum masuk, apa yang harus dilakukan?",
-      "en": "19. The money hasn’t arrived. What should I do?",
-      "zh": "19. 钱还没到账怎么办？"
+      "en": "19. The money hasn’t arrived. What should I do?"
     },
     "answer": {
+      "zh": "在 App 查看放款状态并留意银行侧延迟；若显示已放款仍未到账，请携带交易参考号联系官方客服。",
       "id": "Periksa status pencairan di aplikasi dan kemungkinan keterlambatan dari pihak bank. Jika status sudah menunjukkan pencairan namun dana belum diterima, hubungi CS resmi dengan nomor referensi transaksi.",
-      "en": "Check disbursement status in the app and possible bank delays. If the app shows disbursed funds but you haven’t received them, contact official support with your transaction reference.",
-      "zh": "在 App 查看放款状态并留意银行侧延迟；若显示已放款仍未到账，请携带交易参考号联系官方客服。"
+      "en": "Check disbursement status in the app and possible bank delays. If the app shows disbursed funds but you haven’t received them, contact official support with your transaction reference."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-disbursement--03",
-    "category_slug": "pingo-disbursement",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-disbursement"
   },
   {
     "id": 59,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "借款与放款",
       "id": "Pinjaman & pencairan",
       "en": "Loan & disbursement"
     },
     "question": {
+      "zh": "20. 批准后能否取消？",
       "id": "20. Bisakah saya membatalkan setelah disetujui?",
-      "en": "20. Can I cancel after approval?",
-      "zh": "20. 批准后能否取消？"
+      "en": "20. Can I cancel after approval?"
     },
     "answer": {
+      "zh": "以当时产品规则为准，请查看 App 内确认页或咨询官方客服。",
       "id": "Mengikuti kebijakan produk pada saat itu. Lihat halaman konfirmasi di aplikasi atau tanyakan ke CS resmi.",
-      "en": "Follows the product policy at the time. Check the in-app confirmation screen or ask official support.",
-      "zh": "以当时产品规则为准，请查看 App 内确认页或咨询官方客服。"
+      "en": "Follows the product policy at the time. Check the in-app confirmation screen or ask official support."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-disbursement--04",
-    "category_slug": "pingo-disbursement",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-disbursement"
   },
   {
     "id": 60,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "利息、费用与还款",
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment"
     },
     "question": {
+      "zh": "21. 可能有哪些费用？",
       "id": "21. Biaya apa saja yang mungkin berlaku?",
-      "en": "21. What fees may apply?",
-      "zh": "21. 可能有哪些费用？"
+      "en": "21. What fees may apply?"
     },
     "answer": {
+      "zh": "通常包括利息及/或服务费；在 App 内确认借款前应展示清晰明细。",
       "id": "Umumnya mencakup bunga dan/atau biaya layanan sesuai paket. Rincian harus terlihat jelas sebelum Anda menyetujui pinjaman di aplikasi.",
-      "en": "Typically interest and/or service fees per plan. Details must be clearly shown before you accept the loan in the app.",
-      "zh": "通常包括利息及/或服务费；在 App 内确认借款前应展示清晰明细。"
+      "en": "Typically interest and/or service fees per plan. Details must be clearly shown before you accept the loan in the app."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-fees--01",
-    "category_slug": "pingo-fees",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-fees"
   },
   {
     "id": 61,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "利息、费用与还款",
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment"
     },
     "question": {
+      "zh": "22. 如何查看还款计划与应还总额？",
       "id": "22. Bagaimana cara melihat jadwal dan total pembayaran?",
-      "en": "22. How do I see the repayment schedule and total amount?",
-      "zh": "22. 如何查看还款计划与应还总额？"
+      "en": "22. How do I see the repayment schedule and total amount?"
     },
     "answer": {
+      "zh": "在 App 的借款/账单相关页面查看。",
       "id": "Melalui menu pinjaman/tagihan di aplikasi.",
-      "en": "In the loan/bills section of the app.",
-      "zh": "在 App 的借款/账单相关页面查看。"
+      "en": "In the loan/bills section of the app."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-fees--02",
-    "category_slug": "pingo-fees",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-fees"
   },
   {
     "id": 62,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "利息、费用与还款",
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment"
     },
     "question": {
+      "zh": "23. 有哪些还款方式？",
       "id": "23. Metode pembayaran apa yang tersedia?",
-      "en": "23. What repayment methods are available?",
-      "zh": "23. 有哪些还款方式？"
+      "en": "23. What repayment methods are available?"
     },
     "answer": {
+      "zh": "仅使用 App 内展示的官方渠道（如 VA、电子钱包等）。务必只按 App 内官方指引操作。",
       "id": "Mengikuti channel resmi yang ditampilkan di aplikasi (misalnya virtual account, e-wallet, atau metode lain). Gunakan hanya instruksi resmi di aplikasi.",
-      "en": "Only official channels shown in the app (e.g., virtual account, e-wallet, or others). Follow in-app official instructions only.",
-      "zh": "仅使用 App 内展示的官方渠道（如 VA、电子钱包等）。务必只按 App 内官方指引操作。"
+      "en": "Only official channels shown in the app (e.g., virtual account, e-wallet, or others). Follow in-app official instructions only."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-fees--03",
-    "category_slug": "pingo-fees",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-fees"
   },
   {
     "id": 63,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "利息、费用与还款",
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment"
     },
     "question": {
+      "zh": "24. 逾期会怎样？",
       "id": "24. Apa yang terjadi jika terlambat membayar?",
-      "en": "24. What happens if I repay late?",
-      "zh": "24. 逾期会怎样？"
+      "en": "24. What happens if I repay late?"
     },
     "answer": {
+      "zh": "可能产生逾期费用（以合同为准），并可能影响后续评估。",
       "id": "Denda/keterlambatan dapat berlaku sesuai perjanjian dan dapat mempengaruhi penilaian pada pengajuan berikutnya.",
-      "en": "Late fees may apply per your agreement and late repayment may affect future assessments.",
-      "zh": "可能产生逾期费用（以合同为准），并可能影响后续评估。"
+      "en": "Late fees may apply per your agreement and late repayment may affect future assessments."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-fees--04",
-    "category_slug": "pingo-fees",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-fees"
   },
   {
     "id": 64,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "利息、费用与还款",
       "id": "Bunga, biaya & pembayaran",
       "en": "Interest, fees & repayment"
     },
     "question": {
+      "zh": "25. 能否展期？",
       "id": "25. Bisakah saya memperpanjang tenor?",
-      "en": "25. Can I extend the loan tenor?",
-      "zh": "25. 能否展期？"
+      "en": "25. Can I extend the loan tenor?"
     },
     "answer": {
+      "zh": "若支持，App 会展示展期选项及费用；不支持则需按期还款。",
       "id": "Jika fitur tersedia, opsi akan muncul di aplikasi beserta ketentuan biaya tambahan. Jika tidak tersedia, selesaikan sesuai jadwal.",
-      "en": "If available, options will appear in the app with any additional fees. If not, repay on schedule.",
-      "zh": "若支持，App 会展示展期选项及费用；不支持则需按期还款。"
+      "en": "If available, options will appear in the app with any additional fees. If not, repay on schedule."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-fees--05",
-    "category_slug": "pingo-fees",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-fees"
   },
   {
     "id": 65,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "安全与隐私",
       "id": "Keamanan & privasi",
       "en": "Security & privacy"
     },
     "question": {
+      "zh": "26. 如何防诈骗？",
       "id": "26. Bagaimana menghindari penipuan?",
-      "en": "26. How do I avoid scams?",
-      "zh": "26. 如何防诈骗？"
+      "en": "26. How do I avoid scams?"
     },
     "answer": {
+      "zh": "仅从官方应用商店下载 App；官方不会通过 App 外私聊索要 OTP/密码。",
       "id": "Unduh aplikasi hanya dari toko aplikasi resmi. PinGo tidak meminta OTP/kata sandi melalui chat pribadi di luar saluran resmi aplikasi.",
-      "en": "Download the app only from official app stores. PinGo will not ask for your OTP/password via private chats outside official in-app channels.",
-      "zh": "仅从官方应用商店下载 App；官方不会通过 App 外私聊索要 OTP/密码。"
+      "en": "Download the app only from official app stores. PinGo will not ask for your OTP/password via private chats outside official in-app channels."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-privacy--01",
-    "category_slug": "pingo-privacy",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-privacy"
   },
   {
     "id": 66,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "安全与隐私",
       "id": "Keamanan & privasi",
       "en": "Security & privacy"
     },
     "question": {
+      "zh": "27. 有人让我转到“员工”私人账户？",
       "id": "27. Saya diminta transfer ke rekening pribadi “petugas”. Apakah ini benar?",
-      "en": "27. Someone asked me to transfer money to a personal “staff” account. Is this real?",
-      "zh": "27. 有人让我转到“员工”私人账户？"
+      "en": "27. Someone asked me to transfer money to a personal “staff” account. Is this real?"
     },
     "answer": {
+      "zh": "不正常。还款必须仅按 App 内官方指引操作。",
       "id": "Tidak. Pembayaran hanya mengikuti instruksi resmi di aplikasi.",
-      "en": "No. Repayments must follow official in-app instructions only.",
-      "zh": "不正常。还款必须仅按 App 内官方指引操作。"
+      "en": "No. Repayments must follow official in-app instructions only."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-privacy--02",
-    "category_slug": "pingo-privacy",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-privacy"
   },
   {
     "id": 67,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "安全与隐私",
       "id": "Keamanan & privasi",
       "en": "Security & privacy"
     },
     "question": {
+      "zh": "28. 通知与个人数据相关",
       "id": "28. Bagaimana jika saya ingin berhenti menerima notifikasi atau berkaitan dengan data saya?",
-      "en": "28. Notifications and my personal data",
-      "zh": "28. 通知与个人数据相关"
+      "en": "28. Notifications and my personal data"
     },
     "answer": {
+      "zh": "可在 App 设置中处理，或按《隐私政策》联系官方客服。",
       "id": "Ikuti pengaturan aplikasi atau hubungi CS resmi sesuai Kebijakan Privasi dan ketentuan retensi data.",
-      "en": "Use in-app settings or contact official support per the Privacy Policy and data retention rules.",
-      "zh": "可在 App 设置中处理，或按《隐私政策》联系官方客服。"
+      "en": "Use in-app settings or contact official support per the Privacy Policy and data retention rules."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-privacy--03",
-    "category_slug": "pingo-privacy",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-privacy"
   },
   {
     "id": 68,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "账号与应用",
       "id": "Akun & aplikasi",
       "en": "Account & app"
     },
     "question": {
+      "zh": "29. 忘记 PIN/密码？",
       "id": "29. Saya lupa PIN/kata sandi.",
-      "en": "29. I forgot my PIN/password.",
-      "zh": "29. 忘记 PIN/密码？"
+      "en": "29. I forgot my PIN/password."
     },
     "answer": {
+      "zh": "在登录页使用找回流程，并通过 OTP 验证（WhatsApp/短信以系统实际发送为准）。",
       "id": "Gunakan fitur pemulihan di halaman masuk dan ikuti verifikasi OTP (WhatsApp/SMS sesuai sistem).",
-      "en": "Use recovery on the sign-in screen and complete OTP verification (WhatsApp/SMS as provided by the system).",
-      "zh": "在登录页使用找回流程，并通过 OTP 验证（WhatsApp/短信以系统实际发送为准）。"
+      "en": "Use recovery on the sign-in screen and complete OTP verification (WhatsApp/SMS as provided by the system)."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-account--01",
-    "category_slug": "pingo-account",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-account"
   },
   {
     "id": 69,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "账号与应用",
       "id": "Akun & aplikasi",
       "en": "Account & app"
     },
     "question": {
+      "zh": "30. 手机号换了？",
       "id": "30. Nomor HP saya berubah.",
-      "en": "30. My phone number changed.",
-      "zh": "30. 手机号换了？"
+      "en": "30. My phone number changed."
     },
     "answer": {
+      "zh": "联系官方客服并完成身份核验后更新。",
       "id": "Hubungi CS resmi dengan prosedur verifikasi identitas untuk pembaruan nomor.",
-      "en": "Contact official support and complete identity verification to update your number.",
-      "zh": "联系官方客服并完成身份核验后更新。"
+      "en": "Contact official support and complete identity verification to update your number."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-account--02",
-    "category_slug": "pingo-account",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-account"
   },
   {
     "id": 70,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "账号与应用",
       "id": "Akun & aplikasi",
       "en": "Account & app"
     },
     "question": {
+      "zh": "31. App 卡顿或报错？",
       "id": "31. Aplikasi lambat atau error.",
-      "en": "31. The app is slow or shows errors.",
-      "zh": "31. App 卡顿或报错？"
+      "en": "31. The app is slow or shows errors."
     },
     "answer": {
+      "zh": "尝试更新 App、清理缓存或切换网络；若持续，请向客服反馈并附截图与时间。",
       "id": "Perbarui aplikasi, bersihkan cache, atau ganti jaringan. Jika berlanjut, laporkan ke CS dengan tangkapan layar dan waktu kejadian.",
-      "en": "Update the app, clear cache, or switch networks. If it persists, report to support with screenshots and timestamps.",
-      "zh": "尝试更新 App、清理缓存或切换网络；若持续，请向客服反馈并附截图与时间。"
+      "en": "Update the app, clear cache, or switch networks. If it persists, report to support with screenshots and timestamps."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-account--03",
-    "category_slug": "pingo-account",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-account"
   },
   {
     "id": 71,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "账号与应用",
       "id": "Akun & aplikasi",
       "en": "Account & app"
     },
     "question": {
+      "zh": "32. 如何联系官方客服？",
       "id": "32. Bagaimana menghubungi layanan pelanggan resmi?",
-      "en": "32. How do I contact official customer service?",
-      "zh": "32. 如何联系官方客服？"
+      "en": "32. How do I contact official customer service?"
     },
     "answer": {
+      "zh": "以 PinGo App 内公示方式为准（如应用内客服、邮箱或其他官方渠道）。",
       "id": "Gunakan kontak resmi yang ditampilkan di aplikasi PinGo (misalnya chat in-app, email, atau kanal resmi lain jika disediakan).",
-      "en": "Use the official contact methods shown in the PinGo app (e.g., in-app chat, email, or other official channels if provided).",
-      "zh": "以 PinGo App 内公示方式为准（如应用内客服、邮箱或其他官方渠道）。"
+      "en": "Use the official contact methods shown in the PinGo app (e.g., in-app chat, email, or other official channels if provided)."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-account--04",
-    "category_slug": "pingo-account",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-account"
   },
   {
     "id": 72,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "账号与应用",
       "id": "Akun & aplikasi",
       "en": "Account & app"
     },
     "question": {
+      "zh": "33. 如何投诉？",
       "id": "33. Bagaimana jika saya ingin mengajukan komplain?",
-      "en": "33. How do I file a complaint?",
-      "zh": "33. 如何投诉？"
+      "en": "33. How do I file a complaint?"
     },
     "answer": {
+      "zh": "通过官方客服提交，附上申请/合同编号、凭证与时间线。",
       "id": "Sampaikan melalui CS resmi dengan ID pengajuan/kontrak, bukti, dan urutan kejadian.",
-      "en": "Contact official support with your application/contract ID, evidence, and a clear timeline.",
-      "zh": "通过官方客服提交，附上申请/合同编号、凭证与时间线。"
+      "en": "Contact official support with your application/contract ID, evidence, and a clear timeline."
     },
-    "source": "legacy_faq",
+    "source_detail": "imported_from=legacy_faq",
     "code": "pingo-account--05",
-    "category_slug": "pingo-account",
-    "product_code": "pingo"
+    "product_code": "pingo",
+    "category_slug": "pingo-account"
   },
   {
     "id": 73,
+    "source": "manual",
+    "updated_by": "system/import",
+    "updated_at": "2026-08-13T11:03:44Z",
     "category": {
       "zh": "接待",
       "id": "Sapaan",
       "en": "Reception"
     },
     "question": {
+      "zh": "你好 / 手机号打招呼",
       "id": "Halo / nomor HP / Phone",
-      "en": "Hi / phone number greeting",
-      "zh": "你好 / 手机号打招呼"
+      "en": "Hi / phone number greeting"
     },
     "answer": {
+      "zh": "您好！感谢联系 PinGo 客服，请问有什么可以帮您？",
       "id": "Halo! Terima kasih sudah menghubungi PinGo CS. Ada yang bisa kami bantu hari ini?",
-      "en": "Hi! Thanks for contacting PinGo CS. How can we help you today?",
-      "zh": "您好！感谢联系 PinGo 客服，请问有什么可以帮您？"
+      "en": "Hi! Thanks for contacting PinGo CS. How can we help you today?"
     },
-    "source": "reception_template",
+    "source_detail": "imported_from=reception_template",
     "code": "pingo-reception--01",
+    "product_code": "pingo",
     "category_slug": "pingo-reception",
-    "note": "Phone-like inbound → reception greeting only; do not teach as unknown",
-    "product_code": "pingo"
+    "note": "Phone-like inbound → reception greeting only; do not teach as unknown"
   }
 ]
