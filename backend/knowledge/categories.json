@@ -1,0 +1,124 @@
+{
+  "categories": [
+    {
+      "slug": "pingo-product",
+      "label": {
+        "zh": "产品",
+        "id": "Produk",
+        "en": "Product"
+      }
+    },
+    {
+      "slug": "pingo-otp",
+      "label": {
+        "zh": "注册",
+        "id": "Pendaftaran",
+        "en": "Registration"
+      }
+    },
+    {
+      "slug": "pingo-kyc",
+      "label": {
+        "zh": "KYC",
+        "id": "KYC",
+        "en": "KYC"
+      }
+    },
+    {
+      "slug": "pingo-limit",
+      "label": {
+        "zh": "额度",
+        "id": "Limit",
+        "en": "Limit"
+      }
+    },
+    {
+      "slug": "pingo-loan",
+      "label": {
+        "zh": "借款",
+        "id": "Pinjaman",
+        "en": "Loan"
+      }
+    },
+    {
+      "slug": "pingo-repayment",
+      "label": {
+        "zh": "还款",
+        "id": "Pembayaran",
+        "en": "Repayment"
+      }
+    },
+    {
+      "slug": "pingo-overdue",
+      "label": {
+        "zh": "逾期",
+        "id": "Keterlambatan",
+        "en": "Overdue"
+      }
+    },
+    {
+      "slug": "pingo-security",
+      "label": {
+        "zh": "安全",
+        "id": "Keamanan",
+        "en": "Security"
+      }
+    },
+    {
+      "slug": "pingo-complaint",
+      "label": {
+        "zh": "投诉",
+        "id": "Komplain",
+        "en": "Complaint"
+      }
+    },
+    {
+      "slug": "pingo-profile",
+      "label": {
+        "zh": "填写资料",
+        "id": "Mengisi data",
+        "en": "Profile information"
+      }
+    },
+    {
+      "slug": "pingo-risk",
+      "label": {
+        "zh": "风控审核",
+        "id": "Verifikasi & penilaian risiko",
+        "en": "Verification & risk review"
+      }
+    },
+    {
+      "slug": "pingo-disbursement",
+      "label": {
+        "zh": "借款与放款",
+        "id": "Pinjaman & pencairan",
+        "en": "Loan & disbursement"
+      }
+    },
+    {
+      "slug": "pingo-fees",
+      "label": {
+        "zh": "利息、费用与还款",
+        "id": "Bunga, biaya & pembayaran",
+        "en": "Interest, fees & repayment"
+      }
+    },
+    {
+      "slug": "pingo-privacy",
+      "label": {
+        "zh": "安全与隐私",
+        "id": "Keamanan & privasi",
+        "en": "Security & privacy"
+      }
+    },
+    {
+      "slug": "pingo-account",
+      "label": {
+        "zh": "账号与应用",
+        "id": "Akun & aplikasi",
+        "en": "Account & app"
+      }
+    }
+  ]
+}

@@ -79,6 +79,8 @@ def normalize_faq_item(item: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(item, dict):
         return {
             "id": None,
+            "code": None,
+            "category_slug": None,
             "source": None,
             "sheet": None,
             "category": {**empty_lang(), "label": ""},
@@ -108,8 +110,18 @@ def normalize_faq_item(item: dict[str, Any]) -> dict[str, Any]:
             a = normalize_lang_block(a_raw, prefer_fill=prefer)
 
     cat = normalize_lang_block(item.get("category"))
+    code = str(item.get("code") or "").strip() or None
+    category_slug = str(item.get("category_slug") or "").strip().lower() or None
+    if not category_slug and code:
+        from app.ai.kb_categories import parse_code
+
+        parsed = parse_code(code)
+        if parsed:
+            category_slug = parsed[0]
     return {
         "id": item.get("id"),
+        "code": code,
+        "category_slug": category_slug,
         "source": item.get("source"),
         "sheet": item.get("sheet"),
         "note": item.get("note"),
@@ -131,6 +143,10 @@ def faq_persist_shape(item: dict[str, Any]) -> dict[str, Any]:
         "question": q,
         "answer": a,
     }
+    if item.get("code"):
+        out["code"] = item["code"]
+    if item.get("category_slug"):
+        out["category_slug"] = item["category_slug"]
     if item.get("sheet"):
         out["sheet"] = item["sheet"]
     if item.get("note") is not None:
@@ -205,22 +221,56 @@ def create_faq(
     question: dict[str, str] | Any,
     answer: dict[str, str] | Any,
     category: dict[str, str] | Any | None = None,
+    category_slug: str | None = None,
+    code: str | None = None,
     source: str = "console",
+    categories_path: Path | None = None,
 ) -> dict[str, Any]:
+    from app.ai.kb_categories import (
+        categories_path_for,
+        format_code,
+        next_code_for_slug,
+        normalize_slug,
+        parse_code,
+        resolve_category_fields,
+    )
+
     q = normalize_lang_block(question)
     a = normalize_lang_block(answer)
-    cat = normalize_lang_block(category) if category is not None else empty_lang()
     if not has_any_text(q):
         raise ValueError("question required in at least one language")
     if not has_any_text(a):
         raise ValueError("answer required in at least one language")
-    if not has_any_text(cat):
-        cat = {"zh": "已教答", "id": "Diajarkan", "en": "Taught"}
+
+    cat_path = categories_path or categories_path_for(path)
+    slug, cat = resolve_category_fields(
+        category_slug=category_slug,
+        category=category,
+        categories_path=cat_path,
+    )
 
     with file_lock(path):
         items = load_faq_raw(path)
+        entry_code = (code or "").strip() or None
+        if entry_code:
+            parsed = parse_code(entry_code)
+            if not parsed:
+                raise ValueError("invalid code; expected {slug}--{NN}")
+            if parsed[0] != slug:
+                # moving code into selected category slug: re-number
+                entry_code = next_code_for_slug(items, slug)
+            else:
+                # reject duplicate
+                if any(str(i.get("code") or "") == entry_code for i in items):
+                    raise ValueError(f"code already exists: {entry_code}")
+                entry_code = format_code(slug, parsed[1])
+        else:
+            entry_code = next_code_for_slug(items, slug)
+
         entry = {
             "id": next_faq_id(items),
+            "code": entry_code,
+            "category_slug": normalize_slug(slug),
             "source": source,
             "category": cat,
             "question": q,
@@ -238,7 +288,28 @@ def update_faq(
     question: dict[str, str] | Any | None = None,
     answer: dict[str, str] | Any | None = None,
     category: dict[str, str] | Any | None = None,
+    category_slug: str | None = None,
+    code: str | None = None,
+    categories_path: Path | None = None,
 ) -> dict[str, Any] | None:
+    from app.ai.kb_categories import (
+        categories_path_for,
+        next_code_for_slug,
+        normalize_slug,
+        parse_code,
+        resolve_category_fields,
+    )
+
+    cat_path = categories_path or categories_path_for(path)
+    move_slug: str | None = None
+    move_cat: dict[str, str] | None = None
+    if category_slug is not None or category is not None:
+        move_slug, move_cat = resolve_category_fields(
+            category_slug=category_slug,
+            category=category,
+            categories_path=cat_path,
+        )
+
     with file_lock(path):
         items = load_faq_raw(path)
         found: dict[str, Any] | None = None
@@ -253,8 +324,30 @@ def update_faq(
                 item["question"] = normalize_lang_block(question)
             if answer is not None:
                 item["answer"] = normalize_lang_block(answer)
-            if category is not None:
-                item["category"] = normalize_lang_block(category)
+            if move_slug is not None and move_cat is not None:
+                old_slug = str(item.get("category_slug") or "").strip().lower()
+                item["category"] = move_cat
+                item["category_slug"] = normalize_slug(move_slug)
+                if old_slug != move_slug:
+                    # re-number into new category unless explicit code provided
+                    if code is None:
+                        item["code"] = next_code_for_slug(
+                            [x for x in items if x is not item],
+                            move_slug,
+                        )
+            if code is not None:
+                code_s = code.strip()
+                parsed = parse_code(code_s)
+                if not parsed:
+                    raise ValueError("invalid code; expected {slug}--{NN}")
+                slug_now = str(item.get("category_slug") or parsed[0])
+                if parsed[0] != slug_now:
+                    raise ValueError("code slug must match category_slug")
+                if any(
+                    str(i.get("code") or "") == code_s and i is not item for i in items
+                ):
+                    raise ValueError(f"code already exists: {code_s}")
+                item["code"] = code_s
             # Ensure persisted shape is nested multilang
             item["question"] = normalize_lang_block(item.get("question"))
             item["answer"] = normalize_lang_block(item.get("answer"))

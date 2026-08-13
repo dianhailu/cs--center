@@ -6,11 +6,14 @@ import ConsoleTopbar from "@/components/ConsoleTopbar";
 import {
   ApiError,
   FaqItem,
+  KnowledgeCategory,
   LangTriple,
   UnknownQuestion,
   createFaq,
+  createKnowledgeCategory,
   getStoredToken,
   listFaq,
+  listKnowledgeCategories,
   listUnknowns,
   resolveUnknown,
   updateFaq,
@@ -44,9 +47,20 @@ function hasAny(t: LangTriple): boolean {
   return Boolean(t.zh.trim() || t.id.trim() || t.en.trim());
 }
 
+function catLabel(c: KnowledgeCategory | FaqItem["category"] | undefined): string {
+  if (!c) return "未分类";
+  if ("slug" in c) {
+    const lab = c.label;
+    return lab.label || lab.zh || lab.id || lab.en || c.slug;
+  }
+  return c.label || c.zh || c.id || c.en || "未分类";
+}
+
 function matchesQuery(item: FaqItem, q: string): boolean {
   if (!q) return true;
   const hay = [
+    item.code || "",
+    item.category_slug || "",
     item.question.label,
     item.question.zh,
     item.question.en,
@@ -67,44 +81,26 @@ function matchesQuery(item: FaqItem, q: string): boolean {
 }
 
 type EditorMode =
-  | { kind: "create" }
+  | { kind: "create"; categorySlug: string }
   | { kind: "edit"; item: FaqItem }
   | { kind: "resolve"; unknown: UnknownQuestion };
 
 function LangFields({
   question,
   answer,
-  category,
   onQuestion,
   onAnswer,
-  onCategory,
-  showCategory,
 }: {
   question: LangTriple;
   answer: LangTriple;
-  category: LangTriple;
   onQuestion: (v: LangTriple) => void;
   onAnswer: (v: LangTriple) => void;
-  onCategory: (v: LangTriple) => void;
-  showCategory?: boolean;
 }) {
   return (
     <div className="kb-form-langs">
       {LANG_META.map(({ key, label }) => (
         <div key={key} className="kb-form-lang">
           <div className="kb-lang-tag">{label}</div>
-          {showCategory ? (
-            <label className="kb-field">
-              <span>分类</span>
-              <input
-                value={category[key]}
-                onChange={(e) =>
-                  onCategory({ ...category, [key]: e.target.value })
-                }
-                placeholder={`${label} category`}
-              />
-            </label>
-          ) : null}
           <label className="kb-field">
             <span>问题</span>
             <textarea
@@ -113,7 +109,7 @@ function LangFields({
               onChange={(e) =>
                 onQuestion({ ...question, [key]: e.target.value })
               }
-              placeholder={`${label} question`}
+              placeholder={`${label} question（可只填一种语言）`}
             />
           </label>
           <label className="kb-field">
@@ -156,23 +152,39 @@ export default function KnowledgePage() {
   const [token, setToken] = useState("");
   const [agentName, setAgentName] = useState("");
   const [items, setItems] = useState<FaqItem[]>([]);
+  const [categories, setCategories] = useState<KnowledgeCategory[]>([]);
   const [unknowns, setUnknowns] = useState<UnknownQuestion[]>([]);
   const [unknownTotal, setUnknownTotal] = useState(0);
   const [query, setQuery] = useState("");
+  const [activeSlug, setActiveSlug] = useState<string>("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editor, setEditor] = useState<EditorMode | null>(null);
   const [formQ, setFormQ] = useState<LangTriple>(emptyTriple());
   const [formA, setFormA] = useState<LangTriple>(emptyTriple());
-  const [formCat, setFormCat] = useState<LangTriple>(emptyTriple());
+  const [formSlug, setFormSlug] = useState("");
+  const [autoTranslate, setAutoTranslate] = useState(true);
   const [formError, setFormError] = useState("");
+  const [formWarn, setFormWarn] = useState("");
+  const [showNewCat, setShowNewCat] = useState(false);
+  const [newCatSlug, setNewCatSlug] = useState("");
+  const [newCatLabel, setNewCatLabel] = useState("");
 
   async function reload(t: string) {
-    const [faq, uq] = await Promise.all([listFaq(t), listUnknowns(t, "open")]);
+    const [faq, cats, uq] = await Promise.all([
+      listFaq(t),
+      listKnowledgeCategories(t),
+      listUnknowns(t, "open"),
+    ]);
     setItems(faq.items || []);
+    setCategories(cats.items || []);
     setUnknowns(uq.items || []);
     setUnknownTotal(uq.total_matching ?? uq.count ?? 0);
+    setActiveSlug((prev) => {
+      if (prev && (cats.items || []).some((c) => c.slug === prev)) return prev;
+      return (cats.items || [])[0]?.slug || "";
+    });
   }
 
   useEffect(() => {
@@ -210,30 +222,57 @@ export default function KnowledgePage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items;
     return items.filter((item) => matchesQuery(item, q));
   }, [items, query]);
 
-  function openCreate() {
+  const grouped = useMemo(() => {
+    const map = new Map<string, FaqItem[]>();
+    for (const item of filtered) {
+      const slug = item.category_slug || "uncategorized";
+      if (!map.has(slug)) map.set(slug, []);
+      map.get(slug)!.push(item);
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) => String(a.code || "").localeCompare(String(b.code || "")));
+    }
+    return map;
+  }, [filtered]);
+
+  const visibleSections = useMemo(() => {
+    if (query.trim()) {
+      return categories.filter((c) => (grouped.get(c.slug) || []).length > 0);
+    }
+    if (activeSlug) {
+      const hit = categories.find((c) => c.slug === activeSlug);
+      return hit ? [hit] : categories.slice(0, 1);
+    }
+    return categories;
+  }, [categories, grouped, activeSlug, query]);
+
+  function openCreate(slug?: string) {
+    const s = slug || activeSlug || categories[0]?.slug || "pingo-taught";
     setFormQ(emptyTriple());
     setFormA(emptyTriple());
-    setFormCat({ zh: "已教答", id: "Diajarkan", en: "Taught" });
+    setFormSlug(s);
+    setAutoTranslate(true);
     setFormError("");
-    setEditor({ kind: "create" });
+    setFormWarn("");
+    setEditor({ kind: "create", categorySlug: s });
   }
 
   function openEdit(item: FaqItem) {
     setFormQ(fromLangBlock(item.question));
     setFormA(fromLangBlock(item.answer));
-    setFormCat(fromLangBlock(item.category));
+    setFormSlug(item.category_slug || "");
+    setAutoTranslate(true);
     setFormError("");
+    setFormWarn("");
     setEditor({ kind: "edit", item });
   }
 
   function openResolve(u: UnknownQuestion) {
     const captured = (u.question || "").trim();
     const q = emptyTriple();
-    // Seed captured question into all question slots for easy editing
     q.zh = captured;
     q.id = captured;
     q.en = captured;
@@ -246,9 +285,36 @@ export default function KnowledgePage() {
     } else {
       setFormA(emptyTriple());
     }
-    setFormCat({ zh: "已教答", id: "Diajarkan", en: "Taught" });
+    setFormSlug(activeSlug || categories[0]?.slug || "pingo-taught");
+    setAutoTranslate(true);
     setFormError("");
+    setFormWarn("");
     setEditor({ kind: "resolve", unknown: u });
+  }
+
+  async function submitNewCategory() {
+    if (!token) return;
+    const slug = newCatSlug.trim().toLowerCase();
+    if (!slug) {
+      setError("请填写分类 slug（如 pingo-product）");
+      return;
+    }
+    try {
+      const labelZh = newCatLabel.trim() || slug;
+      await createKnowledgeCategory(token, {
+        slug,
+        label: { zh: labelZh, id: labelZh, en: labelZh },
+      });
+      await reload(token);
+      setActiveSlug(slug);
+      setShowNewCat(false);
+      setNewCatSlug("");
+      setNewCatLabel("");
+      setError("");
+    } catch (err) {
+      if (err instanceof ApiError && err.authFailed) return;
+      setError(userFacingError(err, "创建分类失败"));
+    }
   }
 
   async function submitEditor() {
@@ -261,26 +327,40 @@ export default function KnowledgePage() {
       setFormError("请至少填写一种语言的答案");
       return;
     }
+    if (!formSlug.trim()) {
+      setFormError("请选择分类");
+      return;
+    }
     setSaving(true);
     setFormError("");
+    setFormWarn("");
     try {
       const payload = {
         question: formQ,
         answer: formA,
-        category: formCat,
+        category_slug: formSlug.trim(),
+        auto_translate: autoTranslate,
       };
+      let warnings: string[] | undefined;
       if (editor.kind === "create") {
-        await createFaq(token, payload);
+        const res = await createFaq(token, payload);
+        warnings = res.warnings;
       } else if (editor.kind === "edit") {
-        await updateFaq(token, String(editor.item.id), payload);
+        const res = await updateFaq(token, String(editor.item.id), payload);
+        warnings = res.warnings;
       } else {
         const id = editor.unknown.id;
         if (!id) throw new Error("missing unknown id");
-        await resolveUnknown(token, id, payload);
+        const res = await resolveUnknown(token, id, payload);
+        warnings = res.warnings;
       }
       await reload(token);
+      setActiveSlug(formSlug.trim());
       setEditor(null);
       setError("");
+      if (warnings?.length) {
+        setError(warnings.join("；"));
+      }
     } catch (err) {
       if (err instanceof ApiError && err.authFailed) return;
       setFormError(userFacingError(err, "保存失败"));
@@ -291,9 +371,9 @@ export default function KnowledgePage() {
 
   const editorTitle =
     editor?.kind === "create"
-      ? "新增 FAQ"
+      ? "在此分类下新增"
       : editor?.kind === "edit"
-        ? `编辑 FAQ #${editor.item.id}`
+        ? `编辑 ${editor.item.code || `#${editor.item.id}`}`
         : editor?.kind === "resolve"
           ? "填写答案并入库"
           : "";
@@ -308,132 +388,246 @@ export default function KnowledgePage() {
           <div>
             <h1>CS-PinGo Agent 知识库</h1>
             <p className="muted">
-              每条同时展示中文 / Bahasa Indonesia / English（无语言切换）。可新增、编辑
-              FAQ，并对待补未知问题填写三语答案入库。AI 仍不向访客投递（AI_SEND_TO_CUSTOMER=false）。
+              按分类编码（如 <code>pingo-product--01</code>）管理 FAQ。可只填一种语言并自动翻译。AI
+              仍不向访客投递（AI_SEND_TO_CUSTOMER=false）。
             </p>
           </div>
           <div className="kb-stats">
             <span className="badge">{items.length} 条 FAQ</span>
             <span className="badge warn">{unknownTotal} 条待补未知问</span>
-            <button type="button" onClick={openCreate}>
-              新增 FAQ
+            <button type="button" className="secondary" onClick={() => setShowNewCat((v) => !v)}>
+              新建分类
+            </button>
+            <button type="button" onClick={() => openCreate()}>
+              在此分类下新增
             </button>
           </div>
         </div>
 
-        <div className="kb-search">
-          <input
-            type="search"
-            placeholder="搜索问题、答案、分类（三语均可）…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="搜索知识库"
-          />
-          <span className="muted kb-filter-count">
-            {loading ? "加载中…" : `显示 ${filtered.length} / ${items.length}`}
-          </span>
-        </div>
-
-        {error ? <div className="error">{error}</div> : null}
-
-        {editor ? (
-          <section className="kb-editor" aria-label={editorTitle}>
+        {showNewCat ? (
+          <section className="kb-editor" aria-label="新建分类">
             <div className="kb-section-head">
-              <h2>{editorTitle}</h2>
+              <h2>新建分类</h2>
               <button
                 type="button"
                 className="secondary"
-                onClick={() => setEditor(null)}
-                disabled={saving}
+                onClick={() => setShowNewCat(false)}
               >
                 取消
               </button>
             </div>
-            {editor.kind === "resolve" ? (
-              <p className="muted kb-editor-hint">
-                未知问（{editor.unknown.date || "—"}）：
-                {editor.unknown.question || "—"}
-              </p>
-            ) : null}
-            <LangFields
-              question={formQ}
-              answer={formA}
-              category={formCat}
-              onQuestion={setFormQ}
-              onAnswer={setFormA}
-              onCategory={setFormCat}
-              showCategory
-            />
-            {formError ? <div className="error">{formError}</div> : null}
-            <div className="kb-editor-actions">
-              <button type="button" onClick={submitEditor} disabled={saving}>
-                {saving
-                  ? "保存中…"
-                  : editor.kind === "resolve"
-                    ? "填写答案并入库"
-                    : "保存"}
+            <div className="kb-new-cat">
+              <label className="kb-field">
+                <span>slug（如 pingo-product）</span>
+                <input
+                  value={newCatSlug}
+                  onChange={(e) => setNewCatSlug(e.target.value)}
+                  placeholder="pingo-otp"
+                />
+              </label>
+              <label className="kb-field">
+                <span>显示名称</span>
+                <input
+                  value={newCatLabel}
+                  onChange={(e) => setNewCatLabel(e.target.value)}
+                  placeholder="注册/OTP"
+                />
+              </label>
+              <button type="button" onClick={submitNewCategory}>
+                创建分类
               </button>
             </div>
           </section>
         ) : null}
 
-        {unknowns.length > 0 ? (
-          <section className="kb-unknowns" aria-label="待补未知问题">
-            <div className="kb-section-head">
-              <h2>待补未知问题</h2>
-              <span className="muted">最近 {unknowns.length} 条 · 可填写三语答案入库</span>
-            </div>
-            <ul className="kb-unknown-list">
-              {unknowns.map((u) => (
-                <li key={u.id || `${u.date}-${u.question}`}>
-                  <span className="kb-unknown-date">{u.date || "—"}</span>
-                  <span className="kb-unknown-q">{u.question || "—"}</span>
-                  {u.external_code ? (
-                    <span className="badge neutral">{u.external_code}</span>
-                  ) : null}
+        <div className="kb-layout">
+          <aside className="kb-sidebar" aria-label="分类">
+            <div className="kb-sidebar-title">分类</div>
+            <ul className="kb-cat-nav">
+              {categories.map((c) => (
+                <li key={c.slug}>
                   <button
                     type="button"
-                    className="secondary kb-inline-btn"
-                    onClick={() => openResolve(u)}
+                    className={`kb-cat-nav-btn${activeSlug === c.slug && !query.trim() ? " active" : ""}`}
+                    onClick={() => {
+                      setActiveSlug(c.slug);
+                      setQuery("");
+                    }}
                   >
-                    填写答案并入库
+                    <span className="kb-cat-nav-label">{catLabel(c)}</span>
+                    <span className="muted kb-cat-nav-meta">
+                      {c.slug} · {c.count}
+                    </span>
                   </button>
                 </li>
               ))}
             </ul>
-          </section>
-        ) : null}
+          </aside>
 
-        <section className="kb-list" aria-label="FAQ 列表">
-          {!loading && filtered.length === 0 ? (
-            <div className="empty">没有匹配的知识条目</div>
-          ) : null}
-          {filtered.map((item) => (
-            <article key={String(item.id)} className="kb-card">
-              <div className="kb-card-top">
-                <span className="badge neutral">
-                  {item.category.label ||
-                    item.category.zh ||
-                    item.category.id ||
-                    item.category.en ||
-                    "未分类"}
-                </span>
-                {item.sheet ? (
-                  <span className="muted kb-sheet">{item.sheet}</span>
+          <div className="kb-main">
+            <div className="kb-search">
+              <input
+                type="search"
+                placeholder="搜索问题、答案、编码（三语均可）…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="搜索知识库"
+              />
+              <span className="muted kb-filter-count">
+                {loading
+                  ? "加载中…"
+                  : `显示 ${filtered.length} / ${items.length}`}
+              </span>
+            </div>
+
+            {error ? <div className="error">{error}</div> : null}
+
+            {editor ? (
+              <section className="kb-editor" aria-label={editorTitle}>
+                <div className="kb-section-head">
+                  <h2>{editorTitle}</h2>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => setEditor(null)}
+                    disabled={saving}
+                  >
+                    取消
+                  </button>
+                </div>
+                {editor.kind === "resolve" ? (
+                  <p className="muted kb-editor-hint">
+                    未知问（{editor.unknown.date || "—"}）：
+                    {editor.unknown.question || "—"}
+                  </p>
                 ) : null}
-                <span className="muted kb-id">#{item.id}</span>
-                <button
-                  type="button"
-                  className="secondary kb-inline-btn"
-                  onClick={() => openEdit(item)}
+                <div className="kb-editor-meta">
+                  <label className="kb-field">
+                    <span>分类</span>
+                    <select
+                      value={formSlug}
+                      onChange={(e) => setFormSlug(e.target.value)}
+                    >
+                      {categories.map((c) => (
+                        <option key={c.slug} value={c.slug}>
+                          {catLabel(c)} ({c.slug})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="kb-check">
+                    <input
+                      type="checkbox"
+                      checked={autoTranslate}
+                      onChange={(e) => setAutoTranslate(e.target.checked)}
+                    />
+                    自动翻译其他语言
+                  </label>
+                </div>
+                <LangFields
+                  question={formQ}
+                  answer={formA}
+                  onQuestion={setFormQ}
+                  onAnswer={setFormA}
+                />
+                {formError ? <div className="error">{formError}</div> : null}
+                {formWarn ? <div className="error">{formWarn}</div> : null}
+                <div className="kb-editor-actions">
+                  <button type="button" onClick={submitEditor} disabled={saving}>
+                    {saving
+                      ? "保存中…"
+                      : editor.kind === "resolve"
+                        ? "填写答案并入库"
+                        : "保存"}
+                  </button>
+                </div>
+              </section>
+            ) : null}
+
+            {unknowns.length > 0 ? (
+              <section className="kb-unknowns" aria-label="待补未知问题">
+                <div className="kb-section-head">
+                  <h2>待补未知问题</h2>
+                  <span className="muted">
+                    最近 {unknowns.length} 条 · 可填写答案入库
+                  </span>
+                </div>
+                <ul className="kb-unknown-list">
+                  {unknowns.map((u) => (
+                    <li key={u.id || `${u.date}-${u.question}`}>
+                      <span className="kb-unknown-date">{u.date || "—"}</span>
+                      <span className="kb-unknown-q">{u.question || "—"}</span>
+                      {u.external_code ? (
+                        <span className="badge neutral">{u.external_code}</span>
+                      ) : null}
+                      <button
+                        type="button"
+                        className="secondary kb-inline-btn"
+                        onClick={() => openResolve(u)}
+                      >
+                        填写答案并入库
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {!loading && filtered.length === 0 ? (
+              <div className="empty">没有匹配的知识条目</div>
+            ) : null}
+
+            {visibleSections.map((cat) => {
+              const list = grouped.get(cat.slug) || [];
+              if (query.trim() && list.length === 0) return null;
+              return (
+                <section
+                  key={cat.slug}
+                  className="kb-cat-section"
+                  aria-label={catLabel(cat)}
                 >
-                  编辑
-                </button>
-              </div>
-              <MultilangBlocks question={item.question} answer={item.answer} />
-            </article>
-          ))}
-        </section>
+                  <div className="kb-section-head">
+                    <h2>
+                      {catLabel(cat)}{" "}
+                      <span className="muted kb-cat-slug">{cat.slug}</span>
+                    </h2>
+                    <button
+                      type="button"
+                      className="secondary kb-inline-btn"
+                      onClick={() => openCreate(cat.slug)}
+                    >
+                      在此分类下新增
+                    </button>
+                  </div>
+                  <div className="kb-list">
+                    {list.length === 0 ? (
+                      <div className="empty">此分类暂无条目</div>
+                    ) : null}
+                    {list.map((item) => (
+                      <article key={String(item.id)} className="kb-card">
+                        <div className="kb-card-top">
+                          <span className="badge">{item.code || "—"}</span>
+                          <span className="muted kb-id">#{item.id}</span>
+                          <button
+                            type="button"
+                            className="secondary kb-inline-btn"
+                            onClick={() => openEdit(item)}
+                          >
+                            编辑
+                          </button>
+                        </div>
+                        <MultilangBlocks
+                          question={item.question}
+                          answer={item.answer}
+                        />
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

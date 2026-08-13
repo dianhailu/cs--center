@@ -5,8 +5,13 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from app.ai.kb_categories import (
+    create_category,
+    list_categories_with_counts,
+    migrate_faq_codes,
+)
 from app.ai.kb_store import (
     create_faq,
     load_faq_raw,
@@ -14,6 +19,7 @@ from app.ai.kb_store import (
     normalize_lang_block,
     update_faq,
 )
+from app.ai.kb_translate import auto_translate_qa
 from app.ai.unknown import load_unknowns, resolve_unknown, update_unknown
 from app.api.deps import AuthContext, get_auth
 from app.config import get_settings
@@ -31,18 +37,31 @@ class FaqWriteBody(BaseModel):
     question: LangTriple
     answer: LangTriple
     category: LangTriple | None = None
+    category_slug: str | None = None
+    code: str | None = None
+    auto_translate: bool = True
 
 
 class FaqUpdateBody(BaseModel):
     question: LangTriple | None = None
     answer: LangTriple | None = None
     category: LangTriple | None = None
+    category_slug: str | None = None
+    code: str | None = None
+    auto_translate: bool = True
+
+
+class CategoryCreateBody(BaseModel):
+    slug: str = Field(..., min_length=2, max_length=64)
+    label: LangTriple | None = None
 
 
 class UnknownResolveBody(BaseModel):
     answer: LangTriple
     question: LangTriple | None = None
     category: LangTriple | None = None
+    category_slug: str | None = None
+    auto_translate: bool = True
 
 
 class UnknownUpdateBody(BaseModel):
@@ -78,10 +97,51 @@ def _unknown_item(r: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _maybe_translate(
+    *,
+    question: dict[str, str],
+    answer: dict[str, str],
+    auto_translate: bool,
+) -> tuple[dict[str, str], dict[str, str], list[str]]:
+    if not auto_translate:
+        return question, answer, []
+    settings = get_settings()
+    return auto_translate_qa(settings, question=question, answer=answer)
+
+
+@router.get("/categories")
+def list_categories(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
+    _ = auth
+    settings = get_settings()
+    # Ensure codes exist so counts/slugs are stable for legacy rows
+    migrate_faq_codes(settings.faq_path, settings.categories_path)
+    items = list_categories_with_counts(settings.categories_path, settings.faq_path)
+    return {"count": len(items), "items": items}
+
+
+@router.post("/categories")
+def post_category(
+    body: CategoryCreateBody,
+    auth: AuthContext = Depends(get_auth),
+) -> dict[str, Any]:
+    _ = auth
+    settings = get_settings()
+    try:
+        item = create_category(
+            settings.categories_path,
+            slug=body.slug,
+            label=body.label.model_dump() if body.label else None,
+        )
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    return {"item": item}
+
+
 @router.get("/faq")
 def list_faq(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
     _ = auth
     settings = get_settings()
+    migrate_faq_codes(settings.faq_path, settings.categories_path)
     items = load_faq_raw(settings.faq_path)
     # Normalize legacy / flat shapes in memory; disk rewrite happens on create/update.
     normalized = [normalize_faq_item(x) for x in items]
@@ -95,17 +155,25 @@ def create_faq_item(
 ) -> dict[str, Any]:
     _ = auth
     settings = get_settings()
+    q = body.question.model_dump()
+    a = body.answer.model_dump()
+    q, a, warnings = _maybe_translate(
+        question=q, answer=a, auto_translate=body.auto_translate
+    )
     try:
         item = create_faq(
             settings.faq_path,
-            question=body.question.model_dump(),
-            answer=body.answer.model_dump(),
+            question=q,
+            answer=a,
             category=body.category.model_dump() if body.category else None,
+            category_slug=body.category_slug,
+            code=body.code,
             source="console",
+            categories_path=settings.categories_path,
         )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
-    return {"item": item}
+    return {"item": item, "warnings": warnings}
 
 
 @router.put("/faq/{faq_id}")
@@ -115,22 +183,61 @@ def update_faq_item(
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
     _ = auth
-    if body.question is None and body.answer is None and body.category is None:
+    if (
+        body.question is None
+        and body.answer is None
+        and body.category is None
+        and body.category_slug is None
+        and body.code is None
+    ):
         raise HTTPException(400, "no fields to update")
     settings = get_settings()
+    warnings: list[str] = []
+    q = body.question.model_dump() if body.question else None
+    a = body.answer.model_dump() if body.answer else None
+    if body.auto_translate and (q is not None or a is not None):
+        # Merge with existing so we translate only empty slots relative to full row
+        existing_rows = load_faq_raw(settings.faq_path)
+        existing = next(
+            (
+                normalize_faq_item(x)
+                for x in existing_rows
+                if int(x.get("id") or 0) == faq_id
+            ),
+            None,
+        )
+        if not existing:
+            raise HTTPException(404, "faq not found")
+        merged_q = {
+            **{k: existing["question"].get(k, "") for k in ("zh", "id", "en")},
+            **(q or {}),
+        }
+        merged_a = {
+            **{k: existing["answer"].get(k, "") for k in ("zh", "id", "en")},
+            **(a or {}),
+        }
+        # Only auto-fill langs that are empty after merge (user may clear intentionally
+        # by sending empty + auto_translate false; with true we fill empties).
+        tq, ta, warnings = _maybe_translate(
+            question=merged_q, answer=merged_a, auto_translate=True
+        )
+        q, a = tq, ta
     try:
         item = update_faq(
             settings.faq_path,
             faq_id,
-            question=body.question.model_dump() if body.question else None,
-            answer=body.answer.model_dump() if body.answer else None,
+            question=q,
+            answer=a,
             category=body.category.model_dump() if body.category else None,
+            category_slug=body.category_slug,
+            code=body.code,
+            categories_path=settings.categories_path,
         )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     if not item:
         raise HTTPException(404, "faq not found")
-    return {"item": item}
+    return {"item": item, "warnings": warnings}
 
 
 @router.get("/unknowns")
@@ -181,17 +288,67 @@ def resolve_unknown_item(
 ) -> dict[str, Any]:
     _ = auth
     settings = get_settings()
+    q = body.question.model_dump() if body.question else None
+    a = body.answer.model_dump()
+    if q is None:
+        # resolve_unknown will seed from captured question; translate after create path
+        # Pre-translate answer only if question provided; else translate inside after merge
+        pass
+    if body.auto_translate:
+        if q is not None:
+            q, a, warnings = _maybe_translate(question=q, answer=a, auto_translate=True)
+        else:
+            # translate answer slots only; question filled by resolve_unknown
+            _, a, warnings = _maybe_translate(
+                question={"zh": "", "id": "", "en": ""},
+                answer=a,
+                auto_translate=True,
+            )
+            # If answer had one lang, we still want Q translated — resolve will create then
+            warnings = list(warnings)
+    else:
+        warnings = []
     try:
         faq_item, unknown = resolve_unknown(
             settings.unknown_questions_path,
             settings.faq_path,
             uq_id,
-            answer=body.answer.model_dump(),
-            question=body.question.model_dump() if body.question else None,
+            answer=a,
+            question=q,
             category=body.category.model_dump() if body.category else None,
         )
+        # If resolve seeded question as single-lang and auto_translate, patch FAQ
+        if body.auto_translate and faq_item:
+            tq, ta, w2 = _maybe_translate(
+                question={k: faq_item["question"].get(k, "") for k in ("zh", "id", "en")},
+                answer={k: faq_item["answer"].get(k, "") for k in ("zh", "id", "en")},
+                auto_translate=True,
+            )
+            warnings.extend(w2)
+            if any(tq[k] != faq_item["question"].get(k, "") for k in ("zh", "id", "en")) or any(
+                ta[k] != faq_item["answer"].get(k, "") for k in ("zh", "id", "en")
+            ):
+                updated = update_faq(
+                    settings.faq_path,
+                    int(faq_item["id"]),
+                    question=tq,
+                    answer=ta,
+                    category_slug=body.category_slug,
+                    categories_path=settings.categories_path,
+                )
+                if updated:
+                    faq_item = updated
+        elif body.category_slug:
+            updated = update_faq(
+                settings.faq_path,
+                int(faq_item["id"]),
+                category_slug=body.category_slug,
+                categories_path=settings.categories_path,
+            )
+            if updated:
+                faq_item = updated
     except KeyError as exc:
         raise HTTPException(404, "unknown not found") from exc
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
-    return {"faq": faq_item, "unknown": _unknown_item(unknown)}
+    return {"faq": faq_item, "unknown": _unknown_item(unknown), "warnings": warnings}

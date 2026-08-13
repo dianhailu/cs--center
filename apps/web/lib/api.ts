@@ -243,6 +243,8 @@ export type LangBlock = {
 
 export type FaqItem = {
   id: number | string | null;
+  code?: string | null;
+  category_slug?: string | null;
   source?: string | null;
   sheet?: string | null;
   category: LangBlock;
@@ -259,6 +261,12 @@ export type LangTriple = {
   zh: string;
   id: string;
   en: string;
+};
+
+export type KnowledgeCategory = {
+  slug: string;
+  count: number;
+  label: LangBlock;
 };
 
 export type UnknownQuestion = {
@@ -288,6 +296,9 @@ export type FaqWritePayload = {
   question: LangTriple;
   answer: LangTriple;
   category?: LangTriple;
+  category_slug?: string;
+  code?: string;
+  auto_translate?: boolean;
 };
 
 export async function listFaq(token: string): Promise<FaqListResult> {
@@ -298,10 +309,32 @@ export async function listFaq(token: string): Promise<FaqListResult> {
   return handleResponse<FaqListResult>(res);
 }
 
+export async function listKnowledgeCategories(
+  token: string
+): Promise<{ count: number; items: KnowledgeCategory[] }> {
+  const res = await fetch(`${API_BASE}/api/knowledge/categories`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export async function createKnowledgeCategory(
+  token: string,
+  body: { slug: string; label?: LangTriple }
+): Promise<{ item: KnowledgeCategory }> {
+  const res = await fetch(`${API_BASE}/api/knowledge/categories`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
 export async function createFaq(
   token: string,
   body: FaqWritePayload
-): Promise<{ item: FaqItem }> {
+): Promise<{ item: FaqItem; warnings?: string[] }> {
   const res = await fetch(`${API_BASE}/api/knowledge/faq`, {
     method: "POST",
     headers: authHeaders(token),
@@ -314,7 +347,7 @@ export async function updateFaq(
   token: string,
   id: number | string,
   body: Partial<FaqWritePayload>
-): Promise<{ item: FaqItem }> {
+): Promise<{ item: FaqItem; warnings?: string[] }> {
   const res = await fetch(`${API_BASE}/api/knowledge/faq/${id}`, {
     method: "PUT",
     headers: authHeaders(token),
@@ -356,7 +389,7 @@ export async function resolveUnknown(
   token: string,
   id: string,
   body: FaqWritePayload
-): Promise<{ faq: FaqItem; unknown: UnknownQuestion }> {
+): Promise<{ faq: FaqItem; unknown: UnknownQuestion; warnings?: string[] }> {
   const res = await fetch(
     `${API_BASE}/api/knowledge/unknowns/${encodeURIComponent(id)}/resolve`,
     {

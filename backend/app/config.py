@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     seed_agent_password: str = "agent123"
 
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
+    categories_path: Path = BACKEND_ROOT / "knowledge" / "categories.json"
     history_path: Path = BACKEND_ROOT / "knowledge" / "history_pairs.json"
     unknown_questions_path: Path = BACKEND_ROOT / "knowledge" / "unknown_questions.jsonl"
 

@@ -28,25 +28,30 @@ Agent 启动后按文件 mtime 热加载 FAQ，教答后一般无需重启 worke
 
 ## 多语言 FAQ
 
-每条 FAQ 为嵌套三语（无切换器；坐席台同时展示）：
+每条 FAQ 为嵌套三语 + 分类编码：
 
 ```json
 {
   "id": 1,
+  "code": "pingo-product--01",
+  "category_slug": "pingo-product",
   "category": { "zh": "产品", "id": "Produk", "en": "Product" },
   "question": { "zh": "...", "id": "...", "en": "..." },
   "answer": { "zh": "...", "id": "...", "en": "..." }
 }
 ```
 
-Agent 检索会匹配全部语言的问题字段；回复优先客户语种，否则印尼语（`id`）。
+分类注册表：`categories.json`（slug + 三语 label）。编码格式：`{slug}--{NN}`。
 
 坐席台 `/knowledge/` 或 API（需 agent token）：
 
-- `GET/POST /api/knowledge/faq`、`PUT /api/knowledge/faq/{id}`
+- `GET/POST /api/knowledge/faq`、`PUT /api/knowledge/faq/{id}`（支持 `category_slug`、`auto_translate`）
+- `GET/POST /api/knowledge/categories`
 - `GET /api/knowledge/unknowns`
 - `PUT /api/knowledge/unknowns/{id}`（草稿）
-- `POST /api/knowledge/unknowns/{id}/resolve`（三语答案入库 FAQ）
+- `POST /api/knowledge/unknowns/{id}/resolve`（答案入库 FAQ）
+
+创建/更新时可只填一种语言；`auto_translate: true`（默认）时若配置了 `OPENAI_API_KEY` 会补全另外两种语言。
 
 写入使用文件锁 + 原子替换；FAQ 按 mtime 热加载。
 
