@@ -23,6 +23,8 @@ export default function ConsoleTopbar({
     pathname.startsWith("/inbox/chat");
   const knowledgeActive =
     pathname === "/knowledge" || pathname.startsWith("/knowledge/");
+  const statsActive =
+    pathname === "/stats" || pathname.startsWith("/stats/");
 
   function logout() {
     clearSession();
@@ -51,6 +53,12 @@ export default function ConsoleTopbar({
             className={`console-nav-link${knowledgeActive ? " active" : ""}`}
           >
             知识库
+          </Link>
+          <Link
+            href="/stats/"
+            className={`console-nav-link${statsActive ? " active" : ""}`}
+          >
+            数据统计
           </Link>
         </nav>
       </div>

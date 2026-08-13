@@ -402,6 +402,59 @@ export async function resolveUnknown(
   return handleResponse(res);
 }
 
+export type DailyStatDay = {
+  date: string;
+  unique_people: number;
+  consultations_count: number;
+};
+
+export type DailyStatsResult = {
+  timezone: string;
+  from: string;
+  to: string;
+  days: DailyStatDay[];
+};
+
+export type CategoryStat = {
+  key: string;
+  label: string;
+  count: number;
+};
+
+export type DailyCategoriesResult = {
+  date: string;
+  timezone: string;
+  total_questions: number;
+  categories: CategoryStat[];
+};
+
+export async function getDailyStats(
+  token: string,
+  from: string,
+  to: string
+): Promise<DailyStatsResult> {
+  const q = `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+  const res = await fetch(`${API_BASE}/api/stats/daily${q}`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export async function getDailyCategories(
+  token: string,
+  date: string
+): Promise<DailyCategoriesResult> {
+  const res = await fetch(
+    `${API_BASE}/api/stats/daily/${encodeURIComponent(date)}/categories`,
+    {
+      headers: authHeaders(token),
+      cache: "no-store",
+    }
+  );
+  return handleResponse(res);
+}
+
 export function wsUrl(token: string) {
   const base = API_BASE.replace(/^http/, "ws");
   return `${base}/ws?token=${encodeURIComponent(token)}`;

@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, conversations, knowledge, webhooks, ws
+from app.api.routes import auth, conversations, knowledge, stats, webhooks, ws
 from app.config import get_settings
 from app.seed import seed
 
@@ -38,6 +38,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(conversations.router, prefix="/api")
 app.include_router(knowledge.router, prefix="/api")
+app.include_router(stats.router, prefix="/api")
 app.include_router(webhooks.router, prefix="/api")
 app.include_router(ws.router)
 

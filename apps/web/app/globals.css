@@ -856,3 +856,197 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
     grid-template-columns: 1fr;
   }
 }
+
+/* —— 数据统计 —— */
+.stats-page {
+  padding: 1.35rem 1.5rem 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+.stats-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.stats-head h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font);
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.stats-head p { margin: 0; max-width: 36rem; line-height: 1.45; }
+.stats-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.55rem;
+}
+.stats-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 560;
+}
+.stats-filters input[type="date"] {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  padding: 0.45rem 0.55rem;
+  color: var(--ink);
+  min-width: 9.5rem;
+}
+.stats-error {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: #fef2f2;
+  color: var(--danger);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+}
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.15rem;
+}
+.stats-metric {
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+.stats-metric-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 560;
+}
+.stats-metric-val {
+  font-family: var(--font);
+  font-size: 2rem;
+  line-height: 1.15;
+  margin: 0.25rem 0;
+  color: var(--accent-deep);
+}
+.stats-metric-hint { font-size: 0.78rem; line-height: 1.35; }
+.stats-charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.stats-panel {
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+.stats-panel h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-family: var(--font);
+}
+.stats-def {
+  margin: 0 0 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.stats-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  min-height: 180px;
+  overflow-x: auto;
+  padding: 0.25rem 0.15rem 0;
+}
+.stats-bar-col {
+  flex: 1 1 0;
+  min-width: 2.1rem;
+  max-width: 3.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.25rem 0.1rem;
+  color: var(--ink);
+}
+.stats-bar-col:hover {
+  background: var(--accent-soft);
+}
+.stats-bar-col.active {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px rgba(13, 115, 112, 0.35);
+}
+.stats-bar {
+  width: 70%;
+  min-width: 10px;
+  border-radius: 6px 6px 2px 2px;
+  transition: height 0.2s ease;
+}
+.stats-bar-val {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  line-height: 1;
+}
+.stats-bar-col.active .stats-bar-val {
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+.stats-bar-label {
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.stats-detail { margin-top: 0.25rem; }
+.stats-detail-head { margin-bottom: 0.85rem; }
+.stats-detail-date { color: var(--accent-deep); font-weight: 560; }
+.stats-cat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.stats-cat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+.stats-cat-label { font-weight: 560; }
+.stats-cat-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.stats-cat-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(13, 115, 112, 0.1);
+  overflow: hidden;
+}
+.stats-cat-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-deep));
+  min-width: 4px;
+}
+
+@media (max-width: 900px) {
+  .stats-page { padding: 1rem 1rem 2rem; }
+  .stats-summary { grid-template-columns: 1fr; }
+  .stats-filters { width: 100%; }
+}
+
