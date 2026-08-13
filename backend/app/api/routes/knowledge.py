@@ -19,7 +19,7 @@ from app.ai.kb_store import (
     normalize_lang_block,
     update_faq,
 )
-from app.ai.kb_translate import auto_translate_qa
+from app.ai.kb_translate import auto_translate_qa, detect_source_lang, normalize_source_lang
 from app.ai.unknown import load_unknowns, resolve_unknown, update_unknown
 from app.api.deps import AuthContext, get_auth
 from app.config import get_settings
@@ -40,6 +40,7 @@ class FaqWriteBody(BaseModel):
     category_slug: str | None = None
     code: str | None = None
     auto_translate: bool = True
+    source_lang: str | None = None
 
 
 class FaqUpdateBody(BaseModel):
@@ -49,6 +50,7 @@ class FaqUpdateBody(BaseModel):
     category_slug: str | None = None
     code: str | None = None
     auto_translate: bool = True
+    source_lang: str | None = None
 
 
 class CategoryCreateBody(BaseModel):
@@ -62,6 +64,7 @@ class UnknownResolveBody(BaseModel):
     category: LangTriple | None = None
     category_slug: str | None = None
     auto_translate: bool = True
+    source_lang: str | None = None
 
 
 class UnknownUpdateBody(BaseModel):
@@ -102,11 +105,19 @@ def _maybe_translate(
     question: dict[str, str],
     answer: dict[str, str],
     auto_translate: bool,
+    source_lang: str | None = None,
+    overwrite: bool = False,
 ) -> tuple[dict[str, str], dict[str, str], list[str]]:
     if not auto_translate:
         return question, answer, []
     settings = get_settings()
-    return auto_translate_qa(settings, question=question, answer=answer)
+    return auto_translate_qa(
+        settings,
+        question=question,
+        answer=answer,
+        source_lang=source_lang,
+        overwrite=overwrite,
+    )
 
 
 @router.get("/categories")
@@ -158,7 +169,11 @@ def create_faq_item(
     q = body.question.model_dump()
     a = body.answer.model_dump()
     q, a, warnings = _maybe_translate(
-        question=q, answer=a, auto_translate=body.auto_translate
+        question=q,
+        answer=a,
+        auto_translate=body.auto_translate,
+        source_lang=normalize_source_lang(body.source_lang),
+        overwrite=False,
     )
     try:
         item = create_faq(
@@ -196,7 +211,9 @@ def update_faq_item(
     q = body.question.model_dump() if body.question else None
     a = body.answer.model_dump() if body.answer else None
     if body.auto_translate and (q is not None or a is not None):
-        # Merge with existing so we translate only empty slots relative to full row
+        # Merge with existing, then re-translate from source into the other langs
+        # and overwrite them (edit sync). Prefer client source_lang; else detect
+        # which language the user actually changed.
         existing_rows = load_faq_raw(settings.faq_path)
         existing = next(
             (
@@ -208,18 +225,23 @@ def update_faq_item(
         )
         if not existing:
             raise HTTPException(404, "faq not found")
-        merged_q = {
-            **{k: existing["question"].get(k, "") for k in ("zh", "id", "en")},
-            **(q or {}),
-        }
-        merged_a = {
-            **{k: existing["answer"].get(k, "") for k in ("zh", "id", "en")},
-            **(a or {}),
-        }
-        # Only auto-fill langs that are empty after merge (user may clear intentionally
-        # by sending empty + auto_translate false; with true we fill empties).
+        old_q = {k: existing["question"].get(k, "") for k in ("zh", "id", "en")}
+        old_a = {k: existing["answer"].get(k, "") for k in ("zh", "id", "en")}
+        merged_q = {**old_q, **(q or {})}
+        merged_a = {**old_a, **(a or {})}
+        src = detect_source_lang(
+            old_question=old_q,
+            old_answer=old_a,
+            new_question=merged_q,
+            new_answer=merged_a,
+            preferred=body.source_lang,
+        )
         tq, ta, warnings = _maybe_translate(
-            question=merged_q, answer=merged_a, auto_translate=True
+            question=merged_q,
+            answer=merged_a,
+            auto_translate=True,
+            source_lang=src,
+            overwrite=True,
         )
         q, a = tq, ta
     try:
@@ -290,21 +312,31 @@ def resolve_unknown_item(
     settings = get_settings()
     q = body.question.model_dump() if body.question else None
     a = body.answer.model_dump()
-    if q is None:
-        # resolve_unknown will seed from captured question; translate after create path
-        # Pre-translate answer only if question provided; else translate inside after merge
-        pass
+    src = normalize_source_lang(body.source_lang)
     if body.auto_translate:
         if q is not None:
-            q, a, warnings = _maybe_translate(question=q, answer=a, auto_translate=True)
+            if not src:
+                src = detect_source_lang(new_question=q, new_answer=a)
+            q, a, warnings = _maybe_translate(
+                question=q,
+                answer=a,
+                auto_translate=True,
+                source_lang=src,
+                overwrite=True,
+            )
         else:
-            # translate answer slots only; question filled by resolve_unknown
+            if not src:
+                src = detect_source_lang(
+                    new_question={"zh": "", "id": "", "en": ""},
+                    new_answer=a,
+                )
             _, a, warnings = _maybe_translate(
                 question={"zh": "", "id": "", "en": ""},
                 answer=a,
                 auto_translate=True,
+                source_lang=src,
+                overwrite=False,
             )
-            # If answer had one lang, we still want Q translated — resolve will create then
             warnings = list(warnings)
     else:
         warnings = []
@@ -319,10 +351,15 @@ def resolve_unknown_item(
         )
         # If resolve seeded question as single-lang and auto_translate, patch FAQ
         if body.auto_translate and faq_item:
+            fq = {k: faq_item["question"].get(k, "") for k in ("zh", "id", "en")}
+            fa = {k: faq_item["answer"].get(k, "") for k in ("zh", "id", "en")}
+            patch_src = src or detect_source_lang(new_question=fq, new_answer=fa)
             tq, ta, w2 = _maybe_translate(
-                question={k: faq_item["question"].get(k, "") for k in ("zh", "id", "en")},
-                answer={k: faq_item["answer"].get(k, "") for k in ("zh", "id", "en")},
+                question=fq,
+                answer=fa,
                 auto_translate=True,
+                source_lang=patch_src,
+                overwrite=True,
             )
             warnings.extend(w2)
             if any(tq[k] != faq_item["question"].get(k, "") for k in ("zh", "id", "en")) or any(

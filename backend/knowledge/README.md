@@ -51,7 +51,10 @@ Agent 启动后按文件 mtime 热加载 FAQ，教答后一般无需重启 worke
 - `PUT /api/knowledge/unknowns/{id}`（草稿）
 - `POST /api/knowledge/unknowns/{id}/resolve`（答案入库 FAQ）
 
-创建/更新时可只填一种语言；`auto_translate: true`（默认）时若配置了 `OPENAI_API_KEY` 会补全另外两种语言。
+创建/更新时可只填一种语言；`auto_translate: true`（默认）时若配置了 `OPENAI_API_KEY`：
+- **创建**：补全空语言字段
+- **更新 / 重新翻译**：按 `source_lang`（或检测用户改过的语言）从源语言翻译并**覆盖**另外两种语言
+- 未配置 key 时 API `warnings` 会明确提示，坐席台会 toast
 
 写入使用文件锁 + 原子替换；FAQ 按 mtime 热加载。
 

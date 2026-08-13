@@ -47,6 +47,24 @@ function hasAny(t: LangTriple): boolean {
   return Boolean(t.zh.trim() || t.id.trim() || t.en.trim());
 }
 
+function firstFilledLang(q: LangTriple, a: LangTriple): "zh" | "id" | "en" {
+  for (const k of ["zh", "id", "en"] as const) {
+    if (q[k].trim() || a[k].trim()) return k;
+  }
+  return "zh";
+}
+
+function warnToast(warnings?: string[]): string {
+  if (!warnings?.length) return "";
+  return warnings
+    .map((w) =>
+      w.includes("OPENAI_API_KEY")
+        ? "自动翻译未执行：服务端未配置 OPENAI_API_KEY，其他语言未更新"
+        : w
+    )
+    .join("；");
+}
+
 function catLabel(c: KnowledgeCategory | FaqItem["category"] | undefined): string {
   if (!c) return "未分类";
   if ("slug" in c) {
@@ -90,11 +108,13 @@ function LangFields({
   answer,
   onQuestion,
   onAnswer,
+  onLangFocus,
 }: {
   question: LangTriple;
   answer: LangTriple;
   onQuestion: (v: LangTriple) => void;
   onAnswer: (v: LangTriple) => void;
+  onLangFocus?: (lang: "zh" | "id" | "en") => void;
 }) {
   return (
     <div className="kb-form-langs">
@@ -106,6 +126,7 @@ function LangFields({
             <textarea
               rows={2}
               value={question[key]}
+              onFocus={() => onLangFocus?.(key)}
               onChange={(e) =>
                 onQuestion({ ...question, [key]: e.target.value })
               }
@@ -117,6 +138,7 @@ function LangFields({
             <textarea
               rows={4}
               value={answer[key]}
+              onFocus={() => onLangFocus?.(key)}
               onChange={(e) => onAnswer({ ...answer, [key]: e.target.value })}
               placeholder={`${label} answer`}
             />
@@ -165,11 +187,14 @@ export default function KnowledgePage() {
   const [formA, setFormA] = useState<LangTriple>(emptyTriple());
   const [formSlug, setFormSlug] = useState("");
   const [autoTranslate, setAutoTranslate] = useState(true);
+  const [sourceLang, setSourceLang] = useState<"zh" | "id" | "en">("zh");
   const [formError, setFormError] = useState("");
   const [formWarn, setFormWarn] = useState("");
+  const [toast, setToast] = useState("");
   const [showNewCat, setShowNewCat] = useState(false);
   const [newCatSlug, setNewCatSlug] = useState("");
   const [newCatLabel, setNewCatLabel] = useState("");
+  const [retranslatingId, setRetranslatingId] = useState<number | null>(null);
 
   async function reload(t: string) {
     const [faq, cats, uq] = await Promise.all([
@@ -255,16 +280,20 @@ export default function KnowledgePage() {
     setFormA(emptyTriple());
     setFormSlug(s);
     setAutoTranslate(true);
+    setSourceLang("zh");
     setFormError("");
     setFormWarn("");
     setEditor({ kind: "create", categorySlug: s });
   }
 
   function openEdit(item: FaqItem) {
-    setFormQ(fromLangBlock(item.question));
-    setFormA(fromLangBlock(item.answer));
+    const q = fromLangBlock(item.question);
+    const a = fromLangBlock(item.answer);
+    setFormQ(q);
+    setFormA(a);
     setFormSlug(item.category_slug || "");
     setAutoTranslate(true);
+    setSourceLang(firstFilledLang(q, a));
     setFormError("");
     setFormWarn("");
     setEditor({ kind: "edit", item });
@@ -280,10 +309,14 @@ export default function KnowledgePage() {
     const draft = fromLangBlock(u.draft_answer);
     if (hasAny(draft)) {
       setFormA(draft);
+      setSourceLang(firstFilledLang(q, draft));
     } else if (u.suggested_draft) {
-      setFormA({ zh: "", id: u.suggested_draft, en: "" });
+      const a = { zh: "", id: u.suggested_draft, en: "" };
+      setFormA(a);
+      setSourceLang("id");
     } else {
       setFormA(emptyTriple());
+      setSourceLang("zh");
     }
     setFormSlug(activeSlug || categories[0]?.slug || "pingo-taught");
     setAutoTranslate(true);
@@ -340,6 +373,7 @@ export default function KnowledgePage() {
         answer: formA,
         category_slug: formSlug.trim(),
         auto_translate: autoTranslate,
+        source_lang: autoTranslate ? sourceLang : undefined,
       };
       let warnings: string[] | undefined;
       if (editor.kind === "create") {
@@ -357,13 +391,94 @@ export default function KnowledgePage() {
       await reload(token);
       setActiveSlug(formSlug.trim());
       setEditor(null);
-      setError("");
-      if (warnings?.length) {
-        setError(warnings.join("；"));
+      const msg = warnToast(warnings);
+      if (msg) {
+        setToast(msg);
+        setError(msg);
+      } else {
+        setError("");
+        setToast("");
       }
     } catch (err) {
       if (err instanceof ApiError && err.authFailed) return;
       setFormError(userFacingError(err, "保存失败"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function retranslateItem(item: FaqItem, lang?: "zh" | "id" | "en") {
+    if (!token) return;
+    const q = fromLangBlock(item.question);
+    const a = fromLangBlock(item.answer);
+    const src = lang || firstFilledLang(q, a);
+    if (!(q[src].trim() || a[src].trim())) {
+      setToast(`重新翻译失败：${src} 语言内容为空`);
+      return;
+    }
+    setRetranslatingId(Number(item.id));
+    setToast("");
+    try {
+      const res = await updateFaq(token, String(item.id), {
+        question: q,
+        answer: a,
+        category_slug: item.category_slug || undefined,
+        auto_translate: true,
+        source_lang: src,
+      });
+      await reload(token);
+      const msg = warnToast(res.warnings);
+      setToast(msg || `已从${LANG_META.find((l) => l.key === src)?.label || src}重新翻译并覆盖其他语言`);
+      if (msg) setError(msg);
+    } catch (err) {
+      if (err instanceof ApiError && err.authFailed) return;
+      setToast(userFacingError(err, "重新翻译失败"));
+    } finally {
+      setRetranslatingId(null);
+    }
+  }
+
+  async function retranslateFromEditor() {
+    if (!token || !editor || editor.kind === "create") return;
+    if (!hasAny(formQ) || !hasAny(formA)) {
+      setFormError("请至少填写一种语言的问题与答案后再重新翻译");
+      return;
+    }
+    if (!(formQ[sourceLang].trim() || formA[sourceLang].trim())) {
+      setFormError(`请先填写「${LANG_META.find((l) => l.key === sourceLang)?.label}」作为翻译源`);
+      return;
+    }
+    setSaving(true);
+    setFormError("");
+    setFormWarn("");
+    try {
+      if (editor.kind === "edit") {
+        const res = await updateFaq(token, String(editor.item.id), {
+          question: formQ,
+          answer: formA,
+          category_slug: formSlug.trim() || undefined,
+          auto_translate: true,
+          source_lang: sourceLang,
+        });
+        const msg = warnToast(res.warnings);
+        if (msg) {
+          setFormWarn(msg);
+          setToast(msg);
+        } else if (res.item) {
+          setFormQ(fromLangBlock(res.item.question));
+          setFormA(fromLangBlock(res.item.answer));
+          setToast("已重新翻译并覆盖其他语言");
+        }
+        await reload(token);
+      } else {
+        // resolve: preview by translating via temporary create isn't available;
+        // just toggle autoTranslate + keep source — user saves to apply.
+        setAutoTranslate(true);
+        setFormWarn("未知问入库时会按所选源语言翻译覆盖其他语言，请点「填写答案并入库」");
+      }
+    } catch (err) {
+      if (err instanceof ApiError && err.authFailed) return;
+      setFormError(userFacingError(err, "重新翻译失败"));
     } finally {
       setSaving(false);
     }
@@ -481,6 +596,18 @@ export default function KnowledgePage() {
             </div>
 
             {error ? <div className="error">{error}</div> : null}
+            {toast ? (
+              <div className="kb-toast" role="status">
+                {toast}
+                <button
+                  type="button"
+                  className="secondary kb-inline-btn"
+                  onClick={() => setToast("")}
+                >
+                  关闭
+                </button>
+              </div>
+            ) : null}
 
             {editor ? (
               <section className="kb-editor" aria-label={editorTitle}>
@@ -523,12 +650,32 @@ export default function KnowledgePage() {
                     />
                     自动翻译其他语言
                   </label>
+                  {autoTranslate ? (
+                    <label className="kb-field">
+                      <span>以哪种语言为准</span>
+                      <select
+                        value={sourceLang}
+                        onChange={(e) =>
+                          setSourceLang(e.target.value as "zh" | "id" | "en")
+                        }
+                      >
+                        {LANG_META.map(({ key, label }) => (
+                          <option key={key} value={key}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : null}
                 </div>
                 <LangFields
                   question={formQ}
                   answer={formA}
                   onQuestion={setFormQ}
                   onAnswer={setFormA}
+                  onLangFocus={(lang) => {
+                    if (autoTranslate) setSourceLang(lang);
+                  }}
                 />
                 {formError ? <div className="error">{formError}</div> : null}
                 {formWarn ? <div className="error">{formWarn}</div> : null}
@@ -540,6 +687,16 @@ export default function KnowledgePage() {
                         ? "填写答案并入库"
                         : "保存"}
                   </button>
+                  {editor.kind === "edit" ? (
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={retranslateFromEditor}
+                      disabled={saving}
+                    >
+                      重新翻译
+                    </button>
+                  ) : null}
                 </div>
               </section>
             ) : null}
@@ -614,6 +771,17 @@ export default function KnowledgePage() {
                             onClick={() => openEdit(item)}
                           >
                             编辑
+                          </button>
+                          <button
+                            type="button"
+                            className="secondary kb-inline-btn"
+                            disabled={retranslatingId === Number(item.id)}
+                            onClick={() => retranslateItem(item)}
+                            title="按当前已填语言重新翻译并覆盖其他语言"
+                          >
+                            {retranslatingId === Number(item.id)
+                              ? "翻译中…"
+                              : "重新翻译"}
                           </button>
                         </div>
                         <MultilangBlocks

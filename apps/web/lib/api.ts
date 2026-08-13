@@ -299,6 +299,7 @@ export type FaqWritePayload = {
   category_slug?: string;
   code?: string;
   auto_translate?: boolean;
+  source_lang?: "zh" | "id" | "en";
 };
 
 export async function listFaq(token: string): Promise<FaqListResult> {

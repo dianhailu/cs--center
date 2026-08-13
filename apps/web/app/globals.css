@@ -626,6 +626,8 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .kb-inline-btn {
   padding: 0.35rem 0.75rem;
   font-size: 0.82rem;
+}
+.kb-card-top .kb-inline-btn:first-of-type {
   margin-left: auto;
 }
 .kb-langs {
@@ -801,6 +803,19 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   font-size: 0.9rem;
   color: var(--ink);
   padding-bottom: 0.35rem;
+}
+.kb-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
+  background: var(--warn-soft);
+  color: var(--ink);
+  font-size: 0.9rem;
 }
 .kb-new-cat {
   display: grid;
