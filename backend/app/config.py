@@ -59,6 +59,12 @@ class Settings(BaseSettings):
 
     seed_agent_email: str = "agent@pingo.com"
     seed_agent_password: str = "agent123"
+    # Optional system admin (created on seed when both set)
+    seed_admin_email: str = ""
+    seed_admin_password: str = ""
+
+    default_product_code: str = "pingo"
+    default_country_code: str = "ID"
 
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
     categories_path: Path = BACKEND_ROOT / "knowledge" / "categories.json"

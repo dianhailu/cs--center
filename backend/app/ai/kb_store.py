@@ -118,9 +118,11 @@ def normalize_faq_item(item: dict[str, Any]) -> dict[str, Any]:
         parsed = parse_code(code)
         if parsed:
             category_slug = parsed[0]
+    product_code = str(item.get("product_code") or "").strip().lower() or None
     return {
         "id": item.get("id"),
         "code": code,
+        "product_code": product_code,
         "category_slug": category_slug,
         "source": item.get("source"),
         "sheet": item.get("sheet"),
@@ -145,6 +147,8 @@ def faq_persist_shape(item: dict[str, Any]) -> dict[str, Any]:
     }
     if item.get("code"):
         out["code"] = item["code"]
+    if item.get("product_code"):
+        out["product_code"] = str(item["product_code"]).strip().lower()
     if item.get("category_slug"):
         out["category_slug"] = item["category_slug"]
     if item.get("sheet"):
@@ -223,6 +227,7 @@ def create_faq(
     category: dict[str, str] | Any | None = None,
     category_slug: str | None = None,
     code: str | None = None,
+    product_code: str | None = None,
     source: str = "console",
     categories_path: Path | None = None,
 ) -> dict[str, Any]:
@@ -276,6 +281,9 @@ def create_faq(
             "question": q,
             "answer": a,
         }
+        pc = (product_code or "").strip().lower()
+        if pc:
+            entry["product_code"] = pc
         items.append(entry)
         atomic_write_text(path, json.dumps(items, ensure_ascii=False, indent=2) + "\n")
     return normalize_faq_item(entry)

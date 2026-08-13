@@ -3,13 +3,33 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8080";
 const TOKEN_KEY = "cs_token";
 const AGENT_KEY = "cs_agent";
 
+export type Scope = {
+  workspace_id: string;
+  workspace_name: string;
+  product_code: string;
+  product_name: string;
+  country_code: string;
+  country_name: string;
+  customer_reply_lang: string;
+};
+
 export type LoginResult = {
   access_token: string;
   agent_id: string;
   email: string;
   name: string;
+  role: string;
   workspace_id: string;
   workspace_name: string;
+  product_code: string;
+  country_code: string;
+  customer_reply_lang: string;
+  product_codes: string[];
+  country_codes: string[];
+  scopes: Scope[];
+  can_edit_knowledge: boolean;
+  can_manage_users: boolean;
+  can_manage_catalog: boolean;
 };
 
 export type CustomerSnapshot = {
@@ -77,6 +97,32 @@ export function clearSession() {
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
+}
+
+export function getStoredAgent(): LoginResult | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(AGENT_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as LoginResult;
+  } catch {
+    return null;
+  }
+}
+
+export function saveSession(result: LoginResult) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(TOKEN_KEY, result.access_token);
+  localStorage.setItem(AGENT_KEY, JSON.stringify(result));
+}
+
+export function contextLabel(agent?: LoginResult | null): string {
+  if (!agent) return "客服台";
+  const scope = (agent.scopes || []).find((s) => s.workspace_id === agent.workspace_id);
+  const product = scope?.product_name || agent.product_code || "";
+  const country = scope?.country_name || agent.country_code || "";
+  if (product && country) return `${product} · ${country}`;
+  return agent.workspace_name || product || "客服台";
 }
 
 /** Clear session and send user to login when the API rejects the JWT. */
@@ -189,6 +235,177 @@ export async function login(email: string, password: string): Promise<LoginResul
   });
   // Login must not redirect on 401 (invalid credentials)
   return handleResponse<LoginResult>(res, { allowAuthRedirect: false });
+}
+
+export async function switchContext(
+  token: string,
+  body: { workspace_id?: string; product_code?: string; country_code?: string }
+): Promise<LoginResult> {
+  const res = await fetch(`${API_BASE}/api/auth/switch`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse<LoginResult>(res);
+}
+
+export async function fetchMe(token: string): Promise<LoginResult & { agent_id: string }> {
+  const res = await fetch(`${API_BASE}/api/auth/me`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export type CountryRow = {
+  code: string;
+  name_zh: string;
+  name_en: string;
+  name_local: string;
+};
+
+export type ProductRow = {
+  code: string;
+  name: string;
+  customer_reply_lang: string;
+  default_country_code: string | null;
+  country_codes: string[];
+};
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  is_active: boolean;
+  product_codes: string[];
+  country_codes: string[];
+};
+
+export async function listAdminCountries(token: string): Promise<CountryRow[]> {
+  const res = await fetch(`${API_BASE}/api/admin/countries`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export async function createAdminCountry(
+  token: string,
+  body: Partial<CountryRow> & { code: string }
+): Promise<CountryRow> {
+  const res = await fetch(`${API_BASE}/api/admin/countries`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function updateAdminCountry(
+  token: string,
+  code: string,
+  body: Partial<CountryRow>
+): Promise<CountryRow> {
+  const res = await fetch(`${API_BASE}/api/admin/countries/${encodeURIComponent(code)}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function listAdminProducts(token: string): Promise<ProductRow[]> {
+  const res = await fetch(`${API_BASE}/api/admin/products`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export async function createAdminProduct(
+  token: string,
+  body: {
+    code: string;
+    name: string;
+    customer_reply_lang: string;
+    default_country_code?: string | null;
+    country_codes?: string[];
+  }
+): Promise<ProductRow> {
+  const res = await fetch(`${API_BASE}/api/admin/products`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function updateAdminProduct(
+  token: string,
+  code: string,
+  body: {
+    code?: string;
+    name: string;
+    customer_reply_lang: string;
+    default_country_code?: string | null;
+    country_codes?: string[];
+  }
+): Promise<ProductRow> {
+  const res = await fetch(`${API_BASE}/api/admin/products/${encodeURIComponent(code)}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function listAdminUsers(token: string): Promise<AdminUser[]> {
+  const res = await fetch(`${API_BASE}/api/admin/users`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse(res);
+}
+
+export async function createAdminUser(
+  token: string,
+  body: {
+    email: string;
+    name: string;
+    password: string;
+    role: string;
+    product_codes: string[];
+    country_codes: string[];
+    is_active?: boolean;
+  }
+): Promise<AdminUser> {
+  const res = await fetch(`${API_BASE}/api/admin/users`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function updateAdminUser(
+  token: string,
+  id: string,
+  body: {
+    name?: string;
+    password?: string;
+    role?: string;
+    product_codes?: string[];
+    country_codes?: string[];
+    is_active?: boolean;
+  }
+): Promise<AdminUser> {
+  const res = await fetch(`${API_BASE}/api/admin/users/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
 }
 
 export async function listConversations(

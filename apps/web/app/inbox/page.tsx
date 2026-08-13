@@ -79,7 +79,7 @@ export default function InboxPage() {
 
   return (
     <div className="shell">
-      <ConsoleTopbar subtitle={`${agentName || "Agent"} · PinGo 客服台`} />
+      <ConsoleTopbar />
       <div className="workspace">
         <aside className="queue">
           <div className="queue-head">

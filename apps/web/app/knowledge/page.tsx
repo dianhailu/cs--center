@@ -12,13 +12,13 @@ import {
   createFaq,
   createKnowledgeCategory,
   getStoredToken,
+  getStoredAgent,
   listFaq,
   listKnowledgeCategories,
   listUnknowns,
   resolveUnknown,
   updateFaq,
   userFacingError,
-  AGENT_KEY,
 } from "@/lib/api";
 
 const LANG_META = [
@@ -173,6 +173,8 @@ export default function KnowledgePage() {
   const router = useRouter();
   const [token, setToken] = useState("");
   const [agentName, setAgentName] = useState("");
+  const [canEdit, setCanEdit] = useState(false);
+  const [replyLang, setReplyLang] = useState("");
   const [items, setItems] = useState<FaqItem[]>([]);
   const [categories, setCategories] = useState<KnowledgeCategory[]>([]);
   const [unknowns, setUnknowns] = useState<UnknownQuestion[]>([]);
@@ -214,18 +216,16 @@ export default function KnowledgePage() {
 
   useEffect(() => {
     const t = getStoredToken();
-    const agent = localStorage.getItem(AGENT_KEY);
+    const agent = getStoredAgent();
     if (!t) {
       router.replace("/login/");
       return;
     }
     setToken(t);
     if (agent) {
-      try {
-        setAgentName(JSON.parse(agent).name || "");
-      } catch {
-        /* ignore */
-      }
+      setAgentName(agent.name || "");
+      setCanEdit(Boolean(agent.can_edit_knowledge));
+      setReplyLang(agent.customer_reply_lang || "");
     }
     let cancelled = false;
     (async () => {
@@ -495,31 +495,37 @@ export default function KnowledgePage() {
 
   return (
     <div className="shell">
-      <ConsoleTopbar
-        subtitle={`${agentName || "Agent"} · CS-PinGo 知识库`}
-      />
+      <ConsoleTopbar />
       <div className="kb-page">
         <div className="kb-head">
           <div>
-            <h1>CS-PinGo Agent 知识库</h1>
+            <h1>知识库</h1>
             <p className="muted">
-              按分类编码（如 <code>pingo-product--01</code>）管理 FAQ。可只填一种语言并自动翻译。AI
-              仍不向访客投递（AI_SEND_TO_CUSTOMER=false）。
+              按当前产品过滤 FAQ。坐席只读；产品管理员及以上可编辑。
+              {replyLang ? ` 客户强制回复语：${replyLang}。` : " "}
+              AI 仍不向访客投递（AI_SEND_TO_CUSTOMER=false）。
             </p>
+            {!canEdit ? (
+              <p className="muted">当前角色为坐席：知识库只读，可查看不可编辑。</p>
+            ) : null}
           </div>
           <div className="kb-stats">
             <span className="badge">{items.length} 条 FAQ</span>
             <span className="badge warn">{unknownTotal} 条待补未知问</span>
-            <button type="button" className="secondary" onClick={() => setShowNewCat((v) => !v)}>
-              新建分类
-            </button>
-            <button type="button" onClick={() => openCreate()}>
-              在此分类下新增
-            </button>
+            {canEdit ? (
+              <>
+                <button type="button" className="secondary" onClick={() => setShowNewCat((v) => !v)}>
+                  新建分类
+                </button>
+                <button type="button" onClick={() => openCreate()}>
+                  在此分类下新增
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
 
-        {showNewCat ? (
+        {canEdit && showNewCat ? (
           <section className="kb-editor" aria-label="新建分类">
             <div className="kb-section-head">
               <h2>新建分类</h2>
@@ -609,7 +615,7 @@ export default function KnowledgePage() {
               </div>
             ) : null}
 
-            {editor ? (
+            {canEdit && editor ? (
               <section className="kb-editor" aria-label={editorTitle}>
                 <div className="kb-section-head">
                   <h2>{editorTitle}</h2>
@@ -706,7 +712,8 @@ export default function KnowledgePage() {
                 <div className="kb-section-head">
                   <h2>待补未知问题</h2>
                   <span className="muted">
-                    最近 {unknowns.length} 条 · 可填写答案入库
+                    最近 {unknowns.length} 条
+                    {canEdit ? " · 可填写答案入库" : " · 坐席只读"}
                   </span>
                 </div>
                 <ul className="kb-unknown-list">
@@ -717,13 +724,15 @@ export default function KnowledgePage() {
                       {u.external_code ? (
                         <span className="badge neutral">{u.external_code}</span>
                       ) : null}
-                      <button
-                        type="button"
-                        className="secondary kb-inline-btn"
-                        onClick={() => openResolve(u)}
-                      >
-                        填写答案并入库
-                      </button>
+                      {canEdit ? (
+                        <button
+                          type="button"
+                          className="secondary kb-inline-btn"
+                          onClick={() => openResolve(u)}
+                        >
+                          填写答案并入库
+                        </button>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
@@ -748,13 +757,15 @@ export default function KnowledgePage() {
                       {catLabel(cat)}{" "}
                       <span className="muted kb-cat-slug">{cat.slug}</span>
                     </h2>
-                    <button
-                      type="button"
-                      className="secondary kb-inline-btn"
-                      onClick={() => openCreate(cat.slug)}
-                    >
-                      在此分类下新增
-                    </button>
+                    {canEdit ? (
+                      <button
+                        type="button"
+                        className="secondary kb-inline-btn"
+                        onClick={() => openCreate(cat.slug)}
+                      >
+                        在此分类下新增
+                      </button>
+                    ) : null}
                   </div>
                   <div className="kb-list">
                     {list.length === 0 ? (
@@ -765,24 +776,28 @@ export default function KnowledgePage() {
                         <div className="kb-card-top">
                           <span className="badge">{item.code || "—"}</span>
                           <span className="muted kb-id">#{item.id}</span>
-                          <button
-                            type="button"
-                            className="secondary kb-inline-btn"
-                            onClick={() => openEdit(item)}
-                          >
-                            编辑
-                          </button>
-                          <button
-                            type="button"
-                            className="secondary kb-inline-btn"
-                            disabled={retranslatingId === Number(item.id)}
-                            onClick={() => retranslateItem(item)}
-                            title="按当前已填语言重新翻译并覆盖其他语言"
-                          >
-                            {retranslatingId === Number(item.id)
-                              ? "翻译中…"
-                              : "重新翻译"}
-                          </button>
+                          {canEdit ? (
+                            <>
+                              <button
+                                type="button"
+                                className="secondary kb-inline-btn"
+                                onClick={() => openEdit(item)}
+                              >
+                                编辑
+                              </button>
+                              <button
+                                type="button"
+                                className="secondary kb-inline-btn"
+                                disabled={retranslatingId === Number(item.id)}
+                                onClick={() => retranslateItem(item)}
+                                title="按当前已填语言重新翻译并覆盖其他语言"
+                              >
+                                {retranslatingId === Number(item.id)
+                                  ? "翻译中…"
+                                  : "重新翻译"}
+                              </button>
+                            </>
+                          ) : null}
                         </div>
                         <MultilangBlocks
                           question={item.question}

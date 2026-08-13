@@ -208,14 +208,7 @@ export default function StatsPage() {
 
   return (
     <div className="shell">
-      <ConsoleTopbar
-        subtitle={
-          <>
-            数据统计
-            {agentName ? <span className="muted"> · {agentName}</span> : null}
-          </>
-        }
-      />
+      <ConsoleTopbar />
       <main className="stats-page">
         <div className="stats-head">
           <div>

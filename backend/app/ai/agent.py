@@ -43,12 +43,21 @@ class SupportAgent:
         self.faq = faq
         self.history = history or HistoryIndex(settings.history_path)
 
-    def decide(self, customer_text: str) -> AgentDecision:
+    def decide(
+        self, customer_text: str, *, forced_reply_lang: str | None = None
+    ) -> AgentDecision:
         text = (customer_text or "").strip()
+        forced = (forced_reply_lang or "").strip().lower() or None
+        if forced and forced not in {"zh", "id", "en"}:
+            forced = None
+        default_lang = forced or self.settings.default_reply_lang
         if not text:
-            return AgentDecision("skip", "", self.settings.default_reply_lang, [], [], "empty message")
+            return AgentDecision("skip", "", default_lang, [], [], "empty message")
 
-        lang = detect_lang(text, self.settings.default_reply_lang)
+        # Product policy: customer-facing replies use forced market language.
+        # Detection still helps FAQ retrieval; reply lang is overridden when forced.
+        detected = detect_lang(text, default_lang)
+        lang = forced or detected
         if any(re.search(p, text, flags=re.I) for p in HANDOFF_PATTERNS):
             return AgentDecision(
                 "handoff",
@@ -71,7 +80,7 @@ class SupportAgent:
             )
 
         history_hits = self.history.search(text, top_k=5)
-        faq_hits = self.faq.search(text, lang=lang, top_k=3)
+        faq_hits = self.faq.search(text, lang=detected, top_k=3)
         best_history = history_hits[0] if history_hits else None
         best_faq = faq_hits[0] if faq_hits else None
 

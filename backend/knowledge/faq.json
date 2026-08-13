@@ -20,7 +20,8 @@
     },
     "id": 1,
     "code": "pingo-product--01",
-    "category_slug": "pingo-product"
+    "category_slug": "pingo-product",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -43,7 +44,8 @@
     },
     "id": 2,
     "code": "pingo-product--02",
-    "category_slug": "pingo-product"
+    "category_slug": "pingo-product",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -66,7 +68,8 @@
     },
     "id": 3,
     "code": "pingo-product--03",
-    "category_slug": "pingo-product"
+    "category_slug": "pingo-product",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -89,7 +92,8 @@
     },
     "id": 4,
     "code": "pingo-otp--01",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -112,7 +116,8 @@
     },
     "id": 5,
     "code": "pingo-otp--02",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -135,7 +140,8 @@
     },
     "id": 6,
     "code": "pingo-otp--03",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -158,7 +164,8 @@
     },
     "id": 7,
     "code": "pingo-kyc--01",
-    "category_slug": "pingo-kyc"
+    "category_slug": "pingo-kyc",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -181,7 +188,8 @@
     },
     "id": 8,
     "code": "pingo-kyc--02",
-    "category_slug": "pingo-kyc"
+    "category_slug": "pingo-kyc",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -204,7 +212,8 @@
     },
     "id": 9,
     "code": "pingo-kyc--03",
-    "category_slug": "pingo-kyc"
+    "category_slug": "pingo-kyc",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -227,7 +236,8 @@
     },
     "id": 10,
     "code": "pingo-kyc--04",
-    "category_slug": "pingo-kyc"
+    "category_slug": "pingo-kyc",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -250,7 +260,8 @@
     },
     "id": 11,
     "code": "pingo-limit--01",
-    "category_slug": "pingo-limit"
+    "category_slug": "pingo-limit",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -273,7 +284,8 @@
     },
     "id": 12,
     "code": "pingo-limit--02",
-    "category_slug": "pingo-limit"
+    "category_slug": "pingo-limit",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -296,7 +308,8 @@
     },
     "id": 13,
     "code": "pingo-limit--03",
-    "category_slug": "pingo-limit"
+    "category_slug": "pingo-limit",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -319,7 +332,8 @@
     },
     "id": 14,
     "code": "pingo-limit--04",
-    "category_slug": "pingo-limit"
+    "category_slug": "pingo-limit",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -342,7 +356,8 @@
     },
     "id": 15,
     "code": "pingo-limit--05",
-    "category_slug": "pingo-limit"
+    "category_slug": "pingo-limit",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -365,7 +380,8 @@
     },
     "id": 16,
     "code": "pingo-loan--01",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -388,7 +404,8 @@
     },
     "id": 17,
     "code": "pingo-loan--02",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -411,7 +428,8 @@
     },
     "id": 18,
     "code": "pingo-loan--03",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -434,7 +452,8 @@
     },
     "id": 19,
     "code": "pingo-loan--04",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -457,7 +476,8 @@
     },
     "id": 20,
     "code": "pingo-loan--05",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -480,7 +500,8 @@
     },
     "id": 21,
     "code": "pingo-loan--06",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -503,7 +524,8 @@
     },
     "id": 22,
     "code": "pingo-loan--07",
-    "category_slug": "pingo-loan"
+    "category_slug": "pingo-loan",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -526,7 +548,8 @@
     },
     "id": 23,
     "code": "pingo-repayment--01",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -549,7 +572,8 @@
     },
     "id": 24,
     "code": "pingo-repayment--02",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -572,7 +596,8 @@
     },
     "id": 25,
     "code": "pingo-repayment--03",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -595,7 +620,8 @@
     },
     "id": 26,
     "code": "pingo-repayment--04",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -618,7 +644,8 @@
     },
     "id": 27,
     "code": "pingo-repayment--05",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -641,7 +668,8 @@
     },
     "id": 28,
     "code": "pingo-repayment--06",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -664,7 +692,8 @@
     },
     "id": 29,
     "code": "pingo-repayment--07",
-    "category_slug": "pingo-repayment"
+    "category_slug": "pingo-repayment",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -687,7 +716,8 @@
     },
     "id": 30,
     "code": "pingo-overdue--01",
-    "category_slug": "pingo-overdue"
+    "category_slug": "pingo-overdue",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -710,7 +740,8 @@
     },
     "id": 31,
     "code": "pingo-overdue--02",
-    "category_slug": "pingo-overdue"
+    "category_slug": "pingo-overdue",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -733,7 +764,8 @@
     },
     "id": 32,
     "code": "pingo-overdue--03",
-    "category_slug": "pingo-overdue"
+    "category_slug": "pingo-overdue",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -756,7 +788,8 @@
     },
     "id": 33,
     "code": "pingo-security--01",
-    "category_slug": "pingo-security"
+    "category_slug": "pingo-security",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -779,7 +812,8 @@
     },
     "id": 34,
     "code": "pingo-security--02",
-    "category_slug": "pingo-security"
+    "category_slug": "pingo-security",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -802,7 +836,8 @@
     },
     "id": 35,
     "code": "pingo-security--03",
-    "category_slug": "pingo-security"
+    "category_slug": "pingo-security",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -825,7 +860,8 @@
     },
     "id": 36,
     "code": "pingo-security--04",
-    "category_slug": "pingo-security"
+    "category_slug": "pingo-security",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -848,7 +884,8 @@
     },
     "id": 37,
     "code": "pingo-security--05",
-    "category_slug": "pingo-security"
+    "category_slug": "pingo-security",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -871,7 +908,8 @@
     },
     "id": 38,
     "code": "pingo-complaint--01",
-    "category_slug": "pingo-complaint"
+    "category_slug": "pingo-complaint",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -894,7 +932,8 @@
     },
     "id": 39,
     "code": "pingo-complaint--02",
-    "category_slug": "pingo-complaint"
+    "category_slug": "pingo-complaint",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -917,7 +956,8 @@
     },
     "id": 40,
     "code": "pingo-complaint--03",
-    "category_slug": "pingo-complaint"
+    "category_slug": "pingo-complaint",
+    "product_code": "pingo"
   },
   {
     "source": "kb_v2_xlsx",
@@ -940,7 +980,8 @@
     },
     "id": 41,
     "code": "pingo-complaint--04",
-    "category_slug": "pingo-complaint"
+    "category_slug": "pingo-complaint",
+    "product_code": "pingo"
   },
   {
     "id": 42,
@@ -961,7 +1002,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-otp--04",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "id": 43,
@@ -982,7 +1024,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-otp--05",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "id": 44,
@@ -1003,7 +1046,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-otp--06",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "id": 45,
@@ -1024,7 +1068,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-otp--07",
-    "category_slug": "pingo-otp"
+    "category_slug": "pingo-otp",
+    "product_code": "pingo"
   },
   {
     "id": 46,
@@ -1045,7 +1090,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-profile--01",
-    "category_slug": "pingo-profile"
+    "category_slug": "pingo-profile",
+    "product_code": "pingo"
   },
   {
     "id": 47,
@@ -1066,7 +1112,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-profile--02",
-    "category_slug": "pingo-profile"
+    "category_slug": "pingo-profile",
+    "product_code": "pingo"
   },
   {
     "id": 48,
@@ -1087,7 +1134,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-profile--03",
-    "category_slug": "pingo-profile"
+    "category_slug": "pingo-profile",
+    "product_code": "pingo"
   },
   {
     "id": 49,
@@ -1108,7 +1156,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-profile--04",
-    "category_slug": "pingo-profile"
+    "category_slug": "pingo-profile",
+    "product_code": "pingo"
   },
   {
     "id": 50,
@@ -1129,7 +1178,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-profile--05",
-    "category_slug": "pingo-profile"
+    "category_slug": "pingo-profile",
+    "product_code": "pingo"
   },
   {
     "id": 51,
@@ -1150,7 +1200,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-risk--01",
-    "category_slug": "pingo-risk"
+    "category_slug": "pingo-risk",
+    "product_code": "pingo"
   },
   {
     "id": 52,
@@ -1171,7 +1222,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-risk--02",
-    "category_slug": "pingo-risk"
+    "category_slug": "pingo-risk",
+    "product_code": "pingo"
   },
   {
     "id": 53,
@@ -1192,7 +1244,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-risk--03",
-    "category_slug": "pingo-risk"
+    "category_slug": "pingo-risk",
+    "product_code": "pingo"
   },
   {
     "id": 54,
@@ -1213,7 +1266,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-risk--04",
-    "category_slug": "pingo-risk"
+    "category_slug": "pingo-risk",
+    "product_code": "pingo"
   },
   {
     "id": 55,
@@ -1234,7 +1288,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-risk--05",
-    "category_slug": "pingo-risk"
+    "category_slug": "pingo-risk",
+    "product_code": "pingo"
   },
   {
     "id": 56,
@@ -1255,7 +1310,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-disbursement--01",
-    "category_slug": "pingo-disbursement"
+    "category_slug": "pingo-disbursement",
+    "product_code": "pingo"
   },
   {
     "id": 57,
@@ -1276,7 +1332,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-disbursement--02",
-    "category_slug": "pingo-disbursement"
+    "category_slug": "pingo-disbursement",
+    "product_code": "pingo"
   },
   {
     "id": 58,
@@ -1297,7 +1354,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-disbursement--03",
-    "category_slug": "pingo-disbursement"
+    "category_slug": "pingo-disbursement",
+    "product_code": "pingo"
   },
   {
     "id": 59,
@@ -1318,7 +1376,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-disbursement--04",
-    "category_slug": "pingo-disbursement"
+    "category_slug": "pingo-disbursement",
+    "product_code": "pingo"
   },
   {
     "id": 60,
@@ -1339,7 +1398,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-fees--01",
-    "category_slug": "pingo-fees"
+    "category_slug": "pingo-fees",
+    "product_code": "pingo"
   },
   {
     "id": 61,
@@ -1360,7 +1420,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-fees--02",
-    "category_slug": "pingo-fees"
+    "category_slug": "pingo-fees",
+    "product_code": "pingo"
   },
   {
     "id": 62,
@@ -1381,7 +1442,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-fees--03",
-    "category_slug": "pingo-fees"
+    "category_slug": "pingo-fees",
+    "product_code": "pingo"
   },
   {
     "id": 63,
@@ -1402,7 +1464,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-fees--04",
-    "category_slug": "pingo-fees"
+    "category_slug": "pingo-fees",
+    "product_code": "pingo"
   },
   {
     "id": 64,
@@ -1423,7 +1486,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-fees--05",
-    "category_slug": "pingo-fees"
+    "category_slug": "pingo-fees",
+    "product_code": "pingo"
   },
   {
     "id": 65,
@@ -1444,7 +1508,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-privacy--01",
-    "category_slug": "pingo-privacy"
+    "category_slug": "pingo-privacy",
+    "product_code": "pingo"
   },
   {
     "id": 66,
@@ -1465,7 +1530,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-privacy--02",
-    "category_slug": "pingo-privacy"
+    "category_slug": "pingo-privacy",
+    "product_code": "pingo"
   },
   {
     "id": 67,
@@ -1486,7 +1552,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-privacy--03",
-    "category_slug": "pingo-privacy"
+    "category_slug": "pingo-privacy",
+    "product_code": "pingo"
   },
   {
     "id": 68,
@@ -1507,7 +1574,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-account--01",
-    "category_slug": "pingo-account"
+    "category_slug": "pingo-account",
+    "product_code": "pingo"
   },
   {
     "id": 69,
@@ -1528,7 +1596,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-account--02",
-    "category_slug": "pingo-account"
+    "category_slug": "pingo-account",
+    "product_code": "pingo"
   },
   {
     "id": 70,
@@ -1549,7 +1618,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-account--03",
-    "category_slug": "pingo-account"
+    "category_slug": "pingo-account",
+    "product_code": "pingo"
   },
   {
     "id": 71,
@@ -1570,7 +1640,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-account--04",
-    "category_slug": "pingo-account"
+    "category_slug": "pingo-account",
+    "product_code": "pingo"
   },
   {
     "id": 72,
@@ -1591,7 +1662,8 @@
     },
     "source": "legacy_faq",
     "code": "pingo-account--05",
-    "category_slug": "pingo-account"
+    "category_slug": "pingo-account",
+    "product_code": "pingo"
   },
   {
     "id": 73,
@@ -1613,6 +1685,7 @@
     "source": "reception_template",
     "code": "pingo-reception--01",
     "category_slug": "pingo-reception",
-    "note": "Phone-like inbound → reception greeting only; do not teach as unknown"
+    "note": "Phone-like inbound → reception greeting only; do not teach as unknown",
+    "product_code": "pingo"
   }
 ]

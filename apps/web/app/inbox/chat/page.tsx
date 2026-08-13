@@ -10,6 +10,7 @@ import {
   closeConversation,
   ConversationDetail,
   getConversation,
+  getStoredAgent,
   getStoredToken,
   Message,
   sendMessage,
@@ -22,6 +23,12 @@ import {
   customerLine,
   ticketTitle,
 } from "@/lib/display";
+
+const REPLY_LANG_HINT: Record<string, string> = {
+  id: "回复客户（请用印尼语）…",
+  zh: "回复客户（请用中文）…",
+  en: "Reply to customer (English)…",
+};
 
 function IdChip({
   label,
@@ -65,11 +72,18 @@ function ChatInner() {
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [replyPlaceholder, setReplyPlaceholder] = useState("回复客户…");
 
   const refresh = useCallback(async (t: string, conversationId: string) => {
     const data = await getConversation(t, conversationId);
     setDetail(data);
     setMessages(data.messages || []);
+  }, []);
+
+  useEffect(() => {
+    const agent = getStoredAgent();
+    const lang = agent?.customer_reply_lang || "";
+    setReplyPlaceholder(REPLY_LANG_HINT[lang] || "回复客户…");
   }, []);
 
   useEffect(() => {
@@ -231,7 +245,7 @@ function ChatInner() {
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="回复客户…"
+            placeholder={replyPlaceholder}
             rows={3}
           />
           <button type="submit" disabled={busy || !body.trim()}>

@@ -22,7 +22,9 @@ from app.models import (
     Message,
     MessageDirection,
     MessageSenderType,
+    Workspace,
 )
+from app.rbac import resolve_customer_reply_lang
 from app.services.conversations import send_outbound_message
 
 logger = logging.getLogger(__name__)
@@ -161,7 +163,13 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 continue
 
             text = trigger.body if trigger else ""
-            decision = agent.decide(text)
+            forced_lang = None
+            ws = db.get(Workspace, conv.workspace_id)
+            if ws:
+                forced_lang = resolve_customer_reply_lang(
+                    db, ws.product_code, fallback=get_settings().default_reply_lang or "id"
+                )
+            decision = agent.decide(text, forced_reply_lang=forced_lang)
             result = {
                 "action": decision.action,
                 "reason": decision.reason,

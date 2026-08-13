@@ -7,11 +7,13 @@ from datetime import datetime
 
 from sqlalchemy import (
     Boolean,
+    Column,
     DateTime,
     Enum,
     ForeignKey,
     Index,
     String,
+    Table,
     Text,
     UniqueConstraint,
     func,
@@ -25,6 +27,68 @@ from app.db import Base
 
 def _uuid() -> uuid.UUID:
     return uuid.uuid4()
+
+
+# RBAC roles (stored on AgentUser.role)
+ROLE_SYSTEM_ADMIN = "system_admin"
+ROLE_COUNTRY_ADMIN = "country_admin"
+ROLE_PRODUCT_ADMIN = "product_admin"
+ROLE_AGENT = "agent"
+
+
+product_countries = Table(
+    "product_countries",
+    Base.metadata,
+    Column("product_code", String(64), ForeignKey("products.code"), primary_key=True),
+    Column("country_code", String(8), ForeignKey("countries.code"), primary_key=True),
+)
+
+
+agent_products = Table(
+    "agent_products",
+    Base.metadata,
+    Column("agent_id", Uuid(as_uuid=True), ForeignKey("agent_users.id"), primary_key=True),
+    Column("product_code", String(64), ForeignKey("products.code"), primary_key=True),
+)
+
+
+agent_countries = Table(
+    "agent_countries",
+    Base.metadata,
+    Column("agent_id", Uuid(as_uuid=True), ForeignKey("agent_users.id"), primary_key=True),
+    Column("country_code", String(8), ForeignKey("countries.code"), primary_key=True),
+)
+
+
+class Country(Base):
+    __tablename__ = "countries"
+
+    code: Mapped[str] = mapped_column(String(8), primary_key=True)  # e.g. ID
+    name_zh: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    name_en: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    name_local: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    products: Mapped[list[Product]] = relationship(
+        secondary=product_countries, back_populates="countries"
+    )
+
+
+class Product(Base):
+    __tablename__ = "products"
+
+    code: Mapped[str] = mapped_column(String(64), primary_key=True)  # e.g. pingo
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    # Forced customer-facing reply language (zh / id / en)
+    customer_reply_lang: Mapped[str] = mapped_column(String(8), nullable=False, default="id")
+    default_country_code: Mapped[Optional[str]] = mapped_column(
+        String(8), ForeignKey("countries.code"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    countries: Mapped[list[Country]] = relationship(
+        secondary=product_countries, back_populates="products"
+    )
 
 
 class ConversationStatus(str, enum.Enum):
@@ -115,19 +179,25 @@ class AgentUser(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # system_admin | country_admin | product_admin | agent
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default=ROLE_AGENT)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     memberships: Mapped[list[Membership]] = relationship(back_populates="agent")
+    products: Mapped[list[Product]] = relationship(secondary=agent_products)
+    countries: Mapped[list[Country]] = relationship(secondary=agent_countries)
 
 
 class Membership(Base):
+    """Legacy workspace link; access is primarily role + product/country grants."""
+
     __tablename__ = "memberships"
     __table_args__ = (UniqueConstraint("agent_id", "workspace_id"),)
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=_uuid)
     agent_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("agent_users.id"), nullable=False)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), nullable=False)
-    role: Mapped[str] = mapped_column(String(32), nullable=False, default="agent")
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default=ROLE_AGENT)
 
     agent: Mapped[AgentUser] = relationship(back_populates="memberships")
 

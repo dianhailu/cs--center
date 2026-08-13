@@ -2,7 +2,7 @@
 
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ApiError, login, TOKEN_KEY, AGENT_KEY } from "@/lib/api";
+import { ApiError, login, saveSession } from "@/lib/api";
 
 function LoginForm() {
   const router = useRouter();
@@ -23,8 +23,7 @@ function LoginForm() {
     setError("");
     try {
       const result = await login(email, password);
-      localStorage.setItem(TOKEN_KEY, result.access_token);
-      localStorage.setItem(AGENT_KEY, JSON.stringify(result));
+      saveSession(result);
       router.push("/inbox/");
     } catch (err) {
       if (err instanceof ApiError) {
@@ -44,7 +43,7 @@ function LoginForm() {
           <span className="brand-dot" aria-hidden />
           <h1 style={{ margin: 0 }}>CS Midplatform</h1>
         </div>
-        <p className="muted">PinGo 印尼客服台 · LiveAgent</p>
+        <p className="muted">多产品客服中台 · LiveAgent</p>
         <p className="muted" style={{ fontSize: "0.85rem", marginTop: "-0.5rem" }}>
           登录过期或更换设备后，请重新登录
         </p>

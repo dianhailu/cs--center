@@ -23,6 +23,28 @@ from app.ai.kb_translate import auto_translate_qa, detect_source_lang, normalize
 from app.ai.unknown import load_unknowns, resolve_unknown, update_unknown
 from app.api.deps import AuthContext, get_auth
 from app.config import get_settings
+from app.rbac import assert_product_access, can_edit_knowledge, require_knowledge_write
+
+
+def _product_code(auth: AuthContext) -> str:
+    code = (auth.product_code or "").strip().lower()
+    if not code:
+        raise HTTPException(400, "no product context; switch product first")
+    return assert_product_access(auth.agent, code)
+
+
+def _filter_faq_for_product(items: list[dict[str, Any]], product_code: str) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for raw in items:
+        item = normalize_faq_item(raw)
+        pc = (item.get("product_code") or "").strip().lower() or None
+        # Legacy rows without product_code are treated as default product (seed backfills)
+        if pc is None or pc == product_code:
+            if pc is None:
+                item["product_code"] = product_code
+            out.append(item)
+    return out
+
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 
@@ -122,11 +144,12 @@ def _maybe_translate(
 
 @router.get("/categories")
 def list_categories(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
-    _ = auth
+    product_code = _product_code(auth)
     settings = get_settings()
-    # Ensure codes exist so counts/slugs are stable for legacy rows
     migrate_faq_codes(settings.faq_path, settings.categories_path)
     items = list_categories_with_counts(settings.categories_path, settings.faq_path)
+    # Category counts are global; FAQ list is product-filtered. Good enough for MVP.
+    _ = product_code
     return {"count": len(items), "items": items}
 
 
@@ -135,7 +158,8 @@ def post_category(
     body: CategoryCreateBody,
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    require_knowledge_write(auth.role)
+    _ = _product_code(auth)
     settings = get_settings()
     try:
         item = create_category(
@@ -150,13 +174,18 @@ def post_category(
 
 @router.get("/faq")
 def list_faq(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
-    _ = auth
+    product_code = _product_code(auth)
     settings = get_settings()
     migrate_faq_codes(settings.faq_path, settings.categories_path)
     items = load_faq_raw(settings.faq_path)
-    # Normalize legacy / flat shapes in memory; disk rewrite happens on create/update.
-    normalized = [normalize_faq_item(x) for x in items]
-    return {"count": len(normalized), "items": normalized}
+    normalized = _filter_faq_for_product(items, product_code)
+    return {
+        "count": len(normalized),
+        "items": normalized,
+        "product_code": product_code,
+        "can_edit": can_edit_knowledge(auth.role),
+        "customer_reply_lang": auth.customer_reply_lang,
+    }
 
 
 @router.post("/faq")
@@ -164,7 +193,8 @@ def create_faq_item(
     body: FaqWriteBody,
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    require_knowledge_write(auth.role)
+    product_code = _product_code(auth)
     settings = get_settings()
     q = body.question.model_dump()
     a = body.answer.model_dump()
@@ -183,6 +213,7 @@ def create_faq_item(
             category=body.category.model_dump() if body.category else None,
             category_slug=body.category_slug,
             code=body.code,
+            product_code=product_code,
             source="console",
             categories_path=settings.categories_path,
         )
@@ -197,7 +228,8 @@ def update_faq_item(
     body: FaqUpdateBody,
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    require_knowledge_write(auth.role)
+    product_code = _product_code(auth)
     if (
         body.question is None
         and body.answer is None
@@ -225,6 +257,9 @@ def update_faq_item(
         )
         if not existing:
             raise HTTPException(404, "faq not found")
+        existing_pc = (existing.get("product_code") or product_code or "").lower()
+        if existing_pc and existing_pc != product_code:
+            raise HTTPException(403, "faq belongs to another product")
         old_q = {k: existing["question"].get(k, "") for k in ("zh", "id", "en")}
         old_a = {k: existing["answer"].get(k, "") for k in ("zh", "id", "en")}
         merged_q = {**old_q, **(q or {})}
@@ -259,6 +294,16 @@ def update_faq_item(
         raise HTTPException(400, str(exc)) from exc
     if not item:
         raise HTTPException(404, "faq not found")
+    # Stamp product_code if missing
+    raw_items = load_faq_raw(settings.faq_path)
+    for raw in raw_items:
+        if int(raw.get("id") or 0) == faq_id and not raw.get("product_code"):
+            raw["product_code"] = product_code
+            from app.ai.kb_store import save_faq_raw
+
+            save_faq_raw(settings.faq_path, raw_items)
+            item = normalize_faq_item(raw)
+            break
     return {"item": item, "warnings": warnings}
 
 
@@ -268,7 +313,7 @@ def list_unknowns(
     limit: int = Query(default=50, ge=1, le=200),
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    _ = _product_code(auth)
     settings = get_settings()
     rows = load_unknowns(settings.unknown_questions_path)
     status_norm = (status or "").strip().lower()
@@ -286,7 +331,8 @@ def put_unknown(
     body: UnknownUpdateBody,
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    require_knowledge_write(auth.role)
+    _ = _product_code(auth)
     if body.question is None and body.draft_answer is None and body.suggested_draft is None:
         raise HTTPException(400, "no fields to update")
     settings = get_settings()
@@ -308,7 +354,8 @@ def resolve_unknown_item(
     body: UnknownResolveBody,
     auth: AuthContext = Depends(get_auth),
 ) -> dict[str, Any]:
-    _ = auth
+    require_knowledge_write(auth.role)
+    product_code = _product_code(auth)
     settings = get_settings()
     q = body.question.model_dump() if body.question else None
     a = body.answer.model_dump()
@@ -349,6 +396,17 @@ def resolve_unknown_item(
             question=q,
             category=body.category.model_dump() if body.category else None,
         )
+        # Stamp product on newly created FAQ
+        if faq_item and faq_item.get("id") is not None:
+            raw_items = load_faq_raw(settings.faq_path)
+            for raw in raw_items:
+                if int(raw.get("id") or 0) == int(faq_item["id"]):
+                    raw["product_code"] = product_code
+                    from app.ai.kb_store import save_faq_raw
+
+                    save_faq_raw(settings.faq_path, raw_items)
+                    faq_item = normalize_faq_item(raw)
+                    break
         # If resolve seeded question as single-lang and auto_translate, patch FAQ
         if body.auto_translate and faq_item:
             fq = {k: faq_item["question"].get(k, "") for k in ("zh", "id", "en")}
