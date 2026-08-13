@@ -255,6 +255,12 @@ export type FaqListResult = {
   items: FaqItem[];
 };
 
+export type LangTriple = {
+  zh: string;
+  id: string;
+  en: string;
+};
+
 export type UnknownQuestion = {
   id?: string | null;
   date?: string | null;
@@ -264,6 +270,12 @@ export type UnknownQuestion = {
   external_code?: string | null;
   conversation_id?: string | null;
   reason?: string | null;
+  suggested_draft?: string | null;
+  draft_answer?: LangTriple | null;
+  answer?: LangTriple | string | null;
+  faq_id?: number | null;
+  answered_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type UnknownListResult = {
@@ -272,12 +284,43 @@ export type UnknownListResult = {
   items: UnknownQuestion[];
 };
 
+export type FaqWritePayload = {
+  question: LangTriple;
+  answer: LangTriple;
+  category?: LangTriple;
+};
+
 export async function listFaq(token: string): Promise<FaqListResult> {
   const res = await fetch(`${API_BASE}/api/knowledge/faq`, {
     headers: authHeaders(token),
     cache: "no-store",
   });
   return handleResponse<FaqListResult>(res);
+}
+
+export async function createFaq(
+  token: string,
+  body: FaqWritePayload
+): Promise<{ item: FaqItem }> {
+  const res = await fetch(`${API_BASE}/api/knowledge/faq`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function updateFaq(
+  token: string,
+  id: number | string,
+  body: Partial<FaqWritePayload>
+): Promise<{ item: FaqItem }> {
+  const res = await fetch(`${API_BASE}/api/knowledge/faq/${id}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
 }
 
 export async function listUnknowns(
@@ -290,6 +333,39 @@ export async function listUnknowns(
     cache: "no-store",
   });
   return handleResponse<UnknownListResult>(res);
+}
+
+export async function updateUnknown(
+  token: string,
+  id: string,
+  body: {
+    question?: string;
+    draft_answer?: LangTriple;
+    suggested_draft?: string;
+  }
+): Promise<{ item: UnknownQuestion }> {
+  const res = await fetch(`${API_BASE}/api/knowledge/unknowns/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
+export async function resolveUnknown(
+  token: string,
+  id: string,
+  body: FaqWritePayload
+): Promise<{ faq: FaqItem; unknown: UnknownQuestion }> {
+  const res = await fetch(
+    `${API_BASE}/api/knowledge/unknowns/${encodeURIComponent(id)}/resolve`,
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify(body),
+    }
+  );
+  return handleResponse(res);
 }
 
 export function wsUrl(token: string) {

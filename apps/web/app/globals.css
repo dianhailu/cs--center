@@ -490,7 +490,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .kb-page {
   padding: 1.25rem 1.5rem 2.5rem;
-  max-width: 920px;
+  max-width: 1100px;
   margin: 0 auto;
   width: 100%;
 }
@@ -607,7 +607,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 .kb-q {
   margin: 0 0 0.4rem;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   font-weight: 650;
   line-height: 1.35;
 }
@@ -615,13 +615,94 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   margin: 0;
   white-space: pre-wrap;
   line-height: 1.5;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   color: #2a3340;
 }
 .kb-alt {
   margin: 0.45rem 0 0;
   font-size: 0.82rem;
   line-height: 1.4;
+}
+.kb-inline-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  margin-left: auto;
+}
+.kb-langs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+.kb-lang-block {
+  padding: 0.7rem 0.75rem;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  min-width: 0;
+}
+.kb-lang-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--accent-deep);
+  background: rgba(13, 115, 112, 0.1);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.45rem;
+}
+.kb-editor {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.05rem 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.kb-editor-hint {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+}
+.kb-form-langs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.kb-form-lang {
+  padding: 0.75rem;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+}
+.kb-field {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.kb-field input,
+.kb-field textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+  color: var(--ink);
+  resize: vertical;
+}
+.kb-field input:focus,
+.kb-field textarea:focus {
+  outline: 2px solid rgba(13, 115, 112, 0.28);
+  border-color: rgba(13, 115, 112, 0.4);
+}
+.kb-editor-actions {
+  margin-top: 0.9rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 @media (max-width: 900px) {
@@ -635,4 +716,8 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   .id-chip .val { max-width: 10rem; }
   .topbar-left { gap: 0.75rem; }
   .kb-page { padding: 1rem 1rem 2rem; }
+  .kb-langs,
+  .kb-form-langs {
+    grid-template-columns: 1fr;
+  }
 }
