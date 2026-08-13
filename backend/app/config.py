@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     min_faq_score: float = 0.18
     min_history_score: float = 0.22
     ai_enabled: bool = True
+    # When false: Smart still generates + stores local AI bubbles for agents,
+    # but does NOT post_reply / outbox-deliver to LiveAgent (visitors).
+    # Set true when reply quality is OK to resume customer-facing AI.
+    ai_send_to_customer: bool = False
 
     # Evening history learning (worker scheduled task; rebuilds from full DB)
     history_learn_enabled: bool = True

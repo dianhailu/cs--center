@@ -7,11 +7,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.channels.liveagent import client_from_connection
+from app.config import get_settings
 from app.models import (
     ChannelConnection,
     Conversation,
     Message,
     MessageSendStatus,
+    MessageSenderType,
     OutboxEvent,
     OutboxStatus,
 )
@@ -60,6 +62,24 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
     msg = db.get(Message, event.message_id)
     if not conn or not conv or not msg:
         raise RuntimeError("missing outbox relations")
+
+    # Safety net: never deliver Smart/AI to visitors when flag is off
+    # (covers leftover pending outbox rows created before the gate).
+    settings = get_settings()
+    if msg.sender_type == MessageSenderType.ai and not settings.ai_send_to_customer:
+        msg.send_status = MessageSendStatus.local_only
+        msg.meta = {
+            **(msg.meta or {}),
+            "deliver": "skipped",
+            "reason": "AI_SEND_TO_CUSTOMER=false",
+        }
+        db.commit()
+        logger.info(
+            "skipped AI outbox deliver message=%s conversation=%s",
+            msg.id,
+            conv.external_id,
+        )
+        return
 
     la = client_from_connection(conn)
     try:

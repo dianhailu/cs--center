@@ -55,9 +55,17 @@ CORS_ORIGINS=https://cs.originmount.com
 LIVEAGENT_DRY_RUN=false
 LIVEAGENT_AUTO_TRANSFER=true
 LIVEAGENT_AGENT_EMAIL=<PinGo CS agent email>
+AI_SEND_TO_CUSTOMER=false
 ```
 
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
+
+### AI 是否发给客户（`AI_SEND_TO_CUSTOMER`）
+
+- **默认 / 当前建议：`false`**：Smart 仍生成并写入中台会话（客服可见 `local_only` 气泡），**不**经 outbox/`post_reply` 发给 LiveAgent 访客。人工客服在中台的回复仍正常投递。
+- 学习质量 OK 后再接线：设 `AI_SEND_TO_CUSTOMER=true`，然后 `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build`（api + worker）。
+
+与 auto-transfer / keep-online 独立：关闭投递后不会因 AI 触发 transfer+回复；访客侧「public API 气泡不可见」问题在未投递期间可暂搁。
 
 ### LiveAgent 常在线（Devices keep-alive）
 

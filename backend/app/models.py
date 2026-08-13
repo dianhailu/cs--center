@@ -49,6 +49,7 @@ class MessageSenderType(str, enum.Enum):
 
 class MessageSendStatus(str, enum.Enum):
     local = "local"
+    local_only = "local_only"  # AI preview: midplatform only, not delivered to LA/visitor
     pending = "pending"
     sent = "sent"
     failed = "failed"

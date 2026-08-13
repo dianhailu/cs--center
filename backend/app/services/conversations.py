@@ -6,6 +6,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.config import get_settings
 from app.models import (
     Conversation,
     ConversationStatus,
@@ -60,7 +61,33 @@ def send_outbound_message(
     sender_id: UUID | None = None,
     as_note: bool = False,
 ) -> Message:
+    settings = get_settings()
+    # AI → visitor delivery gated by AI_SEND_TO_CUSTOMER (default false).
+    # Human agent composer still delivers via outbox.
+    deliver = True
+    if (
+        not as_note
+        and sender_type == MessageSenderType.ai
+        and not settings.ai_send_to_customer
+    ):
+        deliver = False
+
     direction = MessageDirection.note if as_note else MessageDirection.outbound
+    meta: dict = {"source": "ai"} if sender_type == MessageSenderType.ai else {}
+    if not deliver:
+        meta = {
+            **meta,
+            "deliver": "skipped",
+            "reason": "AI_SEND_TO_CUSTOMER=false",
+        }
+
+    if as_note:
+        send_status = MessageSendStatus.local
+    elif not deliver:
+        send_status = MessageSendStatus.local_only
+    else:
+        send_status = MessageSendStatus.pending
+
     msg = Message(
         conversation_id=conv.id,
         channel_connection_id=conv.channel_connection_id,
@@ -68,8 +95,8 @@ def send_outbound_message(
         sender_type=sender_type,
         sender_id=sender_id,
         body=body,
-        send_status=MessageSendStatus.pending if not as_note else MessageSendStatus.local,
-        meta={"source": "ai"} if sender_type == MessageSenderType.ai else {},
+        send_status=send_status,
+        meta=meta,
     )
     db.add(msg)
     db.flush()
@@ -80,7 +107,7 @@ def send_outbound_message(
         if sender_id:
             conv.assignee_id = sender_id
 
-    if not as_note:
+    if not as_note and deliver:
         db.add(
             OutboxEvent(
                 workspace_id=conv.workspace_id,
