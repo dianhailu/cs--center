@@ -234,6 +234,64 @@ export async function closeConversation(token: string, id: string) {
   return handleResponse(res);
 }
 
+export type LangBlock = {
+  id: string;
+  en: string;
+  zh: string;
+  label: string;
+};
+
+export type FaqItem = {
+  id: number | string | null;
+  source?: string | null;
+  sheet?: string | null;
+  category: LangBlock;
+  question: LangBlock;
+  answer: LangBlock;
+};
+
+export type FaqListResult = {
+  count: number;
+  items: FaqItem[];
+};
+
+export type UnknownQuestion = {
+  id?: string | null;
+  date?: string | null;
+  recorded_at?: string | null;
+  question?: string | null;
+  status?: string | null;
+  external_code?: string | null;
+  conversation_id?: string | null;
+  reason?: string | null;
+};
+
+export type UnknownListResult = {
+  count: number;
+  total_matching: number;
+  items: UnknownQuestion[];
+};
+
+export async function listFaq(token: string): Promise<FaqListResult> {
+  const res = await fetch(`${API_BASE}/api/knowledge/faq`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse<FaqListResult>(res);
+}
+
+export async function listUnknowns(
+  token: string,
+  status = "open"
+): Promise<UnknownListResult> {
+  const q = `?status=${encodeURIComponent(status)}`;
+  const res = await fetch(`${API_BASE}/api/knowledge/unknowns${q}`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  return handleResponse<UnknownListResult>(res);
+}
+
 export function wsUrl(token: string) {
   const base = API_BASE.replace(/^http/, "ws");
   return `${base}/ws?token=${encodeURIComponent(token)}`;

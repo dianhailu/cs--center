@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import ConsoleTopbar from "@/components/ConsoleTopbar";
 import {
   ApiError,
   Conversation,
-  clearSession,
   getStoredToken,
   listConversations,
   userFacingError,
@@ -70,25 +70,9 @@ export default function InboxPage() {
     };
   }, [load, queue, router]);
 
-  function logout() {
-    clearSession();
-    router.replace("/login/");
-  }
-
   return (
     <div className="shell">
-      <header className="topbar">
-        <div className="brand-mark">
-          <span className="brand-dot" aria-hidden />
-          <div>
-            <div className="brand">CS Midplatform</div>
-            <div className="muted">{agentName || "Agent"} · PinGo 客服台</div>
-          </div>
-        </div>
-        <button className="secondary" onClick={logout} type="button">
-          退出
-        </button>
-      </header>
+      <ConsoleTopbar subtitle={`${agentName || "Agent"} · PinGo 客服台`} />
       <div className="workspace">
         <aside className="queue">
           <div className="queue-head">

@@ -75,6 +75,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 0.85rem 1.4rem;
   border-bottom: 1px solid var(--line-soft);
   background: rgba(255, 253, 248, 0.78);
@@ -82,6 +83,37 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   position: sticky;
   top: 0;
   z-index: 20;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.console-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.console-nav-link {
+  padding: 0.38rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.86rem;
+  font-weight: 560;
+  color: var(--muted);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.console-nav-link:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--line-soft);
+}
+.console-nav-link.active {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 .brand {
   font-family: var(--font);
@@ -325,7 +357,7 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  align-items: start;
+  align-items: flex-start;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 .detail-title {
@@ -456,6 +488,142 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   font-size: 0.88rem;
 }
 
+.kb-page {
+  padding: 1.25rem 1.5rem 2.5rem;
+  max-width: 920px;
+  margin: 0 auto;
+  width: 100%;
+}
+.kb-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+.kb-head h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font);
+  font-size: 1.55rem;
+  font-weight: 600;
+}
+.kb-head p { margin: 0; max-width: 36rem; line-height: 1.45; }
+.kb-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.kb-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+  flex-wrap: wrap;
+}
+.kb-search input {
+  flex: 1;
+  min-width: min(100%, 240px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  background: #fff;
+  box-shadow: inset 0 1px 2px rgba(26, 34, 45, 0.03);
+}
+.kb-search input:focus {
+  outline: 2px solid rgba(13, 115, 112, 0.28);
+  border-color: rgba(13, 115, 112, 0.4);
+}
+.kb-filter-count {
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+.kb-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+.kb-section-head h2 {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.kb-unknowns {
+  margin-bottom: 1.35rem;
+  padding: 0.95rem 1rem 1.05rem;
+  background: var(--warn-soft);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius);
+}
+.kb-unknown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.kb-unknown-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.65rem;
+  font-size: 0.9rem;
+}
+.kb-unknown-date {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  min-width: 5.5rem;
+}
+.kb-unknown-q {
+  flex: 1;
+  min-width: 12rem;
+  color: #78350f;
+}
+.kb-list {
+  display: grid;
+  gap: 0.75rem;
+}
+.kb-card {
+  padding: 1rem 1.1rem 1.05rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.kb-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+.kb-sheet, .kb-id {
+  font-size: 0.75rem;
+}
+.kb-q {
+  margin: 0 0 0.4rem;
+  font-size: 1.02rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.kb-a {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 0.94rem;
+  color: #2a3340;
+}
+.kb-alt {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
 @media (max-width: 900px) {
   .workspace { grid-template-columns: 1fr; }
   .queue {
@@ -465,4 +633,6 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   }
   .detail-header { flex-direction: column; }
   .id-chip .val { max-width: 10rem; }
+  .topbar-left { gap: 0.75rem; }
+  .kb-page { padding: 1rem 1rem 2rem; }
 }

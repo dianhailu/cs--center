@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import ConsoleTopbar from "@/components/ConsoleTopbar";
 import {
   ApiError,
   assignMe,
@@ -125,17 +126,10 @@ function ChatInner() {
 
   return (
     <div className="shell">
-      <header className="topbar">
-        <div className="brand-mark">
-          <span className="brand-dot" aria-hidden />
-          <div>
-            <div className="brand">CS Midplatform</div>
-            <div className="muted">
-              <Link href="/inbox/">← 返回收件箱</Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ConsoleTopbar
+        subtitle={<Link href="/inbox/">← 返回收件箱</Link>}
+        showLogout
+      />
       <div className="detail">
         <div className="detail-header">
           <div style={{ minWidth: 0, flex: 1 }}>
