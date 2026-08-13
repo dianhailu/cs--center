@@ -58,6 +58,17 @@ LIVEAGENT_AGENT_EMAIL=<PinGo CS agent email>
 AI_SEND_TO_CUSTOMER=false
 ```
 
+可选管理员与默认产品/国家：
+
+```env
+DEFAULT_PRODUCT_CODE=pingo
+DEFAULT_COUNTRY_CODE=ID
+# SEED_ADMIN_EMAIL=admin@example.com
+# SEED_ADMIN_PASSWORD=change-me-admin-password
+```
+
+启动 seed 会补齐 `countries`/`products`、把 FAQ 标为 `product_code=pingo`、现有坐席迁为 `agent`。管理台：`/admin/`（product_admin+）。`AI_SEND_TO_CUSTOMER` 保持 `false` 即可。
+
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
 ### AI / OpenAI（香港 VPS 地区限制）
