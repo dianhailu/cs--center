@@ -45,6 +45,8 @@ def process_outbox_batch(db: Session, limit: int = 20) -> int:
             done += 1
         except Exception as exc:  # noqa: BLE001
             logger.exception("outbox failed %s: %s", event.id, exc)
+            db.rollback()
+            event = db.get(OutboxEvent, event.id) or event
             event.last_error = str(exc)[:2000]
             event.status = OutboxStatus.dead if event.attempts >= MAX_ATTEMPTS else OutboxStatus.pending
             msg = db.get(Message, event.message_id)
@@ -83,21 +85,11 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
 
     la = client_from_connection(conn)
     deliver_meta: dict = {}
+    result: dict = {}
     try:
-        # Assign to PinGo CS before posting so livechat does not wait on the ring popup.
-        if la.config.auto_transfer and not la.config.dry_run:
-            try:
-                la.transfer_to_agent(conv.external_id)
-            except Exception as exc:  # noqa: BLE001
-                logger.warning(
-                    "transfer_to_agent failed conversation=%s; continuing to post_reply: %s",
-                    conv.external_id,
-                    exc,
-                )
-
         session: str | None = None
-        # Panel 「回复」 accept: clears visitor waiting. createAnswer needs type-C
-        # message group id (not ticket id); falls back to public API type-5 on failure.
+        # Panel 「回复」 must run while the chat is still ringing. attendants
+        # transfer first removes ringing and makes pickUpChat return 无效请求.
         if la.config.panel_accept and not la.config.dry_run:
             try:
                 accepted = la.accept_chat(conv.external_id)
@@ -120,8 +112,9 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
                     deliver_meta["visitor_path"] = "type_c"
                 except Exception as exc:  # noqa: BLE001
                     logger.warning(
-                        "create_chat_answer failed conversation=%s; fallback post_reply type5: %s",
+                        "create_chat_answer failed conversation=%s answered=%s; fallback type5: %s",
                         conv.external_id,
+                        (deliver_meta.get("panel_accept") or {}).get("answered"),
                         exc,
                     )
                     deliver_meta["visitor_path"] = "type_5_fallback"
@@ -133,6 +126,17 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
         else:
             deliver_meta["visitor_path"] = "type_5"
             result = la.post_reply(conv.external_id, msg.body, as_note=False)
+
+        # Transfer after panel accept so ringing pickUpChat can succeed first.
+        if la.config.auto_transfer and not la.config.dry_run:
+            try:
+                la.transfer_to_agent(conv.external_id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "transfer_to_agent failed conversation=%s; message already posted: %s",
+                    conv.external_id,
+                    exc,
+                )
     finally:
         la.close()
 
@@ -155,4 +159,19 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
         )
     msg.meta = meta
     msg.send_status = MessageSendStatus.sent
-    db.commit()
+    try:
+        db.commit()
+    except Exception:
+        # e.g. uq_msg_external when a prior partial send already stored this stub
+        db.rollback()
+        db.refresh(msg)
+        if not msg.external_id and external:
+            msg.external_id = f"{external}-{msg.id}"
+        msg.meta = meta
+        msg.send_status = MessageSendStatus.sent
+        db.commit()
+        logger.warning(
+            "outbox message %s committed after external_id conflict; visitor_path=%s",
+            msg.id,
+            deliver_meta.get("visitor_path"),
+        )
