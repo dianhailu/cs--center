@@ -53,7 +53,9 @@ _HARMLESS_TRANSFER_RE = re.compile(
 class LiveAgentClient:
     def __init__(self, config: LiveAgentConfig):
         self.config = config
-        self._client = httpx.Client(timeout=30.0)
+        # LoginKey GETs 303 → /agent/index.php; without follow_redirects, raise_for_status
+        # treats 303 as failure and panel session S is never established.
+        self._client = httpx.Client(timeout=30.0, follow_redirects=True)
 
     def close(self) -> None:
         self._client.close()
@@ -238,13 +240,15 @@ class LiveAgentClient:
         if not email:
             raise RuntimeError("LIVEAGENT_AGENT_EMAIL is empty; cannot transfer conversation")
 
+        # LA attendants PUT only reads apikey from the query string (form body alone →
+        # "Api key is not found in request"). Keep apikey in form too for older servers.
         data: dict[str, Any] = {
             "apikey": api_key,
             "agentidentifier": email,
             "useridentifier": email,
         }
         url = f"{self.config.v1_base}/conversations/{conversation_id}/attendants"
-        r = self._client.put(url, data=data)
+        r = self._client.put(url, params={"apikey": api_key}, data=data)
         err_text = self._v1_error_text(r)
         body: dict[str, Any] = {}
         try:
@@ -280,6 +284,7 @@ class LiveAgentClient:
             status_url = f"{self.config.v1_base}/conversations/{conversation_id}/status"
             status_r = self._client.put(
                 status_url,
+                params={"apikey": api_key},
                 data={"apikey": api_key, "status": "A", "useridentifier": email},
             )
             if status_r.status_code >= 400:
@@ -341,7 +346,8 @@ class LiveAgentClient:
         if self.config.agent_email:
             data["useridentifier"] = self.config.agent_email
         url = f"{self.config.v1_base}/conversations/{conversation_id}/messages"
-        r = self._client.post(url, data=data)
+        # Query apikey matches attendants/status; form body still works for messages POST.
+        r = self._client.post(url, params={"apikey": api_key}, data=data)
         if r.status_code >= 400:
             logger.error("post_reply failed %s %s body=%s", r.status_code, r.text[:500], message[:120])
             r.raise_for_status()
@@ -380,21 +386,34 @@ class LiveAgentClient:
             key = payload.strip().strip('"')
         if not key:
             raise RuntimeError("login_key empty")
-        home = self.config.base_url.rstrip("/") + f"/agent/?LoginKey={quote(key)}"
-        page = self._client.get(home, headers={"Accept": "text/html"})
-        page.raise_for_status()
-        html = page.text.replace('\\"', '"')
-        match = _PANEL_S_RE.search(html)
-        if not match:
-            raise RuntimeError("panel session S not found in LoginKey HTML")
-        session = match.group(1)
-        logger.info(
-            "panel_login ok agent=%s S_len=%s cookies=%s",
-            agent_id,
-            len(session),
-            sorted({c.name for c in self._client.cookies.jar}),
+        # Prefer index.php (LoginKey often 303-redirects /agent/?LoginKey=… → index.php).
+        base = self.config.base_url.rstrip("/")
+        candidates = [
+            f"{base}/agent/index.php?LoginKey={quote(key)}",
+            f"{base}/agent/?LoginKey={quote(key)}",
+        ]
+        html = ""
+        last_status = 0
+        for home in candidates:
+            page = self._client.get(home, headers={"Accept": "text/html"})
+            last_status = page.status_code
+            if page.status_code >= 400:
+                continue
+            html = page.text.replace('\\"', '"')
+            match = _PANEL_S_RE.search(html)
+            if match:
+                session = match.group(1)
+                logger.info(
+                    "panel_login ok agent=%s S_len=%s cookies=%s via=%s",
+                    agent_id,
+                    len(session),
+                    sorted({c.name for c in self._client.cookies.jar}),
+                    home.split(base)[-1][:60],
+                )
+                return session
+        raise RuntimeError(
+            f"panel session S not found in LoginKey HTML (last_status={last_status})"
         )
-        return session
 
     def panel_rpc(self, payload: dict[str, Any]) -> Any:
         """POST agent-panel GWT RPC body D=<json> (requires prior panel_login cookies)."""

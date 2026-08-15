@@ -14,6 +14,7 @@ from app.models import ChannelConnection
 from app.seed import seed
 from app.services.ai_loop import process_ai_jobs
 from app.services.inbound import poll_connection
+from app.services.job_recovery import recover_stale_jobs
 from app.services.outbox import process_outbox_batch
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -130,13 +131,26 @@ def run() -> None:
     except Exception as exc:  # noqa: BLE001
         logger.warning("initial keep_online skipped: %s", exc)
 
+    # Clear abandoned processing rows left by prior worker crashes.
+    try:
+        db = SessionLocal()
+        try:
+            recover_stale_jobs(db, older_than_minutes=15)
+        finally:
+            db.close()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("initial stale job recovery skipped: %s", exc)
+
     poll_every = 30
     learn_every = 60  # check schedule about once per minute
+    recover_every = 120  # every ~2 minutes
     ticks = 0
     last_keep_online = time.monotonic()
     while True:
         db = SessionLocal()
         try:
+            if ticks % recover_every == 0:
+                recover_stale_jobs(db, older_than_minutes=15)
             outbox_n = process_outbox_batch(db, limit=30)
             ai_n = process_ai_jobs(db, limit=20)
             if outbox_n or ai_n:

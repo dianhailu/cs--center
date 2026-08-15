@@ -44,6 +44,7 @@ def test_transfer_to_agent_puts_attendants() -> None:
     assert first_call.args[0].endswith("/api/conversations/CONV1/attendants")
     assert first_call.kwargs["data"]["agentidentifier"] == "agent@example.com"
     assert first_call.kwargs["data"]["apikey"] == "v1-key"
+    assert first_call.kwargs["params"]["apikey"] == "v1-key"
 
 
 def test_transfer_to_agent_harmless_already_assigned() -> None:

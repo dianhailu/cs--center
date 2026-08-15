@@ -32,6 +32,7 @@ def test_accept_chat_dry_run():
 
 def test_accept_chat_pickup_and_join():
     la = _client()
+    assert la._client.follow_redirects is True
     with (
         patch.object(la, "panel_login", return_value="SESSIONTOKEN123456789012345678"),
         patch.object(
