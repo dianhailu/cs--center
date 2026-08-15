@@ -82,6 +82,7 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
         return
 
     la = client_from_connection(conn)
+    deliver_meta: dict = {}
     try:
         # Assign to PinGo CS before posting so livechat does not wait on the ring popup.
         if la.config.auto_transfer and not la.config.dry_run:
@@ -93,7 +94,45 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
                     conv.external_id,
                     exc,
                 )
-        result = la.post_reply(conv.external_id, msg.body, as_note=False)
+
+        session: str | None = None
+        # Panel 「回复」 accept: clears visitor waiting. createAnswer may still be denied
+        # on LoginKey sessions (falls back to public API type-5).
+        if la.config.panel_accept and not la.config.dry_run:
+            try:
+                accepted = la.accept_chat(conv.external_id)
+                session = str(accepted.get("session") or "") or None
+                deliver_meta["panel_accept"] = {
+                    "answered": accepted.get("answered"),
+                    "join": accepted.get("join"),
+                }
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "accept_chat failed conversation=%s; continuing without panel accept: %s",
+                    conv.external_id,
+                    exc,
+                )
+                deliver_meta["panel_accept_error"] = str(exc)[:500]
+
+            if session:
+                try:
+                    result = la.create_chat_answer(conv.external_id, msg.body, session=session)
+                    deliver_meta["visitor_path"] = "type_c"
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning(
+                        "create_chat_answer failed conversation=%s; fallback post_reply type5: %s",
+                        conv.external_id,
+                        exc,
+                    )
+                    deliver_meta["visitor_path"] = "type_5_fallback"
+                    deliver_meta["create_chat_answer_error"] = str(exc)[:500]
+                    result = la.post_reply(conv.external_id, msg.body, as_note=False)
+            else:
+                deliver_meta["visitor_path"] = "type_5_no_session"
+                result = la.post_reply(conv.external_id, msg.body, as_note=False)
+        else:
+            deliver_meta["visitor_path"] = "type_5"
+            result = la.post_reply(conv.external_id, msg.body, as_note=False)
     finally:
         la.close()
 
@@ -107,11 +146,13 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
         )
     if external:
         msg.external_id = str(external)
+    meta = {**(msg.meta or {}), **deliver_meta}
     if isinstance(result, dict) and result.get("dry_run"):
-        msg.meta = {**(msg.meta or {}), "dry_run": True}
+        meta["dry_run"] = True
         logger.warning(
             "outbox message %s marked sent under DRY_RUN — not visible in LiveAgent",
             msg.id,
         )
+    msg.meta = meta
     msg.send_status = MessageSendStatus.sent
     db.commit()

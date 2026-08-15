@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+import json
 import logging
 import re
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
 logger = logging.getLogger(__name__)
+
+_PANEL_CHAT_ANSWERER = "Qu\\La\\ChatGateway\\Infrastructure\\Rpc\\ChatAnswererRpc"
+_PANEL_CHAT_JOINER = "Qu\\La\\ChatGateway\\Infrastructure\\Rpc\\RpcChatJoiner"
+_PANEL_CHAT_MESSENGER = "Qu\\La\\ChatGateway\\Infrastructure\\Rpc\\ChatMessenger"
+_PANEL_S_RE = re.compile(r'\["S","([A-Za-z0-9]+)"\]')
 
 
 @dataclass
@@ -18,6 +25,8 @@ class LiveAgentConfig:
     agent_email: str = ""
     dry_run: bool = True
     auto_transfer: bool = True
+    # LoginKey → panel RPC pickUpChat before post_reply (clears visitor "waiting")
+    panel_accept: bool = True
     # Optional overrides for Devices keep-online (PinGo CS presence)
     agent_user_id: str = ""
     chat_department_id: str = ""
@@ -347,6 +356,169 @@ class LiveAgentClient:
         ):
             body["external_stub"] = f"la-{conversation_id}-{r.status_code}"
         return body
+
+    def panel_login(self) -> str:
+        """Consume agents/{id}/login_key and return panel session token S.
+
+        S is embedded in agent HTML pageValues after LoginKey redirect.
+        Cookie A_la_sid is also set on the shared httpx client.
+        """
+        agent_id = self.resolve_agent_id()
+        r = self._client.get(
+            f"{self.config.v3_base}/agents/{agent_id}/login_key",
+            headers=self._v3_headers(),
+        )
+        r.raise_for_status()
+        try:
+            payload = r.json()
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(f"login_key invalid JSON: {exc}") from exc
+        key = ""
+        if isinstance(payload, dict):
+            key = str(payload.get("login_key") or "").strip()
+        elif isinstance(payload, str):
+            key = payload.strip().strip('"')
+        if not key:
+            raise RuntimeError("login_key empty")
+        home = self.config.base_url.rstrip("/") + f"/agent/?LoginKey={quote(key)}"
+        page = self._client.get(home, headers={"Accept": "text/html"})
+        page.raise_for_status()
+        html = page.text.replace('\\"', '"')
+        match = _PANEL_S_RE.search(html)
+        if not match:
+            raise RuntimeError("panel session S not found in LoginKey HTML")
+        session = match.group(1)
+        logger.info(
+            "panel_login ok agent=%s S_len=%s cookies=%s",
+            agent_id,
+            len(session),
+            sorted({c.name for c in self._client.cookies.jar}),
+        )
+        return session
+
+    def panel_rpc(self, payload: dict[str, Any]) -> Any:
+        """POST agent-panel GWT RPC body D=<json> (requires prior panel_login cookies)."""
+        body = "D=" + quote(json.dumps(payload, separators=(",", ":")))
+        base = self.config.base_url.rstrip("/")
+        r = self._client.post(
+            base + "/agent/",
+            content=body.encode("utf-8"),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+                "Accept": "*/*",
+                "X-Requested-With": "XMLHttpRequest",
+                "Referer": base + "/agent/",
+                "Origin": base,
+            },
+        )
+        text = (r.text or "").strip()
+        if r.status_code >= 400:
+            logger.warning(
+                "panel_rpc http=%s M=%s body=%s",
+                r.status_code,
+                payload.get("M"),
+                text[:300],
+            )
+        if text.startswith("<!"):
+            raise RuntimeError(f"panel_rpc returned HTML for M={payload.get('M')}")
+        try:
+            parsed: Any = json.loads(text) if text else None
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(f"panel_rpc non-JSON M={payload.get('M')}: {text[:200]}") from exc
+        if isinstance(parsed, dict) and parsed.get("e"):
+            raise RuntimeError(f"panel_rpc error M={payload.get('M')}: {parsed.get('e')}")
+        return parsed
+
+    @staticmethod
+    def _panel_form_value(resp: Any, key: str) -> str | None:
+        """Parse GWT form rows [["name","value"],["answered","Y"],...] ."""
+        if not isinstance(resp, list) or len(resp) < 2:
+            return None
+        for row in resp[1:]:
+            if isinstance(row, list) and len(row) >= 2 and str(row[0]) == key:
+                return str(row[1])
+        return None
+
+    def accept_chat(self, conversation_id: str) -> dict[str, Any]:
+        """Equivalent to LA popup 「回复」: ChatAnswererRpc.pickUpChat (+ joinOperator).
+
+        Clears visitor waiting / ringing when successful (answered=Y). Does not by itself
+        post a visitor-visible type-C bubble — see create_chat_answer.
+        """
+        if self.config.dry_run:
+            logger.info("DRY_RUN accept_chat %s", conversation_id)
+            return {"dry_run": True, "answered": "Y", "conversation_id": conversation_id}
+        session = self.panel_login()
+        pickup = self.panel_rpc(
+            {
+                "C": _PANEL_CHAT_ANSWERER,
+                "M": "pickUpChat",
+                "S": session,
+                "ticketId": conversation_id,
+            }
+        )
+        answered = self._panel_form_value(pickup, "answered")
+        join: Any = None
+        try:
+            join = self.panel_rpc(
+                {
+                    "C": _PANEL_CHAT_JOINER,
+                    "M": "joinOperator",
+                    "S": session,
+                    "cid": conversation_id,
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(
+                "joinOperator failed conversation=%s (pickUp answered=%s): %s",
+                conversation_id,
+                answered,
+                exc,
+            )
+        logger.info(
+            "accept_chat conversation=%s answered=%s join=%s",
+            conversation_id,
+            answered,
+            join,
+        )
+        return {
+            "conversation_id": conversation_id,
+            "answered": answered,
+            "pickup": pickup,
+            "join": join,
+            "session": session,
+        }
+
+    def create_chat_answer(
+        self,
+        conversation_id: str,
+        message: str,
+        *,
+        session: str | None = None,
+    ) -> dict[str, Any]:
+        """ChatMessenger.createAnswer — visitor-visible livechat (message group type C).
+
+        On PinGo 5.67.7 LoginKey sessions this often returns permission denied; callers
+        should fall back to post_reply (type 5, agent-panel only).
+        """
+        if self.config.dry_run:
+            logger.info("DRY_RUN create_chat_answer %s -> %s", conversation_id, message[:200])
+            return {"dry_run": True, "conversation_id": conversation_id, "path": "type_c"}
+        sess = (session or "").strip() or self.panel_login()
+        resp = self.panel_rpc(
+            {
+                "C": _PANEL_CHAT_MESSENGER,
+                "M": "createAnswer",
+                "S": sess,
+                "chatId": conversation_id,
+                "text": message,
+                "fileIds": "",
+            }
+        )
+        logger.info("create_chat_answer ok conversation=%s", conversation_id)
+        if isinstance(resp, dict):
+            return {**resp, "path": "type_c", "external_stub": f"la-c-{conversation_id}"}
+        return {"result": resp, "path": "type_c", "external_stub": f"la-c-{conversation_id}"}
 
     def list_agent_directory(self) -> dict[str, set[str]]:
         """Best-effort agent ids / emails / names from LiveAgent."""
@@ -842,6 +1014,9 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
     auto_transfer = cfg.get("auto_transfer")
     if auto_transfer is None:
         auto_transfer = settings.liveagent_auto_transfer
+    panel_accept = cfg.get("panel_accept")
+    if panel_accept is None:
+        panel_accept = settings.liveagent_panel_accept
     agent_user_id = str(cfg.get("agent_user_id") or settings.liveagent_agent_user_id or "").strip()
     chat_department_id = str(
         cfg.get("chat_department_id") or settings.liveagent_chat_department_id or ""
@@ -854,6 +1029,7 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
             agent_email=conn.agent_email,
             dry_run=bool(conn.dry_run),
             auto_transfer=bool(auto_transfer),
+            panel_accept=bool(panel_accept),
             agent_user_id=agent_user_id,
             chat_department_id=chat_department_id,
         )

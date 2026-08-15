@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     liveagent_dry_run: bool = True
     # Transfer/assign chat to LIVEAGENT_AGENT_EMAIL before posting AI replies
     liveagent_auto_transfer: bool = True
+    # LoginKey panel pickUpChat before send (clears visitor waiting / ringing)
+    liveagent_panel_accept: bool = True
     # Keep PinGo CS chat presence online via Devices API (does not replace auto-transfer)
     liveagent_keep_online: bool = True
     liveagent_keep_online_interval_sec: int = 60
