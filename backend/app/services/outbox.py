@@ -96,8 +96,8 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
                 )
 
         session: str | None = None
-        # Panel 「回复」 accept: clears visitor waiting. createAnswer may still be denied
-        # on LoginKey sessions (falls back to public API type-5).
+        # Panel 「回复」 accept: clears visitor waiting. createAnswer needs type-C
+        # message group id (not ticket id); falls back to public API type-5 on failure.
         if la.config.panel_accept and not la.config.dry_run:
             try:
                 accepted = la.accept_chat(conv.external_id)

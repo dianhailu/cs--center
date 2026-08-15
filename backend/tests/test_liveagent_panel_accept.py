@@ -56,10 +56,53 @@ def test_create_chat_answer_raises_on_panel_error():
     la = _client()
     with (
         patch.object(la, "panel_login", return_value="SESSIONTOKEN123456789012345678"),
+        patch.object(la, "resolve_chat_group_id", return_value="01a-group-uuid"),
         patch.object(la, "panel_rpc", side_effect=RuntimeError("panel_rpc error M=createAnswer: 您没有权限执行此操作。")),
     ):
         with pytest.raises(RuntimeError, match="权限"):
             la.create_chat_answer("ticket1", "hello")
+
+
+def test_create_chat_answer_uses_type_c_group_id_not_ticket_id():
+    la = _client()
+    with (
+        patch.object(la, "panel_login", return_value="SESSIONTOKEN123456789012345678"),
+        patch.object(la, "resolve_chat_group_id", return_value="01a004dc-group-uuid") as resolve,
+        patch.object(
+            la,
+            "panel_rpc",
+            return_value=[
+                ["name", "value"],
+                ["messageid", "msg-1"],
+                ["message_groupid", "01a004dc-group-uuid"],
+            ],
+        ) as rpc,
+    ):
+        out = la.create_chat_answer("ticket1", "hello visitor")
+    resolve.assert_called_once_with("ticket1")
+    payload = rpc.call_args.args[0]
+    assert payload["M"] == "createAnswer"
+    assert payload["chatId"] == "01a004dc-group-uuid"
+    assert payload["chatId"] != "ticket1"
+    assert payload["text"] == "hello visitor"
+    assert out["path"] == "type_c"
+    assert out["external_stub"] == "msg-1"
+    assert out["chat_group_id"] == "01a004dc-group-uuid"
+
+
+def test_resolve_chat_group_id_picks_latest_type_c():
+    la = _client()
+    with patch.object(
+        la,
+        "get_ticket_messages",
+        return_value=[
+            {"id": "g-start", "type": "S"},
+            {"id": "01a-old", "type": "C"},
+            {"id": "g-note", "type": "5"},
+            {"id": "01a-new", "type": "C"},
+        ],
+    ):
+        assert la.resolve_chat_group_id("ticket1") == "01a-new"
 
 
 def test_panel_form_value():

@@ -489,36 +489,77 @@ class LiveAgentClient:
             "session": session,
         }
 
+    def resolve_chat_group_id(self, conversation_id: str) -> str:
+        """Return the livechat message-group id (rtype/type C) for ChatMessenger.createAnswer.
+
+        LA panel RPC ``chatId`` is the type-C *message group* UUID, not the conversation /
+        ticket id. Passing the ticket id yields a misleading 「您没有权限执行此操作」.
+        """
+        groups = self.get_ticket_messages(conversation_id)
+        chat_groups = [
+            g
+            for g in groups
+            if isinstance(g, dict) and str(g.get("type") or g.get("rtype") or "").upper() == "C"
+        ]
+        if not chat_groups:
+            raise RuntimeError(f"no type-C chat message group for conversation={conversation_id}")
+        # Prefer the latest C group (open/active livechat thread).
+        group = chat_groups[-1]
+        gid = str(group.get("id") or group.get("messagegroupid") or "").strip()
+        if not gid:
+            raise RuntimeError(f"type-C group missing id for conversation={conversation_id}")
+        return gid
+
     def create_chat_answer(
         self,
         conversation_id: str,
         message: str,
         *,
         session: str | None = None,
+        chat_group_id: str | None = None,
     ) -> dict[str, Any]:
         """ChatMessenger.createAnswer — visitor-visible livechat (message group type C).
 
-        On PinGo 5.67.7 LoginKey sessions this often returns permission denied; callers
-        should fall back to post_reply (type 5, agent-panel only).
+        ``chatId`` must be the type-C message group id (see resolve_chat_group_id). Using the
+        conversation/ticket id makes LA return 「您没有权限执行此操作」.
         """
         if self.config.dry_run:
             logger.info("DRY_RUN create_chat_answer %s -> %s", conversation_id, message[:200])
             return {"dry_run": True, "conversation_id": conversation_id, "path": "type_c"}
         sess = (session or "").strip() or self.panel_login()
+        group_id = (chat_group_id or "").strip() or self.resolve_chat_group_id(conversation_id)
         resp = self.panel_rpc(
             {
                 "C": _PANEL_CHAT_MESSENGER,
                 "M": "createAnswer",
                 "S": sess,
-                "chatId": conversation_id,
+                "chatId": group_id,
                 "text": message,
                 "fileIds": "",
             }
         )
-        logger.info("create_chat_answer ok conversation=%s", conversation_id)
+        message_id = self._panel_form_value(resp, "messageid") if isinstance(resp, list) else None
+        logger.info(
+            "create_chat_answer ok conversation=%s group=%s messageid=%s",
+            conversation_id,
+            group_id,
+            message_id,
+        )
+        external = message_id or f"la-c-{conversation_id}"
         if isinstance(resp, dict):
-            return {**resp, "path": "type_c", "external_stub": f"la-c-{conversation_id}"}
-        return {"result": resp, "path": "type_c", "external_stub": f"la-c-{conversation_id}"}
+            return {
+                **resp,
+                "path": "type_c",
+                "chat_group_id": group_id,
+                "external_stub": external,
+            }
+        return {
+            "result": resp,
+            "path": "type_c",
+            "chat_group_id": group_id,
+            "messageid": message_id,
+            "external_stub": external,
+        }
 
     def list_agent_directory(self) -> dict[str, set[str]]:
         """Best-effort agent ids / emails / names from LiveAgent."""

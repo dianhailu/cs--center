@@ -71,7 +71,7 @@ DEFAULT_COUNTRY_CODE=ID
 
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
-`LIVEAGENT_PANEL_ACCEPT=true`（默认）时，worker 在发送前还会用 agent `LoginKey` 调面板 RPC `ChatAnswererRpc.pickUpChat`（+ `joinOperator`），相当于点弹窗「回复」，可清掉访客侧「等待接入」。随后会尝试 `ChatMessenger.createAnswer`（type C，访客 widget 可见）；若 LoginKey 会话返回无权限，则回退到公开 API `post_reply`（type 5，仅坐席/中台可见）。设为 `false` 可关闭面板接入。
+`LIVEAGENT_PANEL_ACCEPT=true`（默认）时，worker 在发送前还会用 agent `LoginKey` 调面板 RPC `ChatAnswererRpc.pickUpChat`（+ `joinOperator`），相当于点弹窗「回复」，可清掉访客侧「等待接入」。随后用 `ChatMessenger.createAnswer` 写入 **type C** 消息组（`chatId` 必须是 type-C message group UUID，不是 conversation/ticket id；用错 id 时 LA 会误报「您没有权限」）。失败时回退公开 API `post_reply`（type 5，仅坐席/中台可见）。设为 `false` 可关闭面板接入。
 
 ### AI / OpenAI（香港 VPS 地区限制）
 
@@ -93,7 +93,7 @@ OPENAI_PROXY=http://user:pass@host:port
 
 - **示例 / 新部署默认：`false`**（代码与 `.env*.example` 保持 false，避免误开）：Smart 仍生成并写入中台会话（客服可见 `local_only` 气泡），**不**经 outbox/`post_reply` 发给 LiveAgent 访客。人工客服在中台的回复仍正常投递。
 - 质量就绪后可在生产接线：`.env.production` 设 `AI_SEND_TO_CUSTOMER=true`，然后 `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --force-recreate api worker`（必要时 `--build`）。临时关闭：改回 `false` 并同样 recreate。
-- 注意：即便开启投递，visitor livechat widget 仍可能看不到 public API（message group type 5）气泡。`LIVEAGENT_PANEL_ACCEPT` 会先 `pickUpChat` 清等待；访客气泡需 type C / `createAnswer`（LoginKey 会话上常被 LA 拒权限，此时仍回退 type 5）。与本开关独立。
+- 注意：公开 API `post_reply` 写入 type 5，访客 widget 通常看不到。`LIVEAGENT_PANEL_ACCEPT` 会先 `pickUpChat`，再用 type-C group id 调 `createAnswer` 让访客可见。与本开关独立。
 
 与 auto-transfer / keep-online 独立：关闭投递后不会因 AI 触发 transfer+回复。
 
