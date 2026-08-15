@@ -120,6 +120,44 @@ def skip_reason_for_trigger(db: Session, conv: Conversation, trigger: Message | 
     return None
 
 
+def early_panel_accept(db: Session, conv: Conversation) -> dict:
+    """pickUpChat as soon as an AI job starts — clear visitor waiting before LLM latency.
+
+    Outbox will call accept_chat again before createAnswer (idempotent when already answered).
+    """
+    conn = db.get(ChannelConnection, conv.channel_connection_id)
+    if not conn or not conv.external_id:
+        return {}
+    la = client_from_connection(conn)
+    try:
+        if not la.config.panel_accept or la.config.dry_run:
+            return {"skipped": "panel_accept_disabled"}
+        accepted = la.accept_chat(conv.external_id)
+        if str(accepted.get("answered") or "").upper() == "Y":
+            conv.status = ConversationStatus.assigned
+            conv.la_status = conv.la_status or "T"
+            db.commit()
+            logger.info(
+                "early_panel_accept ok conversation=%s external=%s",
+                conv.id,
+                conv.external_id,
+            )
+        return {
+            "answered": accepted.get("answered"),
+            "join": accepted.get("join"),
+        }
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(
+            "early_panel_accept failed conversation=%s external=%s: %s",
+            conv.id,
+            conv.external_id,
+            exc,
+        )
+        return {"error": str(exc)[:500]}
+    finally:
+        la.close()
+
+
 def process_ai_jobs(db: Session, limit: int = 10) -> int:
     settings = get_settings()
     if not settings.ai_enabled:
@@ -156,11 +194,21 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
             trigger = db.get(Message, job.trigger_message_id) if job.trigger_message_id else None
             reason = skip_reason_for_trigger(db, conv, trigger, job_id=job.id)
             if reason:
+                # Prior AI may have fallen back to type-5 (visitor still waiting). Retry
+                # pickUp while the chat might still be ringing.
+                accept_retry = {}
+                if reason == "ai_already_replied":
+                    accept_retry = early_panel_accept(db, conv)
                 job.status = "done"
-                job.result = {"skipped": reason}
+                job.result = {"skipped": reason, "early_panel_accept": accept_retry}
                 job.updated_at = datetime.now(timezone.utc)
                 db.commit()
                 continue
+
+            # Accept ringing chat BEFORE LLM so visitor leaves "waiting" in ~1–2s,
+            # not after the full model round-trip (often 30–60s).
+            early_accept = early_panel_accept(db, conv)
+            db.refresh(conv)
 
             text = trigger.body if trigger else ""
             forced_lang = None
@@ -176,6 +224,7 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 "lang": decision.lang,
                 "reply": decision.reply,
                 "trigger_message_id": str(trigger.id) if trigger else None,
+                "early_panel_accept": early_accept,
                 "faq": [
                     {"id": h.faq_id, "score": round(h.score, 4), "q": h.question}
                     for h in decision.faq_hits
@@ -232,8 +281,13 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 assert conv
                 conv.ai_handled = True
                 conv.needs_human = False
+                # Keep assigned after successful panel accept; else open queue.
                 if conv.status == ConversationStatus.ai_pending:
-                    conv.status = ConversationStatus.queued
+                    conv.status = (
+                        ConversationStatus.assigned
+                        if str((early_accept or {}).get("answered") or "").upper() == "Y"
+                        else ConversationStatus.queued
+                    )
                 _safe_tag(db, conv, "ai_replied")
             elif decision.action == "handoff":
                 if decision.reply:
@@ -247,7 +301,9 @@ def process_ai_jobs(db: Session, limit: int = 10) -> int:
                 assert conv
                 conv.ai_handled = True
                 conv.needs_human = True
-                conv.status = ConversationStatus.queued
+                # Do not downgrade an accepted chat back to queued (midplatform 「未接入」).
+                if conv.status != ConversationStatus.assigned:
+                    conv.status = ConversationStatus.queued
                 _safe_tag(db, conv, "ai_handoff")
             else:
                 conv.ai_handled = True

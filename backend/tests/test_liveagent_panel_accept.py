@@ -53,6 +53,20 @@ def test_accept_chat_pickup_and_join():
     assert rpc.call_args_list[1].args[0]["M"] == "joinOperator"
 
 
+def test_accept_chat_raises_when_not_answered():
+    la = _client()
+    with (
+        patch.object(la, "panel_login", return_value="SESSIONTOKEN123456789012345678"),
+        patch.object(
+            la,
+            "panel_rpc",
+            return_value=[["name", "value"], ["answered", "N"]],
+        ),
+    ):
+        with pytest.raises(RuntimeError, match="did not accept"):
+            la.accept_chat("ticket1")
+
+
 def test_create_chat_answer_raises_on_panel_error():
     la = _client()
     with (

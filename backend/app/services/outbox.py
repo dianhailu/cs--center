@@ -11,6 +11,7 @@ from app.config import get_settings
 from app.models import (
     ChannelConnection,
     Conversation,
+    ConversationStatus,
     Message,
     MessageSendStatus,
     MessageSenderType,
@@ -98,6 +99,9 @@ def _process_one(db: Session, event: OutboxEvent) -> None:
                     "answered": accepted.get("answered"),
                     "join": accepted.get("join"),
                 }
+                if str(accepted.get("answered") or "").upper() == "Y":
+                    if conv.status != ConversationStatus.closed:
+                        conv.status = ConversationStatus.assigned
             except Exception as exc:  # noqa: BLE001
                 logger.warning(
                     "accept_chat failed conversation=%s; continuing without panel accept: %s",

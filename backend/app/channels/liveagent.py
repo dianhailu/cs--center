@@ -477,6 +477,11 @@ class LiveAgentClient:
             }
         )
         answered = self._panel_form_value(pickup, "answered")
+        if str(answered or "").upper() != "Y":
+            # Not ringing / already taken → visitor stays on "waiting". Do not pretend OK.
+            raise RuntimeError(
+                f"pickUpChat did not accept conversation={conversation_id} answered={answered}"
+            )
         join: Any = None
         try:
             join = self.panel_rpc(
