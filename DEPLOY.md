@@ -67,7 +67,7 @@ DEFAULT_COUNTRY_CODE=ID
 # SEED_ADMIN_PASSWORD=change-me-admin-password
 ```
 
-启动 seed 会补齐 `countries`/`products`、把 FAQ 标为 `product_code=pingo`、现有坐席迁为 `agent`。管理台：`/admin/`（product_admin+）。`AI_SEND_TO_CUSTOMER` 保持 `false` 即可。
+启动 seed 会补齐 `countries`/`products`、把 FAQ 标为 `product_code=pingo`、现有坐席迁为 `agent`。管理台：`/admin/`（product_admin+）。新部署示例默认 `AI_SEND_TO_CUSTOMER=false`；质量就绪后可在生产 `.env.production` 设为 `true`（见下节）。
 
 `LIVEAGENT_AUTO_TRANSFER=true`（默认）时，worker 在 `post_reply` 前会先通过 LiveAgent attendants API 把会话转给 `LIVEAGENT_AGENT_EMAIL`，减少人工点击 ring/接听弹窗的依赖。设为 `false` 可关闭。
 
@@ -89,10 +89,11 @@ OPENAI_PROXY=http://user:pass@host:port
 
 ### AI 是否发给客户（`AI_SEND_TO_CUSTOMER`）
 
-- **默认 / 当前建议：`false`**：Smart 仍生成并写入中台会话（客服可见 `local_only` 气泡），**不**经 outbox/`post_reply` 发给 LiveAgent 访客。人工客服在中台的回复仍正常投递。
-- 学习质量 OK 后再接线：设 `AI_SEND_TO_CUSTOMER=true`，然后 `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build`（api + worker）。
+- **示例 / 新部署默认：`false`**（代码与 `.env*.example` 保持 false，避免误开）：Smart 仍生成并写入中台会话（客服可见 `local_only` 气泡），**不**经 outbox/`post_reply` 发给 LiveAgent 访客。人工客服在中台的回复仍正常投递。
+- 质量就绪后可在生产接线：`.env.production` 设 `AI_SEND_TO_CUSTOMER=true`，然后 `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --force-recreate api worker`（必要时 `--build`）。临时关闭：改回 `false` 并同样 recreate。
+- 注意：即便开启投递，visitor livechat widget 仍可能看不到 public API（message group type 5）气泡，需 panel `pickUpChat` / type C 路径；与本开关独立。
 
-与 auto-transfer / keep-online 独立：关闭投递后不会因 AI 触发 transfer+回复；访客侧「public API 气泡不可见」问题在未投递期间可暂搁。
+与 auto-transfer / keep-online 独立：关闭投递后不会因 AI 触发 transfer+回复。
 
 ### LiveAgent 常在线（Devices keep-alive）
 
