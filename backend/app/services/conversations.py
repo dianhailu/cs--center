@@ -70,7 +70,7 @@ def _search_filter(term: str) -> ColumnElement | None:
 
 def list_conversations(
     db: Session,
-    workspace_id: UUID,
+    workspace_ids: UUID | list[UUID],
     *,
     status: str | None = None,
     queue: str | None = None,
@@ -78,7 +78,10 @@ def list_conversations(
     q: str | None = None,
     limit: int = 50,
 ) -> list[Conversation]:
-    stmt = select(Conversation).where(Conversation.workspace_id == workspace_id)
+    ids = [workspace_ids] if isinstance(workspace_ids, UUID) else list(workspace_ids)
+    if not ids:
+        return []
+    stmt = select(Conversation).where(Conversation.workspace_id.in_(ids))
     if status:
         stmt = stmt.where(Conversation.status == ConversationStatus(status))
     if queue == "human":
@@ -101,6 +104,14 @@ def get_conversation(db: Session, conversation_id: UUID, workspace_id: UUID) -> 
         select(Conversation)
         .options(selectinload(Conversation.messages))
         .where(Conversation.id == conversation_id, Conversation.workspace_id == workspace_id)
+    )
+
+
+def get_conversation_any(db: Session, conversation_id: UUID) -> Conversation | None:
+    return db.scalar(
+        select(Conversation)
+        .options(selectinload(Conversation.messages))
+        .where(Conversation.id == conversation_id)
     )
 
 

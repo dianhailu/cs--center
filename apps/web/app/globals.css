@@ -1097,6 +1097,79 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
   max-width: min(280px, 42vw);
 }
 .context-switcher select:disabled { opacity: 0.75; }
+
+.product-scope-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  max-width: min(420px, 48vw);
+}
+.product-scope-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-right: 0.15rem;
+}
+.product-scope-tab {
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.product-scope-tab.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel-strong));
+  box-shadow: var(--shadow-sm);
+}
+.product-scope-tab:disabled { opacity: 0.6; cursor: wait; }
+.product-scope-country {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.product-scope-single {
+  font-size: 0.84rem;
+  font-weight: 550;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.inbox-product-filter { margin-bottom: 0.5rem; }
+.conv-item-btn {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.product-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  margin-bottom: 0.25rem;
+}
+.product-badge-pingo {
+  background: #e8f4ff;
+  color: #1565b5;
+}
+.product-badge-avantee {
+  background: #eef7ee;
+  color: #2d6a3a;
+}
+.product-badge-other {
+  background: var(--panel-strong);
+  color: var(--muted);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

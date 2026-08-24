@@ -45,6 +45,7 @@ export type CustomerSnapshot = {
 
 export type Conversation = {
   id: string;
+  workspace_id: string;
   external_id: string;
   external_code?: string | null;
   subject?: string | null;
@@ -57,6 +58,9 @@ export type Conversation = {
   last_message_at?: string | null;
   channel_type?: string | null;
   la_status?: string | null;
+  product_code?: string | null;
+  product_name?: string | null;
+  workspace_name?: string | null;
 };
 
 export type ConversationDetail = Conversation & {
@@ -411,12 +415,15 @@ export async function updateAdminUser(
 export async function listConversations(
   token: string,
   queue?: string,
-  search?: string
+  search?: string,
+  opts?: { allProducts?: boolean; productCode?: string }
 ): Promise<Conversation[]> {
   const params = new URLSearchParams();
   if (queue) params.set("queue", queue);
   const trimmed = (search || "").trim();
   if (trimmed) params.set("q", trimmed);
+  if (opts?.allProducts) params.set("all_products", "true");
+  if (opts?.productCode) params.set("product_code", opts.productCode);
   const qs = params.toString();
   const res = await fetch(`${API_BASE}/api/conversations${qs ? `?${qs}` : ""}`, {
     headers: authHeaders(token),

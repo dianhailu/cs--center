@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   clearSession,
@@ -34,9 +34,16 @@ export default function ConsoleTopbar({
   const [agent, setAgent] = useState<LoginResult | null>(null);
   const [switching, setSwitching] = useState(false);
 
-  useEffect(() => {
+  const refreshAgent = useCallback(() => {
     setAgent(getStoredAgent());
-  }, [pathname]);
+  }, []);
+
+  useEffect(() => {
+    refreshAgent();
+    const onUpdate = () => refreshAgent();
+    window.addEventListener("cs-session-updated", onUpdate);
+    return () => window.removeEventListener("cs-session-updated", onUpdate);
+  }, [pathname, refreshAgent]);
 
   const livechatActive =
     pathname === "/inbox" ||
@@ -53,6 +60,7 @@ export default function ConsoleTopbar({
   const showAdmin =
     Boolean(agent?.can_manage_users || agent?.can_manage_catalog);
   const scopes = agent?.scopes || [];
+  const multiProduct = scopes.length > 1;
   const displaySubtitle =
     subtitle ??
     `${agent?.name || "Agent"} · ${contextLabel(agent)}`;
@@ -119,25 +127,32 @@ export default function ConsoleTopbar({
         </nav>
       </div>
       <div className="topbar-right">
-        {scopes.length > 0 ? (
-          <label className="context-switcher">
-            <span className="sr-only">产品 / 国家</span>
-            <select
-              value={agent?.workspace_id || ""}
-              disabled={switching || scopes.length <= 1}
-              onChange={(e) => onSwitch(e.target.value)}
-              aria-label="切换产品与国家"
-            >
-              {scopes.map((s) => (
-                <option key={s.workspace_id} value={s.workspace_id}>
-                  {s.product_name} · {s.country_name}
-                  {s.customer_reply_lang
-                    ? `（回复 ${LANG_LABEL[s.customer_reply_lang] || s.customer_reply_lang}）`
-                    : ""}
-                </option>
-              ))}
-            </select>
-          </label>
+        {multiProduct ? (
+          <div className="product-scope-tabs" role="tablist" aria-label="切换产品">
+            <span className="product-scope-label">产品</span>
+            {scopes.map((s) => {
+              const active = s.workspace_id === agent?.workspace_id;
+              return (
+                <button
+                  key={s.workspace_id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  disabled={switching}
+                  className={`product-scope-tab${active ? " active" : ""}`}
+                  onClick={() => onSwitch(s.workspace_id)}
+                  title={`${s.workspace_name} · 回复 ${LANG_LABEL[s.customer_reply_lang] || s.customer_reply_lang}`}
+                >
+                  {s.product_name}
+                  <span className="product-scope-country">{s.country_name}</span>
+                </button>
+              );
+            })}
+          </div>
+        ) : scopes.length === 1 ? (
+          <span className="product-scope-single">
+            {scopes[0].product_name} · {scopes[0].country_name}
+          </span>
         ) : null}
         {showLogout ? (
           <button className="secondary" onClick={logout} type="button">

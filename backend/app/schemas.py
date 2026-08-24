@@ -154,6 +154,9 @@ class ConversationOut(BaseModel):
     needs_human: bool
     last_message_at: datetime | None
     created_at: datetime
+    product_code: str | None = None
+    product_name: str | None = None
+    workspace_name: str | None = None
 
     model_config = {"from_attributes": True, "use_enum_values": True}
 
