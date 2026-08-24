@@ -78,6 +78,18 @@ class Settings(BaseSettings):
     default_product_code: str = "pingo"
     default_country_code: str = "ID"
 
+    # Optional second product: Avantee (separate LiveAgent tenant)
+    avantee_product_code: str = "avantee"
+    avantee_product_name: str = "Avantee"
+    avantee_country_code: str = "ID"
+    avantee_customer_reply_lang: str = "id"
+    avantee_workspace_name: str = "Avantee Indonesia"
+    avantee_liveagent_base_url: str = ""
+    avantee_liveagent_api_v3_key: str = ""
+    avantee_liveagent_api_v1_key: str = ""
+    avantee_liveagent_agent_email: str = ""
+    avantee_liveagent_dry_run: bool = False
+
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
     categories_path: Path = BACKEND_ROOT / "knowledge" / "categories.json"
     history_path: Path = BACKEND_ROOT / "knowledge" / "history_pairs.json"

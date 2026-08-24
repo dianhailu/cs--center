@@ -20,6 +20,7 @@ from app.models import (
     Product,
     Workspace,
 )
+from app.product_setup import avantee_spec_from_settings, ensure_product_channel
 from app.rbac import normalize_country, normalize_product
 from app.security import hash_password
 
@@ -263,6 +264,16 @@ def seed() -> None:
             _ensure_membership(db, admin, ws, ROLE_SYSTEM_ADMIN)
             logger.info("seeded system_admin=%s", admin.email)
 
+        avantee_spec = avantee_spec_from_settings(settings)
+        avantee_conn = None
+        if avantee_spec:
+            _, avantee_ws, avantee_conn = ensure_product_channel(db, avantee_spec, org=org)
+            logger.info(
+                "seeded avantee workspace=%s connection=%s",
+                avantee_ws.id,
+                avantee_conn.id,
+            )
+
         db.commit()
         _backfill_faq_product_code(settings.faq_path, product_code)
         logger.info(
@@ -279,6 +290,9 @@ def seed() -> None:
         print(f"SEED_AGENT_EMAIL={agent.email}")
         print(f"SEED_PRODUCT_CODE={product_code}")
         print(f"SEED_COUNTRY_CODE={country_code}")
+        if avantee_conn:
+            print(f"SEED_AVANTEE_CONNECTION_ID={avantee_conn.id}")
+            print(f"SEED_AVANTEE_WORKSPACE_ID={avantee_conn.workspace_id}")
     finally:
         db.close()
 
