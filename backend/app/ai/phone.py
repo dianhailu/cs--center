@@ -58,8 +58,20 @@ _RECEPTION: dict[str, str] = {
 }
 
 
-def reception_reply(lang: str, *, faq_items: list[dict] | None = None) -> str:
-    """Standard PinGo reception greeting; prefer FAQ ``pingo-reception--01`` when present."""
+def reception_reply(
+    lang: str,
+    *,
+    faq_items: list[dict] | None = None,
+    brand: "ProductBrand | None" = None,
+) -> str:
+    """Reception greeting; prefer FAQ ``*-reception--01`` when present."""
+    from app.product_brand import DEFAULT_PINGO_AGENT, ProductBrand, rebrand_text
+
+    brand = brand or ProductBrand(
+        product_code="pingo",
+        product_name="PinGo",
+        agent_display_name=DEFAULT_PINGO_AGENT,
+    )
     key = (lang or "id").lower()
     if key.startswith("zh") or key in {"cn", "chinese"}:
         key = "zh"
@@ -68,9 +80,10 @@ def reception_reply(lang: str, *, faq_items: list[dict] | None = None) -> str:
     else:
         key = "id"
 
+    reception_codes = {f"{brand.product_code}-reception--01", "pingo-reception--01"}
     if faq_items:
         for item in faq_items:
-            if str(item.get("code") or "") != "pingo-reception--01":
+            if str(item.get("code") or "") not in reception_codes:
                 continue
             answers = item.get("answer") or {}
             if isinstance(answers, dict):
@@ -81,7 +94,8 @@ def reception_reply(lang: str, *, faq_items: list[dict] | None = None) -> str:
                     or (answers.get("zh") or "").strip()
                 )
                 if text:
-                    return text
+                    return rebrand_text(text, brand)
             break
 
-    return _RECEPTION[key]
+    fallback = _RECEPTION[key]
+    return rebrand_text(fallback, brand)

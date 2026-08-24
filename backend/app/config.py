@@ -89,6 +89,8 @@ class Settings(BaseSettings):
     avantee_liveagent_api_v1_key: str = ""
     avantee_liveagent_agent_email: str = ""
     avantee_liveagent_dry_run: bool = False
+    avantee_agent_display_name: str = "Joy"
+    avantee_kb_source_product_code: str = "pingo"
 
     faq_path: Path = BACKEND_ROOT / "knowledge" / "faq.json"
     categories_path: Path = BACKEND_ROOT / "knowledge" / "categories.json"

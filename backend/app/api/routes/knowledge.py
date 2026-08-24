@@ -7,6 +7,8 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from sqlalchemy.orm import Session
+
 from app.ai.kb_categories import (
     create_category,
     list_categories_with_counts,
@@ -25,6 +27,8 @@ from app.ai.kb_translate import auto_translate_qa, detect_source_lang, normalize
 from app.ai.unknown import load_unknowns, resolve_unknown, update_unknown
 from app.api.deps import AuthContext, get_auth
 from app.config import get_settings
+from app.db import get_db
+from app.product_brand import faq_items_for_brand, load_product_brand
 from app.rbac import assert_product_access, can_edit_knowledge, require_knowledge_write
 
 
@@ -41,17 +45,11 @@ def _editor_label(auth: AuthContext) -> str:
     return email or name or "agent"
 
 
-def _filter_faq_for_product(items: list[dict[str, Any]], product_code: str) -> list[dict[str, Any]]:
-    out: list[dict[str, Any]] = []
-    for raw in items:
-        item = normalize_faq_item(raw)
-        pc = (item.get("product_code") or "").strip().lower() or None
-        # Legacy rows without product_code are treated as default product (seed backfills)
-        if pc is None or pc == product_code:
-            if pc is None:
-                item["product_code"] = product_code
-            out.append(item)
-    return out
+def _filter_faq_for_product(
+    db: Session, items: list[dict[str, Any]], product_code: str
+) -> list[dict[str, Any]]:
+    brand = load_product_brand(db, product_code)
+    return faq_items_for_brand(items, brand)
 
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
@@ -181,13 +179,16 @@ def post_category(
 
 
 @router.get("/faq")
-def list_faq(auth: AuthContext = Depends(get_auth)) -> dict[str, Any]:
+def list_faq(
+    auth: AuthContext = Depends(get_auth),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
     product_code = _product_code(auth)
     settings = get_settings()
     migrate_faq_codes(settings.faq_path, settings.categories_path)
     migrate_faq_file(settings.faq_path)
     items = load_faq_raw(settings.faq_path)
-    normalized = _filter_faq_for_product(items, product_code)
+    normalized = _filter_faq_for_product(db, items, product_code)
     return {
         "count": len(normalized),
         "items": normalized,

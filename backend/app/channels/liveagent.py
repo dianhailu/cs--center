@@ -30,6 +30,8 @@ class LiveAgentConfig:
     # Optional overrides for Devices keep-online (PinGo CS presence)
     agent_user_id: str = ""
     chat_department_id: str = ""
+    agent_display_name: str = ""
+    agent_name_aliases: list[str] | None = None
 
     @property
     def v3_base(self) -> str:
@@ -625,7 +627,11 @@ class LiveAgentClient:
                 logger.debug("list_agent_directory %s failed: %s", path, exc)
         if self.config.agent_email:
             emails.add(self.config.agent_email.strip().lower())
-        names.update({"pingo cs", "pin go cs", "pingo"})
+        if self.config.agent_display_name:
+            names.add(self.config.agent_display_name.strip().lower())
+        for alias in self.config.agent_name_aliases or []:
+            if alias:
+                names.add(str(alias).strip().lower())
         return {"ids": ids, "emails": emails, "names": names}
 
     def list_agent_user_ids(self) -> set[str]:
@@ -1086,6 +1092,13 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
     chat_department_id = str(
         cfg.get("chat_department_id") or settings.liveagent_chat_department_id or ""
     ).strip()
+    agent_display_name = str(cfg.get("agent_display_name") or "").strip()
+    if not agent_display_name and conn.base_url and "pingo" in conn.base_url.lower():
+        agent_display_name = "PinGo CS"
+    aliases = cfg.get("agent_name_aliases")
+    agent_name_aliases = [str(a).strip() for a in aliases if str(a).strip()] if isinstance(aliases, list) else None
+    if agent_name_aliases is None and agent_display_name:
+        agent_name_aliases = [agent_display_name.lower()]
     return LiveAgentClient(
         LiveAgentConfig(
             base_url=conn.base_url,
@@ -1097,5 +1110,7 @@ def client_from_connection(conn: Any) -> LiveAgentClient:
             panel_accept=bool(panel_accept),
             agent_user_id=agent_user_id,
             chat_department_id=chat_department_id,
+            agent_display_name=agent_display_name,
+            agent_name_aliases=agent_name_aliases,
         )
     )

@@ -8,6 +8,7 @@ from app.ai.faq import FaqHit, FaqIndex, detect_lang
 from app.ai.history import HistoryHit, HistoryIndex
 from app.ai.phone import is_phone_like, reception_reply
 from app.config import Settings
+from app.product_brand import DEFAULT_PINGO_AGENT, ProductBrand, faq_items_for_brand, rebrand_text
 
 logger = logging.getLogger(__name__)
 
@@ -44,8 +45,18 @@ class SupportAgent:
         self.history = history or HistoryIndex(settings.history_path)
 
     def decide(
-        self, customer_text: str, *, forced_reply_lang: str | None = None
+        self,
+        customer_text: str,
+        *,
+        forced_reply_lang: str | None = None,
+        brand: ProductBrand | None = None,
     ) -> AgentDecision:
+        brand = brand or ProductBrand(
+            product_code="pingo",
+            product_name="PinGo",
+            agent_display_name=DEFAULT_PINGO_AGENT,
+        )
+        faq_items = faq_items_for_brand(self.faq.items, brand)
         text = (customer_text or "").strip()
         forced = (forced_reply_lang or "").strip().lower() or None
         if forced and forced not in {"zh", "id", "en"}:
@@ -72,22 +83,25 @@ class SupportAgent:
         if is_phone_like(text):
             return AgentDecision(
                 "reply",
-                reception_reply(lang, faq_items=self.faq.items),
+                reception_reply(lang, faq_items=faq_items, brand=brand),
                 lang,
                 [],
                 [],
                 "phone-like reception greeting",
             )
 
-        history_hits = self.history.search(text, top_k=5)
-        faq_hits = self.faq.search(text, lang=detected, top_k=3)
+        history_hits: list[HistoryHit] = []
+        if brand.uses_own_history:
+            history_hits = self.history.search(text, top_k=5)
+        faq_hits = self.faq.search_items(faq_items, text, lang=detected, top_k=3)
         best_history = history_hits[0] if history_hits else None
         best_faq = faq_hits[0] if faq_hits else None
 
         # 1) Strong historical human reply match → mimic agent answer
         if best_history and best_history.score >= self.settings.min_history_score:
-            mimicked = self._llm_mimic(text, lang, history_hits, faq_hits)
+            mimicked = self._llm_mimic(text, lang, history_hits, faq_hits, brand)
             answer = mimicked or best_history.answer
+            answer = rebrand_text(answer, brand)
             return AgentDecision(
                 "reply",
                 answer,
@@ -99,8 +113,8 @@ class SupportAgent:
 
         # 2) FAQ match
         if best_faq and best_faq.score >= self.settings.min_faq_score:
-            answer = best_faq.answer
-            polished = self._llm_polish(text, lang, faq_hits, history_hits)
+            answer = rebrand_text(best_faq.answer, brand)
+            polished = self._llm_polish(text, lang, faq_hits, history_hits, brand)
             if polished:
                 answer = polished
             return AgentDecision(
@@ -113,9 +127,9 @@ class SupportAgent:
             )
 
         # 3) Weak retrieval → LLM with history+FAQ context, else handoff wait message
-        llm = self._llm_answer(text, lang, faq_hits, history_hits)
+        llm = self._llm_answer(text, lang, faq_hits, history_hits, brand)
         if llm:
-            return AgentDecision("reply", llm, lang, faq_hits, history_hits, "llm with weak retrieval")
+            return AgentDecision("reply", rebrand_text(llm, brand), lang, faq_hits, history_hits, "llm with weak retrieval")
 
         return AgentDecision(
             "handoff",
@@ -132,6 +146,7 @@ class SupportAgent:
         lang: str,
         history_hits: list[HistoryHit],
         faq_hits: list[FaqHit],
+        brand: ProductBrand,
     ) -> str | None:
         if not self.settings.openai_api_key or not history_hits:
             return None
@@ -140,7 +155,8 @@ class SupportAgent:
         )
         faq_bits = "\n".join([f"- {h.answer}" for h in faq_hits[:2] if h.answer])
         system = (
-            "You are PinGo CS (human customer support style). "
+            f"You are {brand.agent_display_name} from {brand.product_name} "
+            "(human customer support style). "
             "Reply like the Agent examples: short, polite, practical Bahasa/Chinese/English matching the customer. "
             "Do not invent policies not present in examples/FAQ. "
             "If examples/FAQ cannot answer, reply exactly HANDOFF. "
@@ -158,6 +174,7 @@ class SupportAgent:
         lang: str,
         hits: list[FaqHit],
         history_hits: list[HistoryHit],
+        brand: ProductBrand,
     ) -> str | None:
         if not self.settings.openai_api_key:
             return None
@@ -166,7 +183,8 @@ class SupportAgent:
             [f"Customer: {h.question}\nAgent: {h.answer}" for h in history_hits[:4] if h.answer]
         ) or "(no history)"
         system = (
-            "You are PinGo CS. Prefer mimicking historical Agent replies. "
+            f"You are {brand.agent_display_name} from {brand.product_name}. "
+            "Prefer mimicking historical Agent replies. "
             "Use FAQ only as supporting facts. "
             "If you cannot answer confidently, reply exactly HANDOFF. "
             f"Reply language: {lang}."
@@ -186,12 +204,14 @@ class SupportAgent:
         lang: str,
         hits: list[FaqHit],
         history_hits: list[HistoryHit],
+        brand: ProductBrand,
     ) -> str | None:
         if not self.settings.openai_api_key or not hits:
             return None
         style = history_hits[0].answer if history_hits else ""
         system = (
-            "You are PinGo CS. Rewrite the FAQ answer in the tone of a human PinGo agent. "
+            f"You are {brand.agent_display_name} from {brand.product_name}. "
+            f"Rewrite the FAQ answer in the tone of a human {brand.product_name} agent. "
             "Keep facts faithful; be concise. "
             f"Reply language: {lang}."
         )

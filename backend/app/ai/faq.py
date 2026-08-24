@@ -119,6 +119,71 @@ class FaqIndex:
         scored.sort(key=lambda h: h.score, reverse=True)
         return scored[:top_k]
 
+    def search_items(self, items: list[dict], query: str, lang: str = "id", top_k: int = 3) -> list[FaqHit]:
+        """Search a scoped FAQ subset (e.g. product-branded borrow)."""
+        if not items:
+            return []
+        docs: list[dict] = []
+        for item in items:
+            bag = " ".join(
+                [
+                    item.get("question", {}).get("id", "") or "",
+                    item.get("question", {}).get("en", "") or "",
+                    item.get("question", {}).get("zh", "") or "",
+                    item.get("answer", {}).get("id", "") or "",
+                    item.get("answer", {}).get("en", "") or "",
+                    item.get("answer", {}).get("zh", "") or "",
+                    (item.get("category") or {}).get("id", "") or "",
+                    (item.get("category") or {}).get("en", "") or "",
+                    (item.get("category") or {}).get("zh", "") or "",
+                ]
+            )
+            tokens = tokenize(bag)
+            docs.append({"item": item, "tokens": tokens, "tf": _tf(tokens)})
+        df: dict[str, int] = {}
+        for doc in docs:
+            for t in set(doc["tokens"]):
+                df[t] = df.get(t, 0) + 1
+        n = max(len(docs), 1)
+        idf = {t: math.log((n + 1) / (c + 1)) + 1.0 for t, c in df.items()}
+        q_tokens = tokenize(query)
+        if not q_tokens:
+            return []
+        q_tf = _tf(q_tokens)
+        scored: list[FaqHit] = []
+        for doc in docs:
+            score = _cosine(q_tf, doc["tf"], idf)
+            item = doc["item"]
+            q_zh = item.get("question", {}).get("zh", "") or ""
+            q_id = item.get("question", {}).get("id", "") or ""
+            q_en = item.get("question", {}).get("en", "") or ""
+            ql = query.lower()
+            if ql and (ql in q_zh.lower() or ql in q_id.lower() or ql in q_en.lower()):
+                score += 0.35
+            if score <= 0:
+                continue
+            lang_key = _lang_key(lang)
+            scored.append(
+                FaqHit(
+                    faq_id=int(item.get("id") or 0),
+                    score=score,
+                    question=item.get("question", {}).get(lang_key)
+                    or item.get("question", {}).get("id")
+                    or item.get("question", {}).get("zh")
+                    or "",
+                    answer=item.get("answer", {}).get(lang_key)
+                    or item.get("answer", {}).get("id")
+                    or item.get("answer", {}).get("zh")
+                    or "",
+                    lang=lang_key,
+                    category=(item.get("category") or {}).get(lang_key)
+                    or (item.get("category") or {}).get("id")
+                    or "",
+                )
+            )
+        scored.sort(key=lambda h: h.score, reverse=True)
+        return scored[:top_k]
+
 
 def detect_lang(text: str, default: str = "id") -> str:
     raw = text or ""

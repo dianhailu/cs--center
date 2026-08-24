@@ -20,6 +20,7 @@ from app.models import (
     Product,
     Workspace,
 )
+from app.product_brand import DEFAULT_PINGO_AGENT
 from app.product_setup import avantee_spec_from_settings, ensure_product_channel
 from app.rbac import normalize_country, normalize_product
 from app.security import hash_password
@@ -35,18 +36,30 @@ def init_db() -> None:
 def _migrate_columns() -> None:
     """Add columns introduced after initial create_all (SQLite / Postgres)."""
     insp = inspect(engine)
-    if "agent_users" not in insp.get_table_names():
-        return
-    cols = {c["name"] for c in insp.get_columns("agent_users")}
+    tables = set(insp.get_table_names())
     with engine.begin() as conn:
-        if "role" not in cols:
-            conn.execute(
-                text(
-                    "ALTER TABLE agent_users ADD COLUMN role VARCHAR(32) "
-                    f"NOT NULL DEFAULT '{ROLE_AGENT}'"
+        if "agent_users" in tables:
+            cols = {c["name"] for c in insp.get_columns("agent_users")}
+            if "role" not in cols:
+                conn.execute(
+                    text(
+                        "ALTER TABLE agent_users ADD COLUMN role VARCHAR(32) "
+                        f"NOT NULL DEFAULT '{ROLE_AGENT}'"
+                    )
                 )
-            )
-            logger.info("migrated agent_users.role")
+                logger.info("migrated agent_users.role")
+        if "products" in tables:
+            cols = {c["name"] for c in insp.get_columns("products")}
+            if "agent_display_name" not in cols:
+                conn.execute(
+                    text("ALTER TABLE products ADD COLUMN agent_display_name VARCHAR(120) NOT NULL DEFAULT ''")
+                )
+                logger.info("migrated products.agent_display_name")
+            if "kb_source_product_code" not in cols:
+                conn.execute(
+                    text("ALTER TABLE products ADD COLUMN kb_source_product_code VARCHAR(64)")
+                )
+                logger.info("migrated products.kb_source_product_code")
 
 
 def _backfill_faq_product_code(faq_path: Path, product_code: str) -> None:
@@ -115,6 +128,7 @@ def seed() -> None:
                 name="PinGo",
                 customer_reply_lang=(settings.default_reply_lang or "id").lower(),
                 default_country_code=country_code,
+                agent_display_name=DEFAULT_PINGO_AGENT,
             )
             db.add(product)
             db.flush()
@@ -123,6 +137,8 @@ def seed() -> None:
                 product.customer_reply_lang = (settings.default_reply_lang or "id").lower()
             if not product.default_country_code:
                 product.default_country_code = country_code
+            if not product.agent_display_name:
+                product.agent_display_name = DEFAULT_PINGO_AGENT
 
         if country not in (product.countries or []):
             product.countries = list({*(product.countries or []), country})
@@ -189,7 +205,12 @@ def seed() -> None:
                 agent_email=settings.liveagent_agent_email,
                 dry_run=settings.liveagent_dry_run,
                 webhook_secret=settings.webhook_secret,
-                config={"auto_transfer": settings.liveagent_auto_transfer},
+                config={
+                    "auto_transfer": settings.liveagent_auto_transfer,
+                    "panel_accept": settings.liveagent_panel_accept,
+                    "agent_display_name": DEFAULT_PINGO_AGENT,
+                    "agent_name_aliases": ["pingo cs", "pin go cs", "pingo"],
+                },
             )
             db.add(conn)
         else:
@@ -201,6 +222,8 @@ def seed() -> None:
             conn.webhook_secret = settings.webhook_secret
             merged = dict(conn.config or {})
             merged["auto_transfer"] = settings.liveagent_auto_transfer
+            merged.setdefault("agent_display_name", DEFAULT_PINGO_AGENT)
+            merged.setdefault("agent_name_aliases", ["pingo cs", "pin go cs", "pingo"])
             conn.config = merged
 
         # --- Seed agent (product agent on pingo/ID) ---

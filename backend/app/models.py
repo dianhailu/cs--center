@@ -81,6 +81,10 @@ class Product(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     # Forced customer-facing reply language (zh / id / en)
     customer_reply_lang: Mapped[str] = mapped_column(String(8), nullable=False, default="id")
+    # Customer-facing CS persona (e.g. PinGo CS, Joy)
+    agent_display_name: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    # Optional: read FAQ from another product and rebrand (e.g. avantee → pingo)
+    kb_source_product_code: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     default_country_code: Mapped[Optional[str]] = mapped_column(
         String(8), ForeignKey("countries.code"), nullable=True
     )

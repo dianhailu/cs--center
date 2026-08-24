@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.models import ChannelConnection, Country, Organization, Product, Workspace
+from app.product_brand import DEFAULT_PINGO_AGENT, agent_name_aliases, brand_from_product
 from app.rbac import normalize_country, normalize_product
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,8 @@ class ProductChannelSpec:
     webhook_secret: str
     auto_transfer: bool
     panel_accept: bool
+    agent_display_name: str = ""
+    kb_source_product_code: str | None = None
 
 
 def ensure_product_channel(
@@ -60,6 +63,12 @@ def ensure_product_channel(
             name=spec.product_name,
             customer_reply_lang=spec.customer_reply_lang.lower(),
             default_country_code=country_code,
+            agent_display_name=(spec.agent_display_name or "").strip(),
+            kb_source_product_code=(
+                (spec.kb_source_product_code or "").strip().lower() or None
+                if spec.kb_source_product_code is not None
+                else None
+            ),
         )
         db.add(product)
         db.flush()
@@ -69,6 +78,13 @@ def ensure_product_channel(
         product.customer_reply_lang = spec.customer_reply_lang.lower()
         if not product.default_country_code:
             product.default_country_code = country_code
+        if spec.agent_display_name:
+            product.agent_display_name = spec.agent_display_name.strip()
+        if spec.kb_source_product_code is not None:
+            src = (spec.kb_source_product_code or "").strip().lower() or None
+            product.kb_source_product_code = src
+
+    brand = brand_from_product(product, product_code=product_code)
 
     if country not in (product.countries or []):
         product.countries = list({*(product.countries or []), country})
@@ -118,6 +134,8 @@ def ensure_product_channel(
     config = {
         "auto_transfer": spec.auto_transfer,
         "panel_accept": spec.panel_accept,
+        "agent_display_name": brand.agent_display_name or spec.agent_display_name or DEFAULT_PINGO_AGENT,
+        "agent_name_aliases": sorted(agent_name_aliases(brand)),
     }
     if not conn:
         conn = ChannelConnection(
@@ -183,4 +201,6 @@ def avantee_spec_from_settings(settings: Settings) -> ProductChannelSpec | None:
         webhook_secret=settings.webhook_secret,
         auto_transfer=settings.liveagent_auto_transfer,
         panel_accept=settings.liveagent_panel_accept,
+        agent_display_name=settings.avantee_agent_display_name or "Joy",
+        kb_source_product_code=settings.avantee_kb_source_product_code or "pingo",
     )
